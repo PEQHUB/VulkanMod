@@ -1,7 +1,7 @@
 package net.vulkanmod.mixin.texture.update;
 
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
-import com.mojang.blaze3d.pipeline.RenderPass;
+import com.mojang.blaze3d.systems.RenderPass;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.vulkanmod.render.texture.SpriteUpdateUtil;
 import org.spongepowered.asm.mixin.Mixin;
