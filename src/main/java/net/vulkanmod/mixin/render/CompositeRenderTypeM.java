@@ -40,13 +40,13 @@ public abstract class CompositeRenderTypeM {
      */
     @Overwrite
     public void draw(MeshData meshData) {
-        RenderPipeline renderPipeline = this.state.pipeline;
+        RenderPipeline renderPipeline = ((CompositeStateAccessor)(Object)this.state).getPipeline();
         GpuBufferSlice gpuBufferSlice = RenderSystem.getDynamicUniforms()
                                                     .writeTransform(
                                                             RenderSystem.getModelViewMatrix(),
                                                             new Vector4f(1.0F, 1.0F, 1.0F, 1.0F),
                                                             new Vector3f(),
-                                                            RenderSystem.getTextureMatrix()
+                                                            ((CompositeStateAccessor)(Object)this.state).getTextureTransform().getMatrix()
                                                     );
         MeshData var3 = meshData;
 
@@ -91,9 +91,9 @@ public abstract class CompositeRenderTypeM {
                 int idx = 0;
                 for (var entry : textures.entrySet()) {
                     RenderSetup.TextureAndSampler textureAndSampler = entry.getValue();
-                    GpuTextureView gpuTextureView3 = textureAndSampler.view();
+                    GpuTextureView gpuTextureView3 = textureAndSampler.textureView();
                     if (gpuTextureView3 != null) {
-                        renderPass.bindSampler(entry.getKey(), gpuTextureView3);
+                        renderPass.bindTexture(entry.getKey(), gpuTextureView3, textureAndSampler.sampler());
 
                         VkGpuTexture vkGpuTexture = (VkGpuTexture) gpuTextureView3.texture();
                         VTextureSelector.bindTexture(idx, vkGpuTexture.getVulkanImage());

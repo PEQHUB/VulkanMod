@@ -221,7 +221,7 @@ public class FluidRenderer implements FluidRendering.DefaultRenderer {
 
             float uA = (u0 + u1 + u2 + u3) / 4.0F;
             float vA = (v0 + v1 + v2 + v3) / 4.0F;
-            float ai = sprites[0].uvShrinkRatio();
+            float ai = getUvShrinkRatio(sprites[0]);
             u0 = Mth.lerp(ai, u0, uA);
             u1 = Mth.lerp(ai, u1, uA);
             u2 = Mth.lerp(ai, u2, uA);
@@ -472,6 +472,13 @@ public class FluidRenderer implements FluidRendering.DefaultRenderer {
 
     private void updateQuad(ModelQuad quad, BlockPos blockPos, LightPipeline lightPipeline, Direction dir) {
         lightPipeline.calculate(quad, blockPos, resources.quadLightData, null, dir, false);
+    }
+
+    private static float getUvShrinkRatio(TextureAtlasSprite sprite) {
+        float atlasWidth = sprite.contents().width() / (sprite.getU1() - sprite.getU0());
+        float atlasHeight = sprite.contents().height() / (sprite.getV1() - sprite.getV0());
+        float atlasSize = Math.max(atlasHeight, atlasWidth);
+        return 4.0f / atlasSize;
     }
 
     private void updateColor(float r, float g, float b, float brightness) {

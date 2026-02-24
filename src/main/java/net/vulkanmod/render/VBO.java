@@ -60,7 +60,7 @@ public class VBO {
                     autoIndexBuffer = Renderer.getDrawer().getTriangleFanIndexBuffer();
                     this.indexCount = AutoIndexBuffer.DrawType.getTriangleStripIndexCount(this.vertexCount);
                 }
-                case TRIANGLE_STRIP, LINE_STRIP -> {
+                case TRIANGLE_STRIP -> {
                     autoIndexBuffer = Renderer.getDrawer().getTriangleStripIndexBuffer();
                     this.indexCount = AutoIndexBuffer.DrawType.getTriangleStripIndexCount(this.vertexCount);
                 }

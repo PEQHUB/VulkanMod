@@ -2,6 +2,8 @@ package net.vulkanmod.mixin.render;
 
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.systems.RenderPass;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.gui.render.GuiRenderer;
@@ -34,7 +36,7 @@ public abstract class GuiRendererMixin {
                 .submitBlitToCurrentLayer(
                         new BlitRenderState(
                                 RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-                                TextureSetup.singleTexture(this.itemsAtlasView),
+                                TextureSetup.singleTexture(this.itemsAtlasView, RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)),
                                 guiItemRenderState.pose(),
                                 guiItemRenderState.x(),
                                 guiItemRenderState.y(),

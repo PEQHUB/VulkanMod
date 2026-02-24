@@ -26,6 +26,10 @@ public class VkGpuTexture extends GlTexture {
     protected boolean closed;
     protected boolean modesDirty = true;
 
+    protected boolean useMipmaps;
+    protected FilterMode minFilter = FilterMode.NEAREST;
+    protected FilterMode magFilter = FilterMode.NEAREST;
+
     boolean needsClear = false;
     int clearColor = 0;
     float depthClearValue = 1.0f;
@@ -57,8 +61,8 @@ public class VkGpuTexture extends GlTexture {
         if (this.modesDirty) {
             int maxLod = this.useMipmaps ? this.getMipLevels() - 1 : 0;
 
-            int magFilterVk = magFilter == FilterMode.LINEAR ? VK10.VK_FILTER_LINEAR : VK10.VK_FILTER_NEAREST;
-            int minFilterVk = minFilter == FilterMode.LINEAR ? VK10.VK_FILTER_LINEAR : VK10.VK_FILTER_NEAREST;
+            int magFilterVk = this.magFilter == FilterMode.LINEAR ? VK10.VK_FILTER_LINEAR : VK10.VK_FILTER_NEAREST;
+            int minFilterVk = this.minFilter == FilterMode.LINEAR ? VK10.VK_FILTER_LINEAR : VK10.VK_FILTER_NEAREST;
 
             long sampler = SamplerManager.getSampler(VK10.VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, VK10.VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
                                                      minFilterVk, magFilterVk, VK10.VK_SAMPLER_MIPMAP_MODE_LINEAR,
@@ -74,21 +78,19 @@ public class VkGpuTexture extends GlTexture {
         return this.id;
     }
 
-    @Override
-    public void setAddressMode(AddressMode addressMode, AddressMode addressMode2) {
-        super.setAddressMode(addressMode, addressMode2);
+    public void setAddressMode(AddressMode addressMode) {
         this.modesDirty = true;
     }
 
-    @Override
-    public void setTextureFilter(FilterMode filterMode, FilterMode filterMode2, boolean bl) {
-        super.setTextureFilter(filterMode, filterMode2, bl);
+    public void setTextureFilter(FilterMode filterMode, boolean bl) {
+        this.minFilter = filterMode;
+        this.magFilter = filterMode;
+        this.useMipmaps = bl;
         this.modesDirty = true;
     }
 
-    @Override
     public void setUseMipmaps(boolean bl) {
-        super.setUseMipmaps(bl);
+        this.useMipmaps = bl;
         this.modesDirty = true;
     }
 

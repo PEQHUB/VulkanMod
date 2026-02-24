@@ -1,14 +1,16 @@
 package net.vulkanmod.mixin.render.vertex;
 
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.model.geom.builders.UVPair;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.core.Vec3i;
+import net.minecraft.util.ARGB;
 import net.vulkanmod.interfaces.ExtendedVertexBuilder;
-import net.vulkanmod.mixin.matrix.PoseAccessor;
 import net.vulkanmod.render.util.MathUtil;
 import net.vulkanmod.render.vertex.format.I32_SNorm;
-import net.vulkanmod.vulkan.util.ColorUtil;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.lwjgl.system.MemoryUtil;
 import org.spongepowered.asm.mixin.*;
 
@@ -155,53 +157,38 @@ public abstract class BufferBuilderM
 
     @Override
     public void putBulkData(PoseStack.Pose matrixEntry, BakedQuad quad, float[] brightness, float red, float green,
-                            float blue, float alpha, int[] lights, int overlay, boolean useQuadColorData) {
-        putQuadData(matrixEntry, quad, brightness, red, green, blue, alpha, lights, overlay, useQuadColorData);
+                            float blue, float alpha, int[] lights, int overlay) {
+        putQuadData(matrixEntry, quad, brightness, red, green, blue, alpha, lights, overlay);
     }
 
     @SuppressWarnings("UnreachableCode")
     @Unique
-    private void putQuadData(PoseStack.Pose matrixEntry, BakedQuad quad, float[] brightness, float red, float green, float blue, float alpha, int[] lights, int overlay, boolean useQuadColorData) {
-        int[] quadData = quad.vertices();
-        Vec3i vec3i = quad.direction().getUnitVec3i();
+    private void putQuadData(PoseStack.Pose matrixEntry, BakedQuad quad, float[] brightness, float red, float green, float blue, float alpha, int[] lights, int overlay) {
+        Vector3fc dirVec = quad.direction().getUnitVec3f();
         Matrix4f matrix4f = matrixEntry.pose();
 
-        boolean trustedNormals = ((PoseAccessor)(Object)matrixEntry).trustedNormals();
-        int normal = MathUtil.packTransformedNorm(matrixEntry.normal(), trustedNormals, vec3i.getX(), vec3i.getY(), vec3i.getZ());
+        Vector3f transformedNormal = matrixEntry.transformNormal(dirVec, new Vector3f());
+        int lightEmission = quad.lightEmission();
 
         for (int k = 0; k < 4; ++k) {
-            float r, g, b;
+            Vector3fc position = quad.position(k);
+            long packedUV = quad.packedUV(k);
 
-            float quadR, quadG, quadB;
-
-            int i = k * 8;
-            float x = Float.intBitsToFloat(quadData[i]);
-            float y = Float.intBitsToFloat(quadData[i + 1]);
-            float z = Float.intBitsToFloat(quadData[i + 2]);
+            float x = position.x();
+            float y = position.y();
+            float z = position.z();
 
             float tx = MathUtil.transformX(matrix4f, x, y, z);
             float ty = MathUtil.transformY(matrix4f, x, y, z);
             float tz = MathUtil.transformZ(matrix4f, x, y, z);
 
-            if (useQuadColorData) {
-                int color = quadData[i + 3];
-                quadR = ColorUtil.RGBA.unpackR(color);
-                quadG = ColorUtil.RGBA.unpackG(color);
-                quadB = ColorUtil.RGBA.unpackB(color);
-                r = quadR * brightness[k] * red;
-                g = quadG * brightness[k] * green;
-                b = quadB * brightness[k] * blue;
-            } else {
-                r = brightness[k] * red;
-                g = brightness[k] * green;
-                b = brightness[k] * blue;
-            }
+            int color = ARGB.colorFromFloat(alpha, brightness[k] * red, brightness[k] * green, brightness[k] * blue);
 
-            int color = ColorUtil.RGBA.pack(r, g, b, alpha);
+            int light = LightTexture.lightCoordsWithEmission(lights[k], lightEmission);
+            float u = UVPair.unpackU(packedUV);
+            float v = UVPair.unpackV(packedUV);
 
-            int light = lights[k];
-            float u = Float.intBitsToFloat(quadData[i + 4]);
-            float v = Float.intBitsToFloat(quadData[i + 5]);
+            int normal = I32_SNorm.packNormal(transformedNormal.x(), transformedNormal.y(), transformedNormal.z());
 
             this.vertex(tx, ty, tz, color, u, v, overlay, light, normal);
         }

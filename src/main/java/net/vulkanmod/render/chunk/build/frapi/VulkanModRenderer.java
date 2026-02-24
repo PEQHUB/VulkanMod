@@ -73,4 +73,5 @@ public class VulkanModRenderer implements Renderer {
 	public QuadEmitter getLayerRenderStateEmitter(ItemStackRenderState.LayerRenderState layer) {
 		return ((AccessLayerRenderState) layer).getMutableMesh().emitter();
 	}
+
 }

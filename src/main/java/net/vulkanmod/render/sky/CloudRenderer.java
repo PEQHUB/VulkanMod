@@ -11,7 +11,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.vulkanmod.render.PipelineManager;
 import net.vulkanmod.render.VBO;
 import net.vulkanmod.vulkan.Renderer;
@@ -23,7 +23,6 @@ import org.joml.Matrix4fStack;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
-import java.util.Optional;
 
 public class CloudRenderer {
     private static final Identifier TEXTURE_LOCATION = Identifier.withDefaultNamespace("textures/environment/clouds.png");
@@ -62,15 +61,9 @@ public class CloudRenderer {
     }
 
     public void renderClouds(ClientLevel level, float ticks, float partialTicks, double camX, double camY, double camZ) {
-        Optional<Integer> optional = level.dimensionType().cloudHeight();
-
-        if (optional.isEmpty()) {
-            return;
-        }
-
         Minecraft minecraft = Minecraft.getInstance();
 
-        int cloudHeight = optional.get();
+        float cloudHeight = level.environmentAttributes().getDimensionValue(EnvironmentAttributes.CLOUD_HEIGHT);
         double timeOffset = (ticks + partialTicks) * 0.03F;
         double centerX = (camX + timeOffset);
         double centerZ = camZ + 0.33F * CELL_WIDTH;
@@ -138,8 +131,11 @@ public class CloudRenderer {
         VRenderSystem.setModelOffset(-xTranslation, 0, -zTranslation);
 
         // TODO
-        Vec3 cloudColor = Vec3.fromRGB24(level.getCloudColor(partialTicks));
-        VRenderSystem.setShaderColor((float) cloudColor.x, (float) cloudColor.y, (float) cloudColor.z, 0.8f);
+        int cloudColorInt = level.environmentAttributes().getDimensionValue(EnvironmentAttributes.CLOUD_COLOR);
+        float cloudR = ((cloudColorInt >> 16) & 0xFF) / 255.0f;
+        float cloudG = ((cloudColorInt >> 8) & 0xFF) / 255.0f;
+        float cloudB = (cloudColorInt & 0xFF) / 255.0f;
+        VRenderSystem.setShaderColor(cloudR, cloudG, cloudB, 0.8f);
 
         GraphicsPipeline pipeline = PipelineManager.getCloudsPipeline();
         VRenderSystem.enableBlend();

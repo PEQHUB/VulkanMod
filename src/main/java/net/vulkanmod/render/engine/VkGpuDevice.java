@@ -38,6 +38,10 @@ import org.slf4j.Logger;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.OptionalDouble;
+import com.mojang.blaze3d.textures.AddressMode;
+import com.mojang.blaze3d.textures.FilterMode;
+import com.mojang.blaze3d.textures.GpuSampler;
 
 @SuppressWarnings("NullableProblems")
 public class VkGpuDevice implements GpuDevice {
@@ -146,11 +150,11 @@ public class VkGpuDevice implements GpuDevice {
     }
 
     @Override
-    public GpuBuffer createBuffer(@Nullable Supplier<String> supplier, int usage, int size) {
+    public GpuBuffer createBuffer(@Nullable Supplier<String> supplier, int usage, long size) {
         if (size <= 0) {
             throw new IllegalArgumentException("Buffer size must be greater than zero");
         } else {
-            return new VkGpuBuffer(this.debugLabels, supplier, usage, size);
+            return new VkGpuBuffer(this.debugLabels, supplier, usage, (int) size);
         }
     }
 
@@ -227,6 +231,16 @@ public class VkGpuDevice implements GpuDevice {
     }
 
     @Override
+    public int getMaxSupportedAnisotropy() {
+        return (int) DeviceManager.deviceProperties.limits().maxSamplerAnisotropy();
+    }
+
+    @Override
+    public GpuSampler createSampler(AddressMode addressModeU, AddressMode addressModeV, FilterMode minFilter, FilterMode magFilter, int maxAnisotropy, OptionalDouble maxLod) {
+        return new VkGpuSampler(addressModeU, addressModeV, minFilter, magFilter, maxAnisotropy, maxLod);
+    }
+
+    @Override
     public void clearPipelineCache() {
         for (GlRenderPipeline glRenderPipeline : this.pipelineCache.values()) {
             if (glRenderPipeline.program() != GlProgram.INVALID_PROGRAM) {
@@ -287,8 +301,8 @@ public class VkGpuDevice implements GpuDevice {
         });
     }
 
-    public CompiledRenderPipeline precompilePipeline(RenderPipeline renderPipeline, @Nullable ShaderSource shaderSourceGetter) {
-        shaderSourceGetter = shaderSourceGetter == null ? this.defaultShaderSource : shaderSourceGetter;
+    @Override
+    public CompiledRenderPipeline precompilePipeline(RenderPipeline renderPipeline, ShaderSource shaderSourceGetter) {
         compilePipeline(renderPipeline, shaderSourceGetter);
 
         return new VkRenderPipeline(renderPipeline);

@@ -19,12 +19,13 @@ package net.vulkanmod.render.chunk.build.frapi.mesh;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.fabric.api.renderer.v1.mesh.ShadeMode;
 import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.vulkanmod.render.model.quad.ModelQuadView;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3fc;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadTransform;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadView;
@@ -265,26 +266,31 @@ public abstract class MutableQuadViewImpl extends QuadViewImpl implements QuadEm
 
 	@Override
 	public final MutableQuadViewImpl fromBakedQuad(BakedQuad quad) {
-		fromVanilla(quad.vertices(), 0);
-//		data[baseIndex + HEADER_BITS] = EncodingFormat.cullFace(0, cullFace);
+		// Set positions from the BakedQuad record
+		Vector3fc p0 = quad.position0();
+		Vector3fc p1 = quad.position1();
+		Vector3fc p2 = quad.position2();
+		Vector3fc p3 = quad.position3();
+		pos(0, p0.x(), p0.y(), p0.z());
+		pos(1, p1.x(), p1.y(), p1.z());
+		pos(2, p2.x(), p2.y(), p2.z());
+		pos(3, p3.x(), p3.y(), p3.z());
+
+		// Set UVs from packed UV longs
+		uv(0, UVPair.unpackU(quad.packedUV0()), UVPair.unpackV(quad.packedUV0()));
+		uv(1, UVPair.unpackU(quad.packedUV1()), UVPair.unpackV(quad.packedUV1()));
+		uv(2, UVPair.unpackU(quad.packedUV2()), UVPair.unpackV(quad.packedUV2()));
+		uv(3, UVPair.unpackU(quad.packedUV3()), UVPair.unpackV(quad.packedUV3()));
+
+		// Default vertex colors to white
+		color(-1, -1, -1, -1);
+
 		nominalFace(quad.direction());
 		diffuseShade(quad.shade());
 		tintIndex(quad.tintIndex());
 
-//		tag(0);
-
-		// Copy data from BakedQuad instead of calculating properties
-        ModelQuadView quadView = (ModelQuadView) (Object) quad;
-		int normal = quadView.getNormal();
-		data[baseIndex + HEADER_FACE_NORMAL] = normal;
-		NormalHelper.unpackNormalTo(normal, faceNormal);
-
-		Direction lightFace = quadView.lightFace();
-		data[baseIndex + HEADER_BITS] = EncodingFormat.lightFace(data[baseIndex + HEADER_BITS], lightFace);
-		data[baseIndex + HEADER_BITS] = EncodingFormat.geometryFlags(data[baseIndex + HEADER_BITS], quadView.getFlags());
-
-		this.facing = quadView.getQuadFacing();
-		this.isGeometryInvalid = false;
+		// Compute geometry from the positions we just set
+		computeGeometry();
 
 		int lightEmission = quad.lightEmission();
 

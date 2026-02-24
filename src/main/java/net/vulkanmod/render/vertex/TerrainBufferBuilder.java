@@ -112,6 +112,13 @@ public class TerrainBufferBuilder implements VertexConsumer {
 	}
 
 	@Override
+	public VertexConsumer setColor(int color) {
+		this.vertexBuilder.color(this.elementPtr, color);
+
+		return this;
+	}
+
+	@Override
 	public VertexConsumer setUv(float u, float v) {
 		this.vertexBuilder.uv(this.elementPtr, u, v);
 
@@ -140,6 +147,12 @@ public class TerrainBufferBuilder implements VertexConsumer {
 
 	@Override
 	public VertexConsumer setUv2(int i, int j) {
+		return this;
+	}
+
+	@Override
+	public VertexConsumer setLineWidth(float lineWidth) {
+		// No-op: terrain rendering does not use line width
 		return this;
 	}
 }
