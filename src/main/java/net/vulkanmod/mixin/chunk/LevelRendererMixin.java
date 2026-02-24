@@ -113,8 +113,8 @@ public abstract class LevelRendererMixin {
         return null;
     }
 
-    @Redirect(method = "method_62214", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/ChunkSectionsToRender;renderGroup(Lnet/minecraft/client/renderer/chunk/ChunkSectionLayerGroup;)V"))
-    private void renderSectionLayer(ChunkSectionsToRender instance, ChunkSectionLayerGroup chunkSectionLayerGroup) {
+    @Redirect(method = "method_62214", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/ChunkSectionsToRender;renderGroup(Lnet/minecraft/client/renderer/chunk/ChunkSectionLayerGroup;Lcom/mojang/blaze3d/textures/GpuSampler;)V"))
+    private void renderSectionLayer(ChunkSectionsToRender instance, ChunkSectionLayerGroup chunkSectionLayerGroup, com.mojang.blaze3d.textures.GpuSampler gpuSampler) {
         if (chunkSectionLayerGroup == ChunkSectionLayerGroup.OPAQUE) {
             Profiler profiler = Profiler.getMainProfiler();
             profiler.push("Opaque_terrain");
