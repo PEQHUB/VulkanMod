@@ -10,7 +10,9 @@ import com.mojang.blaze3d.systems.ScissorState;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.OutputTarget;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.vulkanmod.render.engine.*;
 import net.vulkanmod.vulkan.Renderer;
 import net.vulkanmod.vulkan.VRenderSystem;
@@ -22,35 +24,34 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
-@Mixin(RenderType.CompositeRenderType.class)
+@Mixin(RenderType.class)
 public abstract class CompositeRenderTypeM {
 
-    @Shadow @Final private RenderType.CompositeState state;
-    @Shadow @Final private RenderPipeline renderPipeline;
+    @Shadow @Final private RenderSetup state;
+    @Shadow protected String name;
 
-    // TODO
     /**
-     * @author
-     * @reason
+     * @author VulkanMod
+     * @reason Replace GL rendering with Vulkan
      */
     @Overwrite
     public void draw(MeshData meshData) {
-        ((RenderType.CompositeRenderType)(Object)(this)).setupRenderState();
+        RenderPipeline renderPipeline = this.state.pipeline;
         GpuBufferSlice gpuBufferSlice = RenderSystem.getDynamicUniforms()
                                                     .writeTransform(
                                                             RenderSystem.getModelViewMatrix(),
                                                             new Vector4f(1.0F, 1.0F, 1.0F, 1.0F),
                                                             new Vector3f(),
-                                                            RenderSystem.getTextureMatrix(),
-                                                            RenderSystem.getShaderLineWidth()
+                                                            RenderSystem.getTextureMatrix()
                                                     );
         MeshData var3 = meshData;
 
         try {
-            GpuBuffer gpuBuffer = this.renderPipeline.getVertexFormat().uploadImmediateVertexBuffer(meshData.vertexBuffer());
+            GpuBuffer gpuBuffer = renderPipeline.getVertexFormat().uploadImmediateVertexBuffer(meshData.vertexBuffer());
             GpuBuffer gpuBuffer2;
             VertexFormat.IndexType indexType;
             if (meshData.indexBuffer() == null) {
@@ -58,11 +59,12 @@ public abstract class CompositeRenderTypeM {
                 gpuBuffer2 = autoStorageIndexBuffer.getBuffer(meshData.drawState().indexCount());
                 indexType = autoStorageIndexBuffer.type();
             } else {
-                gpuBuffer2 = this.renderPipeline.getVertexFormat().uploadImmediateIndexBuffer(meshData.indexBuffer());
+                gpuBuffer2 = renderPipeline.getVertexFormat().uploadImmediateIndexBuffer(meshData.indexBuffer());
                 indexType = meshData.drawState().indexType();
             }
 
-            RenderTarget renderTarget = ((CompositeStateAccessor)(Object)this.state).getOutputState().getRenderTarget();
+            OutputTarget outputTarget = ((CompositeStateAccessor)(Object)this.state).getOutputTarget();
+            RenderTarget renderTarget = outputTarget.getRenderTarget();
             GpuTextureView gpuTextureView = RenderSystem.outputColorTextureOverride != null
                     ? RenderSystem.outputColorTextureOverride
                     : renderTarget.getColorTextureView();
@@ -72,10 +74,9 @@ public abstract class CompositeRenderTypeM {
 
             try (RenderPass renderPass = RenderSystem.getDevice()
                                                      .createCommandEncoder()
-                                                     .createRenderPass(() -> "Immediate draw for " +
-                                                                             ((RenderType.CompositeRenderType) (Object) (this)).getName(),
+                                                     .createRenderPass(() -> "Immediate draw for " + this.name,
                                                                        gpuTextureView, OptionalInt.empty(), gpuTextureView2, OptionalDouble.empty())) {
-                renderPass.setPipeline(this.renderPipeline);
+                renderPass.setPipeline(renderPipeline);
                 ScissorState scissorState = RenderSystem.getScissorStateForRenderTypeDraws();
                 if (scissorState.enabled()) {
                     renderPass.enableScissor(scissorState.x(), scissorState.y(), scissorState.width(), scissorState.height());
@@ -85,14 +86,19 @@ public abstract class CompositeRenderTypeM {
                 renderPass.setUniform("DynamicTransforms", gpuBufferSlice);
                 renderPass.setVertexBuffer(0, gpuBuffer);
 
-                for (int i = 0; i < 12; i++) {
-                    GpuTextureView gpuTextureView3 = RenderSystem.getShaderTexture(i);
+                // Bind textures from RenderSetup
+                Map<String, RenderSetup.TextureAndSampler> textures = this.state.getTextures();
+                int idx = 0;
+                for (var entry : textures.entrySet()) {
+                    RenderSetup.TextureAndSampler textureAndSampler = entry.getValue();
+                    GpuTextureView gpuTextureView3 = textureAndSampler.view();
                     if (gpuTextureView3 != null) {
-                        renderPass.bindSampler("Sampler" + i, gpuTextureView3);
+                        renderPass.bindSampler(entry.getKey(), gpuTextureView3);
 
                         VkGpuTexture vkGpuTexture = (VkGpuTexture) gpuTextureView3.texture();
-                        VTextureSelector.bindTexture(i, vkGpuTexture.getVulkanImage());
+                        VTextureSelector.bindTexture(idx, vkGpuTexture.getVulkanImage());
                     }
+                    idx++;
                 }
 
                 VRenderSystem.applyModelViewMatrix(RenderSystem.getModelViewMatrix());
@@ -120,8 +126,6 @@ public abstract class CompositeRenderTypeM {
         if (meshData != null) {
             meshData.close();
         }
-
-        ((RenderType.CompositeRenderType)(Object)(this)).clearRenderState();
     }
 
 }

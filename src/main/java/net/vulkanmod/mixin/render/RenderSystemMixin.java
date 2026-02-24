@@ -1,11 +1,10 @@
 package net.vulkanmod.mixin.render;
 
-import com.mojang.blaze3d.shaders.ShaderType;
+import com.mojang.blaze3d.shaders.ShaderSource;
 import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.renderer.DynamicUniforms;
-import net.minecraft.resources.Identifier;
 import net.vulkanmod.render.engine.VkGpuDevice;
 import net.vulkanmod.vulkan.Renderer;
 import net.vulkanmod.vulkan.VRenderSystem;
@@ -14,8 +13,6 @@ import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
-import java.util.function.BiFunction;
 
 import static com.mojang.blaze3d.systems.RenderSystem.*;
 
@@ -33,7 +30,7 @@ public abstract class RenderSystemMixin {
     public static void assertOnRenderThread() {}
 
     @Overwrite(remap = false)
-    public static void initRenderer(long l, int i, boolean bl, BiFunction<Identifier, ShaderType, String> shaderSource, boolean bl2) {
+    public static void initRenderer(long l, int i, boolean bl, ShaderSource shaderSource, boolean bl2) {
         renderThread.setPriority(Thread.NORM_PRIORITY + 2);
 
         VRenderSystem.initRenderer();

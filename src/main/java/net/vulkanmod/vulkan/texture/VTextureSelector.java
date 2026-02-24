@@ -1,9 +1,6 @@
 package net.vulkanmod.vulkan.texture;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.vulkanmod.Initializer;
-import net.vulkanmod.gl.VkGlTexture;
-import net.vulkanmod.render.engine.VkGpuTexture;
 import net.vulkanmod.render.texture.SpriteUpdateUtil;
 import net.vulkanmod.vulkan.shader.Pipeline;
 import net.vulkanmod.vulkan.shader.descriptor.ImageDescriptor;
@@ -82,29 +79,10 @@ public abstract class VTextureSelector {
     }
 
     public static void bindShaderTextures(Pipeline pipeline) {
-        var imageDescriptors = pipeline.getImageDescriptors();
-
-        for (ImageDescriptor state : imageDescriptors) {
-            var textureView = RenderSystem.getShaderTexture(state.imageIdx);
-
-            if (textureView == null)
-                continue;
-
-            VkGpuTexture gpuTexture = (VkGpuTexture) textureView.texture();
-            gpuTexture.flushModeChanges();
-
-            final int shaderTexture = gpuTexture.glId();
-            VkGlTexture texture = VkGlTexture.getTexture(shaderTexture);
-
-            if (texture != null && texture.getVulkanImage() != null) {
-                VTextureSelector.bindTexture(state.imageIdx, texture.getVulkanImage());
-            }
-            // TODO
-//            else {
-//                 texture = GlTexture.getTexture(MissingTextureAtlasSprite.getTexture().getId());
-//                 VTextureSelector.bindTexture(state.imageIdx, texture.getVulkanImage());
-//            }
-        }
+        // In 1.21.11, RenderSystem.getShaderTexture() was removed.
+        // Textures are now bound via RenderSetup.getTextures() in the draw path,
+        // or directly via VTextureSelector.bindTexture() for terrain rendering.
+        // The boundTextures array is already populated by callers before this point.
     }
 
     public static VulkanImage getImage(int i) {

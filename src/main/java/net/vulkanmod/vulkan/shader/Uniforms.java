@@ -1,7 +1,7 @@
 package net.vulkanmod.vulkan.shader;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import net.minecraft.client.Minecraft;
 import net.vulkanmod.vulkan.VRenderSystem;
 import net.vulkanmod.vulkan.shader.layout.Uniform;
 import net.vulkanmod.vulkan.util.MappedBuffer;
@@ -39,7 +39,7 @@ public class Uniforms {
         vec1f_uniformMap.put("FogRenderDistanceEnd", () -> VRenderSystem.getFogData().renderDistanceEnd);
         vec1f_uniformMap.put("FogSkyEnd", () -> VRenderSystem.getFogData().skyEnd);
         vec1f_uniformMap.put("FogCloudsEnd", () -> VRenderSystem.getFogData().cloudEnd);
-        vec1f_uniformMap.put("LineWidth", RenderSystem::getShaderLineWidth);
+        vec1f_uniformMap.put("LineWidth", () -> Minecraft.getInstance().getWindow().getAppropriateLineWidth());
         vec1f_uniformMap.put("AlphaCutout", () -> VRenderSystem.alphaCutout);
 
         //Vec2

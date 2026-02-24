@@ -2,7 +2,7 @@ package net.vulkanmod.mixin.render;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.TimerQuery;
-import net.minecraft.client.GraphicsStatus;
+import net.minecraft.client.GraphicsPreset;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.main.GameConfig;
@@ -32,11 +32,11 @@ public class MinecraftMixin {
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     private void forceGraphicsMode(GameConfig gameConfig, CallbackInfo ci) {
-        var graphicsModeOption = this.options.graphicsMode();
+        var graphicsModeOption = this.options.graphicsPreset();
 
-        if (graphicsModeOption.get() == GraphicsStatus.FABULOUS) {
+        if (graphicsModeOption.get() == GraphicsPreset.FABULOUS) {
             Initializer.LOGGER.error("Fabulous graphics mode not supported, forcing Fancy");
-            graphicsModeOption.set(GraphicsStatus.FANCY);
+            graphicsModeOption.set(GraphicsPreset.FANCY);
         }
     }
 

@@ -114,7 +114,7 @@ public abstract class Options {
                                             InactivityFpsLimit.values(),
                                             value -> minecraftOptions.inactivityFpsLimit().set(value),
                                             () -> minecraftOptions.inactivityFpsLimit().get())
-                                .setTranslator(inactivityFpsLimit -> Component.translatable(inactivityFpsLimit.getKey()))
+                                .setTranslator(inactivityFpsLimit -> inactivityFpsLimit.caption())
                 }),
                 new OptionBlock("", new Option<?>[]{
                         new RangeOption(Component.translatable("options.guiScale"),
@@ -146,7 +146,7 @@ public abstract class Options {
                                             AttackIndicatorStatus.values(),
                                             value -> minecraftOptions.attackIndicator().set(value),
                                             () -> minecraftOptions.attackIndicator().get())
-                                .setTranslator(value -> Component.translatable(value.getKey())),
+                                .setTranslator(value -> value.caption()),
                         new SwitchOption(Component.translatable("options.autosaveIndicator"),
                                          value -> minecraftOptions.showAutosaveIndicator().set(value),
                                          () -> minecraftOptions.showAutosaveIndicator().get()),
@@ -169,24 +169,24 @@ public abstract class Options {
                                             PrioritizeChunkUpdates.values(),
                                             value -> minecraftOptions.prioritizeChunkUpdates().set(value),
                                             () -> minecraftOptions.prioritizeChunkUpdates().get())
-                                .setTranslator(value -> Component.translatable(value.getKey())),
+                                .setTranslator(value -> value.caption()),
                 }),
                 new OptionBlock("", new Option<?>[]{
                         new CyclingOption<>(Component.translatable("options.graphics"),
-                                            new GraphicsStatus[]{GraphicsStatus.FAST, GraphicsStatus.FANCY},
-                                            value -> minecraftOptions.graphicsMode().set(value),
-                                            () -> minecraftOptions.graphicsMode().get())
+                                            new GraphicsPreset[]{GraphicsPreset.FAST, GraphicsPreset.FANCY},
+                                            value -> minecraftOptions.graphicsPreset().set(value),
+                                            () -> minecraftOptions.graphicsPreset().get())
                                 .setTranslator(graphicsMode -> Component.translatable(graphicsMode.getKey())),
                         new CyclingOption<>(Component.translatable("options.particles"),
                                             new ParticleStatus[]{ParticleStatus.MINIMAL, ParticleStatus.DECREASED, ParticleStatus.ALL},
                                             value -> minecraftOptions.particles().set(value),
                                             () -> minecraftOptions.particles().get())
-                                .setTranslator(particlesMode -> Component.translatable(particlesMode.getKey())),
+                                .setTranslator(particlesMode -> particlesMode.caption()),
                         new CyclingOption<>(Component.translatable("options.renderClouds"),
                                             CloudStatus.values(),
                                             value -> minecraftOptions.cloudStatus().set(value),
                                             () -> minecraftOptions.cloudStatus().get())
-                                .setTranslator(value -> Component.translatable(value.getKey())),
+                                .setTranslator(value -> value.caption()),
                         new RangeOption(Component.translatable("options.renderCloudsDistance"),
                                         2, 128, 1,
                                         (value) -> minecraftOptions.cloudRange().set(value),
