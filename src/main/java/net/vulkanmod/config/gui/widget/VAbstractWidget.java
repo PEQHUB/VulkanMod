@@ -1,11 +1,11 @@
 package net.vulkanmod.config.gui.widget;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.class_1109;
+import net.minecraft.class_1144;
+import net.minecraft.class_11909;
+import net.minecraft.class_2561;
+import net.minecraft.class_310;
+import net.minecraft.class_3417;
 import net.vulkanmod.config.gui.GuiElement;
 import net.vulkanmod.config.gui.render.GuiRenderer;
 import net.vulkanmod.vulkan.util.ColorUtil;
@@ -15,7 +15,7 @@ public abstract class VAbstractWidget extends GuiElement {
     public boolean visible = true;
     public boolean focused;
 
-    protected Component message;
+    protected class_2561 message;
 
     public void setDimensions(int x, int y, int width, int height) {
         this.x = x;
@@ -68,13 +68,13 @@ public abstract class VAbstractWidget extends GuiElement {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean bl) {
+    public boolean method_25402(class_11909 event, boolean bl) {
         if (this.active && this.visible) {
-            if (this.isValidClickButton(event.button())) {
-                boolean clicked = this.clicked(event.x(), event.y());
+            if (this.isValidClickButton(event.method_74245())) {
+                boolean clicked = this.clicked(event.comp_4798(), event.comp_4799());
                 if (clicked) {
-                    this.playDownSound(Minecraft.getInstance().getSoundManager());
-                    this.onClick(event.x(), event.y());
+                    this.playDownSound(class_310.method_1551().method_1483());
+                    this.onClick(event.comp_4798(), event.comp_4799());
                     return true;
                 }
             }
@@ -93,9 +93,9 @@ public abstract class VAbstractWidget extends GuiElement {
     }
 
     @Override
-    public boolean mouseReleased(MouseButtonEvent event) {
-        if (this.isValidClickButton(event.button())) {
-            this.onRelease(event.x(), event.y());
+    public boolean method_25406(class_11909 event) {
+        if (this.isValidClickButton(event.method_74245())) {
+            this.onRelease(event.comp_4798(), event.comp_4799());
             return true;
         } else {
             return false;
@@ -107,20 +107,20 @@ public abstract class VAbstractWidget extends GuiElement {
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double d, double e) {
-        if (this.isValidClickButton(event.button())) {
-            this.onDrag(event.x(), event.y(), d, e);
+    public boolean method_25403(class_11909 event, double d, double e) {
+        if (this.isValidClickButton(event.method_74245())) {
+            this.onDrag(event.comp_4798(), event.comp_4799(), d, e);
             return true;
         } else {
             return false;
         }
     }
 
-    public void playDownSound(SoundManager soundManager) {
-        soundManager.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+    public void playDownSound(class_1144 soundManager) {
+        soundManager.method_4873(class_1109.method_47978(class_3417.field_15015, 1.0F));
     }
 
-    public Component getTooltip() {
+    public class_2561 getTooltip() {
         return null;
     }
 }

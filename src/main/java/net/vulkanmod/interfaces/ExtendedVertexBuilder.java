@@ -1,10 +1,10 @@
 package net.vulkanmod.interfaces;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.class_4588;
 
 public interface ExtendedVertexBuilder {
 
-    static ExtendedVertexBuilder of(VertexConsumer vertexConsumer) {
+    static ExtendedVertexBuilder of(class_4588 vertexConsumer) {
         if (vertexConsumer instanceof ExtendedVertexBuilder) {
             return (ExtendedVertexBuilder) vertexConsumer;
         }

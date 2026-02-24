@@ -21,9 +21,9 @@ import net.vulkanmod.render.vertex.format.I32_SNorm;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadView;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
-import net.minecraft.util.Mth;
+import net.minecraft.class_2350;
+import net.minecraft.class_2382;
+import net.minecraft.class_3532;
 
 /**
  * Static routines of general utility for renderer implementations.
@@ -42,10 +42,10 @@ public abstract class NormalHelper {
 	 * The extra value is for use by shaders.
 	 */
 	public static int packNormal(float x, float y, float z, float w) {
-		x = Mth.clamp(x, -1, 1);
-		y = Mth.clamp(y, -1, 1);
-		z = Mth.clamp(z, -1, 1);
-		w = Mth.clamp(w, -1, 1);
+		x = class_3532.method_15363(x, -1, 1);
+		y = class_3532.method_15363(y, -1, 1);
+		z = class_3532.method_15363(z, -1, 1);
+		w = class_3532.method_15363(w, -1, 1);
 
 		return ((int) (x * PACK) & 0xFF) | (((int) (y * PACK) & 0xFF) << 8) | (((int) (z * PACK) & 0xFF) << 16) | (((int) (w * PACK) & 0xFF) << 24);
 	}
@@ -61,9 +61,9 @@ public abstract class NormalHelper {
 	 * Like {@link #packNormal(float, float, float, float)}, but without a {@code w} value.
 	 */
 	public static int packNormal(float x, float y, float z) {
-		x = Mth.clamp(x, -1, 1);
-		y = Mth.clamp(y, -1, 1);
-		z = Mth.clamp(z, -1, 1);
+		x = class_3532.method_15363(x, -1, 1);
+		y = class_3532.method_15363(y, -1, 1);
+		z = class_3532.method_15363(z, -1, 1);
 
 		return ((int) (x * PACK) & 0xFF) | (((int) (y * PACK) & 0xFF) << 8) | (((int) (z * PACK) & 0xFF) << 16);
 	}
@@ -104,11 +104,11 @@ public abstract class NormalHelper {
 	 * Expects convex quads with all points co-planar.
 	 */
 	public static void computeFaceNormal(@NotNull Vector3f saveTo, QuadView q) {
-		final Direction nominalFace = q.nominalFace();
+		final class_2350 nominalFace = q.nominalFace();
 
 		if (nominalFace != null && GeometryHelper.isQuadParallelToFace(nominalFace, q)) {
-			Vec3i vec = nominalFace.getUnitVec3i();
-			saveTo.set(vec.getX(), vec.getY(), vec.getZ());
+			class_2382 vec = nominalFace.method_62675();
+			saveTo.set(vec.method_10263(), vec.method_10264(), vec.method_10260());
 			return;
 		}
 
@@ -183,10 +183,10 @@ public abstract class NormalHelper {
 		return I32_SNorm.packNormal(normX, normY, normZ);
 	}
 
-	public static int packedNormalFromDirection(Direction direction) {
-		Vec3i normal = direction.getUnitVec3i();
+	public static int packedNormalFromDirection(class_2350 direction) {
+		class_2382 normal = direction.method_62675();
 
-		return I32_SNorm.packNormal(normal.getX(), normal.getY(), normal.getZ());
+		return I32_SNorm.packNormal(normal.method_10263(), normal.method_10264(), normal.method_10260());
 	}
 
 	public static void unpackNormalTo(int packedNormal, Vector3f normal) {

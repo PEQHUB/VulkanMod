@@ -3,7 +3,7 @@ package net.vulkanmod.vulkan;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.client.Minecraft;
+import net.minecraft.class_310;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.gl.VkGlFramebuffer;
 import net.vulkanmod.mixin.window.WindowAccessor;
@@ -239,10 +239,10 @@ public class Renderer {
 
             if (getSwapChain().getWidth() == 0 && getSwapChain().getHeight() == 0) {
                 skipRendering = true;
-                Minecraft.getInstance().noRender = true;
+                class_310.method_1551().field_1743 = true;
             } else {
                 skipRendering = false;
-                Minecraft.getInstance().noRender = false;
+                class_310.method_1551().field_1743 = false;
             }
         }
 
@@ -571,7 +571,7 @@ public class Renderer {
         this.mainPass.onResize();
 
         this.onResizeCallbacks.forEach(Runnable::run);
-        ((WindowAccessor) (Object) Minecraft.getInstance().getWindow()).getEventHandler().resizeDisplay();
+        ((WindowAccessor) (Object) class_310.method_1551().method_22683()).getEventHandler().method_15993();
 
         currentFrame = 0;
     }

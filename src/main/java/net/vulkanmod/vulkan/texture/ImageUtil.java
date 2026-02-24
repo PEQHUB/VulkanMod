@@ -65,7 +65,7 @@ public abstract class ImageUtil {
 
     public static void copyImageToBuffer(VulkanImage image, Buffer buffer, int mipLevel,
                                          int width, int height, int xOffset, int yOffset,
-                                         int bufferOffset, int bufferRowLength, int bufferImageHeight) {
+                                         long bufferOffset, int bufferRowLength, int bufferImageHeight) {
         try (MemoryStack stack = stackPush()) {
             int prevLayout = image.getCurrentLayout();
             CommandPool.CommandBuffer commandBuffer = DeviceManager.getGraphicsQueue().beginCommands();
@@ -81,7 +81,7 @@ public abstract class ImageUtil {
     }
 
     public static void copyImageToBufferCmd(MemoryStack stack, VkCommandBuffer commandBuffer, long buffer, long image,
-                                            int mipLevel, int width, int height, int xOffset, int yOffset, int bufferOffset,
+                                            int mipLevel, int width, int height, int xOffset, int yOffset, long bufferOffset,
                                             int bufferRowLength, int bufferImageHeight) {
         VkBufferImageCopy.Buffer region = VkBufferImageCopy.calloc(1, stack);
         region.bufferOffset(bufferOffset);

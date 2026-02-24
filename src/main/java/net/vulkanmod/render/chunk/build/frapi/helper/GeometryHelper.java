@@ -16,13 +16,13 @@
 
 package net.vulkanmod.render.chunk.build.frapi.helper;
 
-import static net.minecraft.util.Mth.equal;
+import static net.minecraft.class_3532.method_20390;
 
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadView;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Axis;
-import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.class_2350;
+import net.minecraft.class_2350.class_2351;
+import net.minecraft.class_2350.class_2352;
+import net.minecraft.class_777;
 import org.joml.Vector3fc;
 
 /**
@@ -55,7 +55,7 @@ public abstract class GeometryHelper {
 	 * Expects convex quads with all points co-planar.
 	 */
 	public static int computeShapeFlags(QuadView quad) {
-		Direction lightFace = quad.lightFace();
+		class_2350 lightFace = quad.lightFace();
 		int bits = 0;
 
 		if (isQuadParallelToFace(lightFace, quad)) {
@@ -78,22 +78,22 @@ public abstract class GeometryHelper {
 	 * Does not validate quad winding order.
 	 * Expects convex quads with all points co-planar.
 	 */
-	public static boolean isQuadParallelToFace(Direction face, QuadView quad) {
-		int i = face.getAxis().ordinal();
+	public static boolean isQuadParallelToFace(class_2350 face, QuadView quad) {
+		int i = face.method_10166().ordinal();
 		final float val = quad.posByIndex(0, i);
-		return equal(val, quad.posByIndex(1, i)) && equal(val, quad.posByIndex(2, i)) && equal(val, quad.posByIndex(3, i));
+		return method_15347(val, quad.posByIndex(1, i)) && method_15347(val, quad.posByIndex(2, i)) && method_15347(val, quad.posByIndex(3, i));
 	}
 
 	/**
 	 * True if quad - already known to be parallel to a face - is actually coplanar with it.
 	 * For compatibility with vanilla resource packs, also true if quad is outside the face.
 	 *
-	 * <p>Test will be unreliable if not already parallel, use {@link #isQuadParallelToFace(Direction, QuadView)}
+	 * <p>Test will be unreliable if not already parallel, use {@link #isQuadParallelToFace(class_2350, QuadView)}
 	 * for that purpose. Expects convex quads with all points co-planar.
 	 */
-	public static boolean isParallelQuadOnFace(Direction lightFace, QuadView quad) {
-		final float x = quad.posByIndex(0, lightFace.getAxis().ordinal());
-		return lightFace.getAxisDirection() == AxisDirection.POSITIVE ? x >= EPS_MAX : x <= EPS_MIN;
+	public static boolean isParallelQuadOnFace(class_2350 lightFace, QuadView quad) {
+		final float x = quad.posByIndex(0, lightFace.method_10166().ordinal());
+		return lightFace.method_10171() == class_2352.field_11056 ? x >= EPS_MAX : x <= EPS_MIN;
 	}
 
 	/**
@@ -105,22 +105,22 @@ public abstract class GeometryHelper {
 	 *
 	 * <p>Expects convex quads with all points co-planar.
 	 */
-	public static boolean isQuadCubic(Direction lightFace, QuadView quad) {
+	public static boolean isQuadCubic(class_2350 lightFace, QuadView quad) {
 		int a, b;
 
 		switch (lightFace) {
-		case EAST:
-		case WEST:
+		case field_11034:
+		case field_11039:
 			a = 1;
 			b = 2;
 			break;
-		case UP:
-		case DOWN:
+		case field_11036:
+		case field_11033:
 			a = 0;
 			b = 2;
 			break;
-		case SOUTH:
-		case NORTH:
+		case field_11035:
+		case field_11043:
 			a = 1;
 			b = 0;
 			break;
@@ -133,7 +133,7 @@ public abstract class GeometryHelper {
 	}
 
 	/**
-	 * Used by {@link #isQuadCubic(Direction, QuadView)}.
+	 * Used by {@link #isQuadCubic(class_2350, QuadView)}.
 	 * True if quad touches all four corners of unit square.
 	 *
 	 * <p>For compatibility with resource packs that contain models with quads exceeding
@@ -172,26 +172,26 @@ public abstract class GeometryHelper {
 
 	/**
 	 * Identifies the face to which the quad is most closely aligned.
-	 * This mimics the value that {@link BakedQuad#getDirection()} returns, and is
+	 * This mimics the value that {@link class_777#getDirection()} returns, and is
 	 * used in the vanilla renderer for all diffuse lighting.
 	 *
 	 * <p>Derived from the quad face normal and expects convex quads with all points co-planar.
 	 */
-	public static Direction lightFace(QuadView quad) {
+	public static class_2350 lightFace(QuadView quad) {
 		final Vector3fc normal = quad.faceNormal();
 		switch (GeometryHelper.longestAxis(normal)) {
-		case X:
-			return normal.x() > 0 ? Direction.EAST : Direction.WEST;
+		case field_11048:
+			return normal.x() > 0 ? class_2350.field_11034 : class_2350.field_11039;
 
-		case Y:
-			return normal.y() > 0 ? Direction.UP : Direction.DOWN;
+		case field_11052:
+			return normal.y() > 0 ? class_2350.field_11036 : class_2350.field_11033;
 
-		case Z:
-			return normal.z() > 0 ? Direction.SOUTH : Direction.NORTH;
+		case field_11051:
+			return normal.z() > 0 ? class_2350.field_11035 : class_2350.field_11043;
 
 		default:
 			// handle WTF case
-			return Direction.UP;
+			return class_2350.field_11036;
 		}
 	}
 
@@ -216,24 +216,24 @@ public abstract class GeometryHelper {
 	/**
 	 * @see #longestAxis(float, float, float)
 	 */
-	public static Axis longestAxis(Vector3fc vec) {
+	public static class_2351 longestAxis(Vector3fc vec) {
 		return longestAxis(vec.x(), vec.y(), vec.z());
 	}
 
 	/**
 	 * Identifies the largest (max absolute magnitude) component (X, Y, Z) in the given vector.
 	 */
-	public static Axis longestAxis(float normalX, float normalY, float normalZ) {
-		Axis result = Axis.Y;
+	public static class_2351 longestAxis(float normalX, float normalY, float normalZ) {
+		class_2351 result = class_2351.field_11052;
 		float longest = Math.abs(normalY);
 		float a = Math.abs(normalX);
 
 		if (a > longest) {
-			result = Axis.X;
+			result = class_2351.field_11048;
 			longest = a;
 		}
 
 		return Math.abs(normalZ) > longest
-				? Axis.Z : result;
+				? class_2351.field_11051 : result;
 	}
 }

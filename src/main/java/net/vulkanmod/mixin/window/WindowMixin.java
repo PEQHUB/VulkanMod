@@ -1,8 +1,12 @@
 package net.vulkanmod.mixin.window;
 
-import com.mojang.blaze3d.TracyFrameCapture;
 import com.mojang.blaze3d.platform.*;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.class_10219;
+import net.minecraft.class_1041;
+import net.minecraft.class_323;
+import net.minecraft.class_3678;
+import net.minecraft.class_543;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.config.Config;
 import net.vulkanmod.config.Platform;
@@ -27,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-@Mixin(Window.class)
+@Mixin(class_1041.class)
 public abstract class WindowMixin {
     @Final @Shadow private long handle;
 
@@ -52,13 +56,13 @@ public abstract class WindowMixin {
 
     @Shadow public abstract int getHeight();
 
-    @Shadow protected abstract void updateFullscreen(boolean bl, @Nullable TracyFrameCapture tracyFrameCapture);
+    @Shadow protected abstract void updateFullscreen(boolean bl, @Nullable class_10219 tracyFrameCapture);
 
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwWindowHint(II)V"))
     private void redirect(int hint, int value) { }
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwCreateWindow(IILjava/lang/CharSequence;JJ)J"))
-    private void vulkanHint(WindowEventHandler windowEventHandler, ScreenManager screenManager, DisplayData displayData, String string, String string2, CallbackInfo ci) {
+    private void vulkanHint(class_3678 windowEventHandler, class_323 screenManager, class_543 displayData, String string, String string2, CallbackInfo ci) {
         GLFW.glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
         //Fix Gnome Client-Side Decorators
@@ -67,7 +71,7 @@ public abstract class WindowMixin {
     }
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void getHandle(WindowEventHandler windowEventHandler, ScreenManager screenManager, DisplayData displayData, String string, String string2, CallbackInfo ci) {
+    private void getHandle(class_3678 windowEventHandler, class_323 screenManager, class_543 displayData, String string, String string2, CallbackInfo ci) {
         VRenderSystem.setWindow(this.handle);
     }
 
@@ -93,8 +97,8 @@ public abstract class WindowMixin {
      * @author
      */
     @Overwrite
-    public void updateDisplay(@Nullable TracyFrameCapture tracyFrameCapture) {
-        RenderSystem.flipFrame((Window) ((Object)this), tracyFrameCapture);
+    public void updateDisplay(@Nullable class_10219 tracyFrameCapture) {
+        RenderSystem.flipFrame((class_1041) ((Object)this), tracyFrameCapture);
 
         if (Options.fullscreenDirty) {
             Options.fullscreenDirty = false;

@@ -85,7 +85,7 @@ public abstract class SamplerManager {
             samplerInfo.mipmapMode(sampler.getMipmapMode());
             samplerInfo.maxLod(sampler.getMaxLod());
             samplerInfo.minLod(0.0F);
-            samplerInfo.mipLodBias(MIP_BIAS);
+            samplerInfo.mipLodBias(0.0F);
 
             // Reduction Mode
             if (sampler.hasReductionMode()) {
@@ -111,6 +111,21 @@ public abstract class SamplerManager {
         }
     }
 
+    static int getEncodedState(int addressModeU, int addressModeV,
+                                int minFilter, int magFilter, int mipmapMode,
+                                boolean anisotropy, int reductionMode) {
+        int encodedState = (addressModeU & ADDRESS_MODE_BITS) << ADDRESS_MODE_U_OFFSET;
+        encodedState |= (addressModeV & ADDRESS_MODE_BITS) << ADDRESS_MODE_V_OFFSET;
+        encodedState |= (minFilter & 1) << MIN_FILTER_OFFSET;
+        encodedState |= (magFilter & 1) << MAG_FILTER_OFFSET;
+        encodedState |= (mipmapMode & 1) << MIPMAP_MODE_OFFSET;
+        encodedState |= ((anisotropy ? 1 : 0) & 1) << ANISOTROPY_OFFSET;
+        encodedState |= (reductionMode != -1 ? 1 : 0) << REDUCTION_MODE_ENABLE_OFFSET;
+        encodedState |= (reductionMode & REDUCTION_MODE_BITS) << REDUCTION_MODE_OFFSET;
+
+        return encodedState;
+    }
+
     public static class SamplerInfo {
         final int encodedState;
         final int maxLod;
@@ -129,16 +144,7 @@ public abstract class SamplerManager {
             this.maxLod = (int) maxLod;
             this.maxAnisotropy = (int) maxAnisotropy;
 
-            int encodedState = (addressModeU & ADDRESS_MODE_BITS) << ADDRESS_MODE_U_OFFSET;
-            encodedState |= (addressModeV & ADDRESS_MODE_BITS) << ADDRESS_MODE_V_OFFSET;
-            encodedState |= (minFilter & 1) << MIN_FILTER_OFFSET;
-            encodedState |= (magFilter & 1) << MAG_FILTER_OFFSET;
-            encodedState |= (mipmapMode & 1) << MIPMAP_MODE_OFFSET;
-            encodedState |= ((anisotropy ? 1 : 0) & 1) << ANISOTROPY_OFFSET;
-            encodedState |= (reductionMode != -1 ? 1 : 0) << REDUCTION_MODE_ENABLE_OFFSET;
-            encodedState |= (reductionMode & REDUCTION_MODE_BITS) << REDUCTION_MODE_OFFSET;
-
-            this.encodedState = encodedState;
+            this.encodedState = getEncodedState(addressModeU, addressModeV, minFilter, magFilter, mipmapMode, anisotropy, reductionMode);
         }
 
         public int getAddressModeU() {

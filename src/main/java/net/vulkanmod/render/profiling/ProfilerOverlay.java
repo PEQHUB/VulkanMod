@@ -1,11 +1,11 @@
 package net.vulkanmod.render.profiling;
 
 import com.google.common.base.Strings;
-import net.minecraft.SharedConstants;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
+import net.minecraft.class_155;
+import net.minecraft.class_2561;
+import net.minecraft.class_310;
+import net.minecraft.class_327;
+import net.minecraft.class_332;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.config.gui.render.GuiRenderer;
 import net.vulkanmod.render.chunk.WorldRenderer;
@@ -32,15 +32,15 @@ public class ProfilerOverlay {
     private static String buildStats;
 //    private static int node = -1;
 
-    private final Minecraft minecraft;
-    private final Font font;
+    private final class_310 minecraft;
+    private final class_327 font;
 
-    public ProfilerOverlay(Minecraft minecraft) {
+    public ProfilerOverlay(class_310 minecraft) {
         this.minecraft = minecraft;
-        this.font = minecraft.font;
+        this.font = minecraft.field_1772;
     }
 
-    public static void createInstance(Minecraft minecraft) {
+    public static void createInstance(class_310 minecraft) {
         INSTANCE = new ProfilerOverlay(minecraft);
     }
 
@@ -54,7 +54,7 @@ public class ProfilerOverlay {
 //        node = v >= 0 && v <= 15 ? v-1 : node;
     }
 
-    public void render(GuiGraphics guiGraphics) {
+    public void render(class_332 guiGraphics) {
         GuiRenderer.guiGraphics = guiGraphics;
 
         List<String> infoList = this.buildInfo();
@@ -71,7 +71,7 @@ public class ProfilerOverlay {
         for (int i = 0; i < infoList.size(); ++i) {
             String line = infoList.get(i);
             if (!Strings.isNullOrEmpty(line)) {
-                int textWidth = this.font.width(line);
+                int textWidth = this.font.method_1727(line);
                 int yPosition = xOffset + lineHeight * i;
                 GuiRenderer.fill(
                         1, yPosition - 1,
@@ -87,7 +87,7 @@ public class ProfilerOverlay {
             if (!Strings.isNullOrEmpty(line)) {
                 int yPosition = xOffset + lineHeight * i;
                 GuiRenderer.drawString(
-                        this.font, Component.literal(line),
+                        this.font, class_2561.method_43470(line),
                         xOffset, yPosition,
                         textColor, false);
             }
@@ -98,7 +98,7 @@ public class ProfilerOverlay {
         List<String> list = new ArrayList<>();
         list.add("");
         list.add("Profiler");
-        list.add("Version: %s %s ".formatted(Initializer.getVersion(), SharedConstants.getCurrentVersion().name()));
+        list.add("Version: %s %s ".formatted(Initializer.getVersion(), class_155.method_16673().comp_4025()));
 
         this.updateResults();
 

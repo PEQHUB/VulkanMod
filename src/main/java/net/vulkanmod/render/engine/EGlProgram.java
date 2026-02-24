@@ -5,6 +5,7 @@ import com.mojang.blaze3d.opengl.*;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.logging.LogUtils;
+import net.minecraft.class_284;
 import net.vulkanmod.vulkan.shader.Pipeline;
 import net.vulkanmod.vulkan.shader.descriptor.UBO;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,7 @@ public class EGlProgram {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static Set<String> BUILT_IN_UNIFORMS = Sets.<String>newHashSet("Projection", "Lighting", "Fog", "Globals");
     public static EGlProgram INVALID_PROGRAM = new EGlProgram(-1, "invalid");
-    private final Map<String, Uniform> uniformsByName = new HashMap();
+    private final Map<String, class_284> uniformsByName = new HashMap();
     private final int programId;
     private final String debugLabel;
 
@@ -32,8 +33,8 @@ public class EGlProgram {
         for (RenderPipeline.UniformDescription uniformDescription : uniformDescriptions) {
             String name = uniformDescription.name();
 
-            Uniform uniform = switch (uniformDescription.type()) {
-                case UNIFORM_BUFFER -> {
+            class_284 uniform = switch (uniformDescription.type()) {
+                case field_60031 -> {
                     UBO ubo = pipeline.getUBO(name);
 
                     if (ubo == null) {
@@ -41,11 +42,11 @@ public class EGlProgram {
                     }
 
                     int binding = ubo.binding;
-                    yield new Uniform.Ubo(binding);
+                    yield new class_284.class_11272(binding);
                 }
-                case TEXEL_BUFFER -> {
+                case field_60032 -> {
                     int binding = i++;
-                    yield new Uniform.Utb(binding, 0, Objects.requireNonNull(uniformDescription.textureFormat()));
+                    yield new class_284.class_11273(binding, 0, Objects.requireNonNull(uniformDescription.textureFormat()));
                 }
             };
 
@@ -56,13 +57,13 @@ public class EGlProgram {
             var imageDescriptor = pipeline.getImageDescriptor(samplerName);
             int binding = imageDescriptor.getBinding();
             int imageIdx = imageDescriptor.imageIdx;
-            this.uniformsByName.put(samplerName, new Uniform.Sampler(binding, imageIdx));
+            this.uniformsByName.put(samplerName, new class_284.class_11271(binding, imageIdx));
         }
 
     }
 
     @Nullable
-    public Uniform getUniform(String string) {
+    public class_284 getUniform(String string) {
         RenderSystem.assertOnRenderThread();
         return this.uniformsByName.get(string);
     }
@@ -79,7 +80,7 @@ public class EGlProgram {
         return this.debugLabel;
     }
 
-    public Map<String, Uniform> getUniforms() {
+    public Map<String, class_284> getUniforms() {
         return this.uniformsByName;
     }
 

@@ -1,12 +1,10 @@
 package net.vulkanmod.mixin.render;
 
-import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.systems.TimerQuery;
-import net.minecraft.client.GraphicsPreset;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
-import net.minecraft.client.main.GameConfig;
-import net.minecraft.util.profiling.ProfilerFiller;
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.class_310;
+import net.minecraft.class_315;
+import net.minecraft.class_5365;
+import net.minecraft.class_542;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.render.texture.SpriteUpdateUtil;
 import net.vulkanmod.vulkan.Renderer;
@@ -19,30 +17,30 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.Optional;
-
-@Mixin(Minecraft.class)
+@Mixin(class_310.class)
 public class MinecraftMixin {
 
     @Shadow public boolean noRender;
-    @Shadow @Final public Options options;
+    @Shadow @Final public class_315 options;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void forceGraphicsMode(GameConfig gameConfig, CallbackInfo ci) {
-        var graphicsModeOption = this.options.graphicsPreset();
+    private void forceGraphicsMode(class_542 gameConfig, CallbackInfo ci) {
+        var graphicsModeOption = this.options.method_75329();
 
-        if (graphicsModeOption.get() == GraphicsPreset.FABULOUS) {
-            Initializer.LOGGER.error("Fabulous graphics mode not supported, forcing Fancy");
-            graphicsModeOption.set(GraphicsPreset.FANCY);
+        if (graphicsModeOption.method_41753() == class_5365.field_25429) {
+            Initializer.LOGGER.error("Fabulous graphics mode not supported, forcing Fancy.");
+            graphicsModeOption.method_41748(class_5365.field_25428);
+        }
+
+        if (this.options.method_75337().method_41753()) {
+            Initializer.LOGGER.error("Improved transparency currently not supported, forcing it off.");
+            this.options.method_75337().method_41748(false);
         }
     }
 
-    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;tick()V"),
-    locals = LocalCapture.CAPTURE_FAILHARD)
-    private void redirectResourceTick(boolean bl, CallbackInfo ci, int i, ProfilerFiller profilerFiller, int j) {
+    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;tick()V"))
+    private void redirectResourceTick(boolean bl, CallbackInfo ci, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j) {
         int n = Math.min(10, i) - 1;
         boolean doUpload = j == n;
         SpriteUpdateUtil.setDoUpload(doUpload);
@@ -66,6 +64,6 @@ public class MinecraftMixin {
 
     // Fixes crash when minimizing window before setScreen is called
     @Redirect(method = "setScreen", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;noRender:Z", opcode = Opcodes.PUTFIELD))
-    private void keepVar(Minecraft instance, boolean value) {}
+    private void keepVar(class_310 instance, boolean value) {}
 
 }

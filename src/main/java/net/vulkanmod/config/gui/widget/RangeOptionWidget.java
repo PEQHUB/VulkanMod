@@ -1,13 +1,14 @@
 package net.vulkanmod.config.gui.widget;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
+import net.minecraft.class_1144;
+import net.minecraft.class_11908;
+import net.minecraft.class_2561;
+import net.minecraft.class_310;
+import net.minecraft.class_327;
+import net.minecraft.class_3532;
 import net.vulkanmod.config.gui.render.GuiRenderer;
 import net.vulkanmod.config.option.RangeOption;
+import net.vulkanmod.vulkan.VRenderSystem;
 import net.vulkanmod.vulkan.util.ColorUtil;
 import org.lwjgl.glfw.GLFW;
 
@@ -16,7 +17,7 @@ public class RangeOptionWidget extends OptionWidget<RangeOption> {
 
     private boolean focused;
 
-    public RangeOptionWidget(RangeOption option, Component name) {
+    public RangeOptionWidget(RangeOption option, class_2561 name) {
         super(option, name);
         this.setValue(option.getScaledValue());
     }
@@ -52,12 +53,13 @@ public class RangeOptionWidget extends OptionWidget<RangeOption> {
         }
 
         int color = this.active ? 0xFFFFFFFF : 0xFFA0A0A0;
-        Font font = Minecraft.getInstance().font;
+        class_327 font = class_310.method_1551().field_1772;
         var text = this.getDisplayedValue();
-        int width = font.width(text);
+        int width = font.method_27525(text);
         int x = this.controlX + this.controlWidth / 2 - width / 2;
+//        int x = (int) (this.x + 0.5f * width);
         int y = this.y + (this.height - 9) / 2;
-        GuiRenderer.drawString(font, text.getVisualOrderText(), x, y, color);
+        GuiRenderer.drawString(font, text.method_30937(), x, y, color);
     }
 
     @Override
@@ -66,9 +68,9 @@ public class RangeOptionWidget extends OptionWidget<RangeOption> {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
-        boolean isLeft = event.key() == GLFW.GLFW_KEY_LEFT;
-        boolean isRight = event.key() == GLFW.GLFW_KEY_RIGHT;
+    public boolean method_25404(class_11908 event) {
+        boolean isLeft = event.comp_4795() == GLFW.GLFW_KEY_LEFT;
+        boolean isRight = event.comp_4795() == GLFW.GLFW_KEY_RIGHT;
 
         if (isLeft || isRight) {
             float direction = isLeft ? -1.0f : 1.0f;
@@ -79,12 +81,12 @@ public class RangeOptionWidget extends OptionWidget<RangeOption> {
     }
 
     @Override
-    public void setFocused(boolean bl) {
+    public void method_25365(boolean bl) {
         this.focused = bl;
     }
 
     @Override
-    public boolean isFocused() {
+    public boolean method_25370() {
         return this.focused;
     }
 
@@ -94,7 +96,7 @@ public class RangeOptionWidget extends OptionWidget<RangeOption> {
 
     private void setValue(double value) {
         double d = this.value;
-        this.value = Mth.clamp(value, 0.0, 1.0);
+        this.value = class_3532.method_15350(value, 0.0, 1.0);
         if (d != this.value) {
             this.applyValue();
         }
@@ -112,13 +114,13 @@ public class RangeOptionWidget extends OptionWidget<RangeOption> {
     }
 
     @Override
-    public void playDownSound(SoundManager soundManager) {
+    public void playDownSound(class_1144 soundManager) {
     }
 
     @Override
     public void onRelease(double mouseX, double mouseY) {
         if (this.controlHovered) {
-            super.playDownSound(Minecraft.getInstance().getSoundManager());
+            super.playDownSound(class_310.method_1551().method_1483());
         }
     }
 }

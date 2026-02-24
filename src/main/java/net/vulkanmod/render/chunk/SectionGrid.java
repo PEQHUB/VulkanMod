@@ -1,10 +1,10 @@
 package net.vulkanmod.render.chunk;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
+import net.minecraft.class_1937;
+import net.minecraft.class_2338;
+import net.minecraft.class_310;
+import net.minecraft.class_3532;
 import net.vulkanmod.render.chunk.frustum.VFrustum;
 import net.vulkanmod.render.chunk.graph.GraphDirections;
 import net.vulkanmod.render.chunk.util.CircularIntList;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public class SectionGrid {
 
-    protected final Level level;
+    protected final class_1937 level;
     protected int gridHeight;
     protected int gridWidth;
     public RenderSection[] sections;
@@ -27,11 +27,11 @@ public class SectionGrid {
     private final CircularIntList zList;
     private final CircularIntList.RangeIterator xComplIterator;
 
-    public SectionGrid(Level level, int viewDistance) {
+    public SectionGrid(class_1937 level, int viewDistance) {
         this.level = level;
         this.setViewDistance(viewDistance);
         this.createChunks();
-        this.chunkAreaManager = new ChunkAreaManager(this.gridWidth, this.gridHeight, this.level.getMinY());
+        this.chunkAreaManager = new ChunkAreaManager(this.gridWidth, this.gridHeight, this.level.method_31607());
 
         this.prevSecX = Integer.MIN_VALUE;
         this.prevSecZ = Integer.MIN_VALUE;
@@ -42,7 +42,7 @@ public class SectionGrid {
     }
 
     protected void createChunks() {
-        if (!Minecraft.getInstance().isSameThread()) {
+        if (!class_310.method_1551().method_18854()) {
             throw new IllegalStateException("createChunks called from wrong thread: " + Thread.currentThread().getName());
         } else {
             int size = this.gridWidth * this.gridHeight * this.gridWidth;
@@ -72,7 +72,7 @@ public class SectionGrid {
     protected void setViewDistance(int radius) {
         int i = radius * 2 + 1;
         this.gridWidth = i;
-        this.gridHeight = this.level.getSectionsCount();
+        this.gridHeight = this.level.method_32890();
         this.gridWidth = i;
     }
 
@@ -81,13 +81,13 @@ public class SectionGrid {
      * and to reduce section repositioning to only the necessary.
      */
     public void repositionCamera(double x, double z) {
-        int secX = Mth.floor(x) >> 4;
-        int secZ = Mth.floor(z) >> 4;
+        int secX = class_3532.method_15357(x) >> 4;
+        int secZ = class_3532.method_15357(z) >> 4;
 
         this.chunkAreaManager.repositionAreas(secX, secZ);
 
-        int dx = Mth.clamp(secX - this.prevSecX, -this.gridWidth, this.gridWidth);
-        int dz = Mth.clamp(secZ - this.prevSecZ, -this.gridWidth, this.gridWidth);
+        int dx = class_3532.method_15340(secX - this.prevSecX, -this.gridWidth, this.gridWidth);
+        int dz = class_3532.method_15340(secZ - this.prevSecZ, -this.gridWidth, this.gridWidth);
 
         int xAbsChunkIndex = secX - this.gridWidth / 2;
         int xStart = Math.floorMod(xAbsChunkIndex, this.gridWidth); // needs positive modulo
@@ -180,7 +180,7 @@ public class SectionGrid {
                              CircularIntList xList, CircularIntList zList,
                              int xCurrentIdx, int zCurrentIdx) {
 
-        int y1 = this.level.getMinY() + (yRel << 4);
+        int y1 = this.level.method_31607() + (yRel << 4);
         RenderSection renderSection = this.sections[this.getChunkIndex(xRelativeIndex, yRel, zRelativeIndex)];
 
         this.unsetNeighbours(renderSection);
@@ -281,20 +281,20 @@ public class SectionGrid {
 
     public void setDirty(int sectionX, int sectionY, int sectionZ, boolean playerChanged) {
         int i = Math.floorMod(sectionX, this.gridWidth);
-        int j = Math.floorMod(sectionY - this.level.getMinSectionY(), this.gridHeight);
+        int j = Math.floorMod(sectionY - this.level.method_32891(), this.gridHeight);
         int k = Math.floorMod(sectionZ, this.gridWidth);
         RenderSection renderSection = this.sections[this.getChunkIndex(i, j, k)];
         renderSection.setDirty(playerChanged);
     }
 
     @Nullable
-    public RenderSection getSectionAtBlockPos(BlockPos blockPos) {
-        return this.getSectionAtBlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+    public RenderSection getSectionAtBlockPos(class_2338 blockPos) {
+        return this.getSectionAtBlockPos(blockPos.method_10263(), blockPos.method_10264(), blockPos.method_10260());
     }
 
     public RenderSection getSectionAtBlockPos(int x, int y, int z) {
         int i = x >> 4;
-        int j = (y - this.level.getMinY()) >> 4;
+        int j = (y - this.level.method_31607()) >> 4;
         int k = z >> 4;
 
         return this.getSectionAtSectionPos(i, j, k);

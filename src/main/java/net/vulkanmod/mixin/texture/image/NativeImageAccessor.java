@@ -1,10 +1,10 @@
 package net.vulkanmod.mixin.texture.image;
 
-import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.class_1011;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(NativeImage.class)
+@Mixin(class_1011.class)
 public interface NativeImageAccessor {
 
     @Accessor

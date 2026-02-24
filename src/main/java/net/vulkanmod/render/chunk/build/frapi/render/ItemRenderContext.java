@@ -1,28 +1,25 @@
 package net.vulkanmod.render.chunk.build.frapi.render;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.MatrixUtil;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshView;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.render.FabricLayerRenderState;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderLayerHelper;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.class_10444;
+import net.minecraft.class_11515;
+import net.minecraft.class_1921;
+import net.minecraft.class_4587;
+import net.minecraft.class_4588;
+import net.minecraft.class_4597;
+import net.minecraft.class_4722;
+import net.minecraft.class_765;
+import net.minecraft.class_777;
+import net.minecraft.class_7837;
+import net.minecraft.class_811;
+import net.minecraft.class_918;
 import net.vulkanmod.mixin.render.frapi.ItemRendererAccessor;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.vulkanmod.render.chunk.build.frapi.helper.ColorHelper;
 import net.vulkanmod.render.chunk.build.frapi.mesh.MutableQuadViewImpl;
 import org.jetbrains.annotations.Nullable;
@@ -32,22 +29,22 @@ import org.jetbrains.annotations.Nullable;
  * Used during item buffering to support geometry added through {@link FabricLayerRenderState#emitter()}.
  */
 public class ItemRenderContext extends AbstractRenderContext {
-	private static final int GLINT_COUNT = ItemStackRenderState.FoilType.values().length;
+	private static final int GLINT_COUNT = class_10444.class_10445.values().length;
 
-	private ItemDisplayContext itemDisplayContext;
-	private PoseStack matrixStack;
-	private MultiBufferSource vertexConsumerProvider;
+	private class_811 itemDisplayContext;
+	private class_4587 matrixStack;
+	private class_4597 vertexConsumerProvider;
 	private int lightmap;
 	private int[] tints;
 
-	private RenderType defaultLayer;
-	private ItemStackRenderState.FoilType defaultGlint;
+	private class_1921 defaultLayer;
+	private class_10444.class_10445 defaultGlint;
     private boolean ignoreQuadGlint;
 
-	private PoseStack.Pose specialGlintEntry;
-	private final VertexConsumer[] vertexConsumerCache = new VertexConsumer[3 * GLINT_COUNT];
+	private class_4587.class_4665 specialGlintEntry;
+	private final class_4588[] vertexConsumerCache = new class_4588[3 * GLINT_COUNT];
 
-	public void renderModel(ItemDisplayContext itemDisplayContext, PoseStack matrixStack, MultiBufferSource bufferSource, int lightmap, int overlay, int[] tints, List<BakedQuad> modelQuads, MeshView mesh, RenderType renderType, ItemStackRenderState.FoilType foilType, boolean ignoreQuadGlint) {
+	public void renderModel(class_811 itemDisplayContext, class_4587 matrixStack, class_4597 bufferSource, int lightmap, int overlay, int[] tints, List<class_777> modelQuads, MeshView mesh, class_1921 renderType, class_10444.class_10445 foilType, boolean ignoreQuadGlint) {
 		this.itemDisplayContext = itemDisplayContext;
 		this.matrixStack = matrixStack;
 		this.vertexConsumerProvider = bufferSource;
@@ -69,13 +66,13 @@ public class ItemRenderContext extends AbstractRenderContext {
 		Arrays.fill(vertexConsumerCache, null);
 	}
 
-    private void bufferQuads(List<BakedQuad> vanillaQuads, MeshView mesh) {
+    private void bufferQuads(List<class_777> vanillaQuads, MeshView mesh) {
         QuadEmitter emitter = getEmitter();
 
         final int vanillaQuadCount = vanillaQuads.size();
 
         for (int i = 0; i < vanillaQuadCount; i++) {
-            final BakedQuad q = vanillaQuads.get(i);
+            final class_777 q = vanillaQuads.get(i);
             emitter.fromBakedQuad(q);
             emitter.emit();
         }
@@ -85,7 +82,7 @@ public class ItemRenderContext extends AbstractRenderContext {
 
 	@Override
 	protected void bufferQuad(MutableQuadViewImpl quad) {
-        final VertexConsumer vertexConsumer = getVertexConsumer(quad.renderLayer(), quad.glint());
+        final class_4588 vertexConsumer = getVertexConsumer(quad.renderLayer(), quad.glint());
 
         tintQuad(quad);
         shadeQuad(quad, quad.emissive());
@@ -107,7 +104,7 @@ public class ItemRenderContext extends AbstractRenderContext {
 	private void shadeQuad(MutableQuadViewImpl quad, boolean emissive) {
 		if (emissive) {
 			for (int i = 0; i < 4; i++) {
-				quad.lightmap(i, LightTexture.FULL_BRIGHT);
+				quad.lightmap(i, class_765.field_32767);
 			}
 		} else {
 			final int lightmap = this.lightmap;
@@ -118,9 +115,9 @@ public class ItemRenderContext extends AbstractRenderContext {
 		}
 	}
 
-    private VertexConsumer getVertexConsumer(@Nullable ChunkSectionLayer quadRenderLayer, @Nullable ItemStackRenderState.FoilType quadGlint) {
-        RenderType layer;
-        ItemStackRenderState.FoilType glint;
+    private class_4588 getVertexConsumer(@Nullable class_11515 quadRenderLayer, @Nullable class_10444.class_10445 quadGlint) {
+        class_1921 layer;
+        class_10444.class_10445 glint;
 
         if (quadRenderLayer == null) {
             layer = defaultLayer;
@@ -136,16 +133,16 @@ public class ItemRenderContext extends AbstractRenderContext {
 
         int cacheIndex;
 
-        if (layer == Sheets.translucentItemSheet()) {
+        if (layer == class_4722.method_29382()) {
             cacheIndex = 0;
-        } else if (layer == Sheets.cutoutBlockSheet()) {
+        } else if (layer == class_4722.method_24074()) {
             cacheIndex = GLINT_COUNT;
         } else {
             cacheIndex = 2 * GLINT_COUNT;
         }
 
         cacheIndex += glint.ordinal();
-        VertexConsumer vertexConsumer = vertexConsumerCache[cacheIndex];
+        class_4588 vertexConsumer = vertexConsumerCache[cacheIndex];
 
         if (vertexConsumer == null) {
             vertexConsumer = createVertexConsumer(layer, glint);
@@ -155,22 +152,22 @@ public class ItemRenderContext extends AbstractRenderContext {
         return vertexConsumer;
     }
 
-	private VertexConsumer createVertexConsumer(RenderType layer, ItemStackRenderState.FoilType glint) {
-		if (glint == ItemStackRenderState.FoilType.SPECIAL) {
+	private class_4588 createVertexConsumer(class_1921 layer, class_10444.class_10445 glint) {
+		if (glint == class_10444.class_10445.field_55343) {
 			if (specialGlintEntry == null) {
-				specialGlintEntry = matrixStack.last().copy();
+				specialGlintEntry = matrixStack.method_23760().method_56822();
 
-				if (itemDisplayContext == ItemDisplayContext.GUI) {
-					MatrixUtil.mulComponentWise(specialGlintEntry.pose(), 0.5F);
-				} else if (itemDisplayContext.firstPerson()) {
-					MatrixUtil.mulComponentWise(specialGlintEntry.pose(), 0.75F);
+				if (itemDisplayContext == class_811.field_4317) {
+					class_7837.method_46414(specialGlintEntry.method_23761(), 0.5F);
+				} else if (itemDisplayContext.method_29998()) {
+					class_7837.method_46414(specialGlintEntry.method_23761(), 0.75F);
 				}
 			}
 
 			return ItemRendererAccessor.getSpecialFoilBuffer(vertexConsumerProvider, layer, specialGlintEntry);
 		}
 
-		return ItemRenderer.getFoilBuffer(vertexConsumerProvider, layer, true, glint != ItemStackRenderState.FoilType.NONE);
+		return class_918.method_23181(vertexConsumerProvider, layer, true, glint != class_10444.class_10445.field_55341);
 	}
 
 }

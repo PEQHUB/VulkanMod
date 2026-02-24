@@ -1,21 +1,18 @@
 package net.vulkanmod.mixin.texture.update;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.CommandEncoder;
 import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.util.Mth;
-import net.minecraft.util.profiling.Profiler;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.class_1011;
+import net.minecraft.class_1043;
+import net.minecraft.class_1293;
+import net.minecraft.class_1294;
+import net.minecraft.class_1309;
+import net.minecraft.class_310;
+import net.minecraft.class_3532;
+import net.minecraft.class_757;
+import net.minecraft.class_765;
 import net.vulkanmod.gl.VkGlTexture;
 import net.vulkanmod.mixin.texture.image.NativeImageAccessor;
 import net.vulkanmod.render.engine.VkGpuTexture;
@@ -29,19 +26,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(LightTexture.class)
+@Mixin(class_765.class)
 public class MLightTexture {
     @Unique private static final Vector3f END_FLASH_SKY_LIGHT_COLOR = new Vector3f(0.9F, 0.5F, 1.0F);
 
-    @Shadow @Final private Minecraft minecraft;
-    @Shadow @Final private GameRenderer renderer;
+    @Shadow @Final private class_310 minecraft;
+    @Shadow @Final private class_757 renderer;
 
     @Shadow private boolean updateLightTexture;
     @Shadow private float blockLightRedFlicker;
 
-    @Unique private DynamicTexture lightTexture;
+    @Unique private class_1043 lightTexture;
     @Unique private GpuTextureView textureView;
-    @Unique private NativeImage lightPixels;
+    @Unique private class_1011 lightPixels;
 
     private Vector3f[] tempVecs;
 
@@ -210,14 +207,14 @@ public class MLightTexture {
 
     @Unique
     private float getDarknessGamma(float f) {
-        MobEffectInstance mobEffectInstance = this.minecraft.player.getEffect(MobEffects.DARKNESS);
-        return mobEffectInstance != null ? mobEffectInstance.getBlendFactor(this.minecraft.player, f) : 0.0F;
+        class_1293 mobEffectInstance = this.minecraft.field_1724.method_6112(class_1294.field_38092);
+        return mobEffectInstance != null ? mobEffectInstance.method_55653(this.minecraft.field_1724, f) : 0.0F;
     }
 
     @Unique
-    private float calculateDarknessScale(LivingEntity livingEntity, float f, float g) {
+    private float calculateDarknessScale(class_1309 livingEntity, float f, float g) {
         float h = 0.45F * f;
-        return Math.max(0.0F, Mth.cos(((float)livingEntity.tickCount - g) * (float) Math.PI * 0.025F) * h);
+        return Math.max(0.0F, class_3532.method_15362(((float)livingEntity.field_6012 - g) * (float) Math.PI * 0.025F) * h);
     }
 
     @Unique
@@ -227,7 +224,7 @@ public class MLightTexture {
 
     @Unique
     private static void clampColor(Vector3f vector3f) {
-        vector3f.set(Mth.clamp(vector3f.x, 0.0F, 1.0F), Mth.clamp(vector3f.y, 0.0F, 1.0F), Mth.clamp(vector3f.z, 0.0F, 1.0F));
+        vector3f.set(class_3532.method_15363(vector3f.x, 0.0F, 1.0F), class_3532.method_15363(vector3f.y, 0.0F, 1.0F), class_3532.method_15363(vector3f.z, 0.0F, 1.0F));
     }
 
     @Unique
@@ -241,7 +238,7 @@ public class MLightTexture {
     private static float getBrightness(float ambientLight, int i) {
         float f = (float)i / 15.0F;
         float g = f / (4.0F - 3.0F * f);
-        return Mth.lerp(ambientLight, g, 1.0F);
+        return class_3532.method_16439(ambientLight, g, 1.0F);
     }
 
 }

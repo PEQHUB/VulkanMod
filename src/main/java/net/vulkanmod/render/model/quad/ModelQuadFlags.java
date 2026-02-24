@@ -1,6 +1,6 @@
 package net.vulkanmod.render.model.quad;
 
-import net.minecraft.core.Direction;
+import net.minecraft.class_2350;
 
 public class ModelQuadFlags {
     /**
@@ -23,7 +23,7 @@ public class ModelQuadFlags {
         return (flags & mask) != 0;
     }
 
-    public static int getQuadFlags(ModelQuadView quad, Direction face) {
+    public static int getQuadFlags(ModelQuadView quad, class_2350 face) {
         float minX = 32.0F;
         float minY = 32.0F;
         float minZ = 32.0F;
@@ -45,25 +45,25 @@ public class ModelQuadFlags {
             maxZ = Math.max(maxZ, z);
         }
 
-        boolean partial = switch (face.getAxis()) {
-            case X -> minY >= 0.0001f || minZ >= 0.0001f || maxY <= 0.9999F || maxZ <= 0.9999F;
-            case Y -> minX >= 0.0001f || minZ >= 0.0001f || maxX <= 0.9999F || maxZ <= 0.9999F;
-            case Z -> minX >= 0.0001f || minY >= 0.0001f || maxX <= 0.9999F || maxY <= 0.9999F;
+        boolean partial = switch (face.method_10166()) {
+            case field_11048 -> minY >= 0.0001f || minZ >= 0.0001f || maxY <= 0.9999F || maxZ <= 0.9999F;
+            case field_11052 -> minX >= 0.0001f || minZ >= 0.0001f || maxX <= 0.9999F || maxZ <= 0.9999F;
+            case field_11051 -> minX >= 0.0001f || minY >= 0.0001f || maxX <= 0.9999F || maxY <= 0.9999F;
         };
 
-        boolean parallel = switch(face.getAxis()) {
-            case X -> minX == maxX;
-            case Y -> minY == maxY;
-            case Z -> minZ == maxZ;
+        boolean parallel = switch(face.method_10166()) {
+            case field_11048 -> minX == maxX;
+            case field_11052 -> minY == maxY;
+            case field_11051 -> minZ == maxZ;
         };
 
         boolean aligned = parallel && switch (face) {
-            case DOWN -> minY < 0.0001f;
-            case UP -> maxY > 0.9999F;
-            case NORTH -> minZ < 0.0001f;
-            case SOUTH -> maxZ > 0.9999F;
-            case WEST -> minX < 0.0001f;
-            case EAST -> maxX > 0.9999F;
+            case field_11033 -> minY < 0.0001f;
+            case field_11036 -> maxY > 0.9999F;
+            case field_11043 -> minZ < 0.0001f;
+            case field_11035 -> maxZ > 0.9999F;
+            case field_11039 -> minX < 0.0001f;
+            case field_11034 -> maxX > 0.9999F;
         };
 
         int flags = 0;

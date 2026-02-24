@@ -1,11 +1,12 @@
 package net.vulkanmod.mixin.render.target;
 
-import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.class_10799;
+import net.minecraft.class_276;
 import net.vulkanmod.render.engine.VkFbo;
 import net.vulkanmod.render.engine.VkGpuTexture;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +14,7 @@ import org.spongepowered.asm.mixin.*;
 
 import java.util.OptionalInt;
 
-@Mixin(RenderTarget.class)
+@Mixin(class_276.class)
 public abstract class RenderTargetMixin {
 
     @Shadow public int width;
@@ -35,23 +36,11 @@ public abstract class RenderTargetMixin {
         try (RenderPass renderPass = RenderSystem.getDevice()
                                                  .createCommandEncoder()
                                                  .createRenderPass(() -> "Blit render target", gpuTextureView, OptionalInt.empty())) {
-            renderPass.setPipeline(RenderPipelines.ENTITY_OUTLINE_BLIT);
+            renderPass.setPipeline(class_10799.field_56840);
             RenderSystem.bindDefaultUniforms(renderPass);
-            renderPass.bindTexture("InSampler", this.colorTextureView, null);
+            renderPass.bindTexture("InSampler", this.colorTextureView, RenderSystem.getSamplerCache().method_75294(FilterMode.NEAREST));
             renderPass.draw(0, 3);
         }
     }
 
-//    @Inject(method = "getColorTextureView", at = @At("HEAD"))
-//    private void injClear(CallbackInfoReturnable<GpuTextureView> cir) {
-//        applyClear();
-//    }
-//
-//    @Unique
-//    private void applyClear() {
-//        VkFbo fbo = ((VkGpuTexture) this.colorTexture).getFbo(this.depthTexture);
-//        if (fbo.needsClear()) {
-//            fbo.bind();
-//        }
-//    }
 }

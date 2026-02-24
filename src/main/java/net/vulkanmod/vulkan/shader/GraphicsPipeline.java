@@ -1,10 +1,10 @@
 package net.vulkanmod.vulkan.shader;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+import net.minecraft.class_290;
 import net.vulkanmod.interfaces.VertexFormatMixed;
 import net.vulkanmod.vulkan.Renderer;
 import net.vulkanmod.vulkan.Vulkan;
@@ -244,7 +244,7 @@ public class GraphicsPipeline extends Pipeline {
         final VkVertexInputBindingDescription.Buffer bindingDescriptions;
 
         VertexInputDescription(VertexFormat vertexFormat) {
-            if (vertexFormat != DefaultVertexFormat.EMPTY) {
+            if (vertexFormat != class_290.field_60033) {
                 this.bindingDescriptions = getBindingDescription(vertexFormat);
                 this.attributeDescriptions = getAttributeDescriptions(vertexFormat);
             }
@@ -382,8 +382,14 @@ public class GraphicsPipeline extends Pipeline {
 
                         offset += 4;
                     }
+                    else if (type == VertexFormatElement.Type.FLOAT && elementCount == 1) {
+                        posDescription.format(VK_FORMAT_R32_SFLOAT);
+                        posDescription.offset(offset);
+
+                        offset += 4;
+                    }
                     else {
-                        throw new RuntimeException(String.format("Unknown format: %s", usage));
+                        throw new RuntimeException(String.format("Unknown type: %s", type));
                     }
                 }
 

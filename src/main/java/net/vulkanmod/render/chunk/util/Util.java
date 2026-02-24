@@ -1,25 +1,25 @@
 package net.vulkanmod.render.chunk.util;
 
-import net.minecraft.core.Direction;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
+import net.minecraft.class_2350;
 
 public class Util {
 
-    public static final Direction[] DIRECTIONS = Direction.values();
-    public static final Direction[] XZ_DIRECTIONS = getXzDirections();
+    public static final class_2350[] DIRECTIONS = class_2350.values();
+    public static final class_2350[] XZ_DIRECTIONS = getXzDirections();
 
     public static byte getOppositeDirIdx(byte idx) {
         return (byte) ((idx & 0b1) != 0 ? idx - 1 : idx + 1);
     }
 
-    private static Direction[] getXzDirections() {
-        Direction[] directions = new Direction[4];
+    private static class_2350[] getXzDirections() {
+        class_2350[] directions = new class_2350[4];
 
         int i = 0;
-        for (Direction direction : Direction.values()) {
-            if (direction.getAxis() == Direction.Axis.X || direction.getAxis() == Direction.Axis.Z) {
+        for (class_2350 direction : class_2350.values()) {
+            if (direction.method_10166() == class_2350.class_2351.field_11048 || direction.method_10166() == class_2350.class_2351.field_11051) {
                 directions[i] = direction;
                 ++i;
             }

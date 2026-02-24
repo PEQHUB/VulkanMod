@@ -25,7 +25,7 @@ public abstract class SpriteUpdateUtil {
     }
 
     public static void transitionLayouts() {
-        if (transitionedLayouts.isEmpty()) {
+        if (!doUpload || transitionedLayouts.isEmpty()) {
             return;
         }
 

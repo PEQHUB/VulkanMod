@@ -1,15 +1,15 @@
 package net.vulkanmod.render.chunk.build.task;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.chunk.VisGraph;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.class_11954;
+import net.minecraft.class_2338;
+import net.minecraft.class_243;
+import net.minecraft.class_2464;
+import net.minecraft.class_2586;
+import net.minecraft.class_2680;
+import net.minecraft.class_310;
+import net.minecraft.class_3610;
+import net.minecraft.class_827;
+import net.minecraft.class_852;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.render.chunk.RenderSection;
 import net.vulkanmod.render.chunk.WorldRenderer;
@@ -46,10 +46,10 @@ public class BuildTask extends ChunkTask {
             return Result.CANCELLED;
         }
 
-        Vec3 vec3 = WorldRenderer.getCameraPos();
-        float x = (float) vec3.x;
-        float y = (float) vec3.y;
-        float z = (float) vec3.z;
+        class_243 vec3 = WorldRenderer.getCameraPos();
+        float x = (float) vec3.field_1352;
+        float y = (float) vec3.field_1351;
+        float z = (float) vec3.field_1350;
         CompileResult compileResult = this.compile(x, y, z, builderResources);
 
         CompiledSection compiledSection = new CompiledSection();
@@ -76,11 +76,11 @@ public class BuildTask extends ChunkTask {
     private CompileResult compile(float camX, float camY, float camZ, BuilderResources builderResources) {
         CompileResult compileResult = new CompileResult(this.section, true);
 
-        BlockPos startBlockPos = new BlockPos(section.xOffset(), section.yOffset(), section.zOffset()).immutable();
-        VisGraph visGraph = new VisGraph();
+        class_2338 startBlockPos = new class_2338(section.xOffset(), section.yOffset(), section.zOffset()).method_10062();
+        class_852 visGraph = new class_852();
 
         if (this.region == null) {
-            compileResult.visibilitySet = visGraph.resolve();
+            compileResult.visibilitySet = visGraph.method_3679();
             return compileResult;
         }
 
@@ -97,32 +97,32 @@ public class BuildTask extends ChunkTask {
 
         FluidRenderer fluidRenderer = builderResources.fluidRenderer;
 
-        BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
+        class_2338.class_2339 blockPos = new class_2338.class_2339();
 
         for (int y = 0; y < 16; ++y) {
             for (int z = 0; z < 16; ++z) {
                 for (int x = 0; x < 16; ++x) {
-                    blockPos.set(section.xOffset() + x, section.yOffset() + y, section.zOffset() + z);
+                    blockPos.method_10103(section.xOffset() + x, section.yOffset() + y, section.zOffset() + z);
 
-                    BlockState blockState = this.region.getBlockState(blockPos);
-                    if (blockState.isSolidRender()) {
-                        visGraph.setOpaque(blockPos);
+                    class_2680 blockState = this.region.method_8320(blockPos);
+                    if (blockState.method_26216()) {
+                        visGraph.method_3682(blockPos);
                     }
 
-                    if (blockState.hasBlockEntity()) {
-                        BlockEntity blockEntity = this.region.getBlockEntity(blockPos);
+                    if (blockState.method_31709()) {
+                        class_2586 blockEntity = this.region.method_8321(blockPos);
                         if (blockEntity != null) {
                             this.handleBlockEntity(compileResult, blockEntity);
                         }
                     }
 
-                    FluidState fluidState = blockState.getFluidState();
-                    if (!fluidState.isEmpty()) {
+                    class_3610 fluidState = blockState.method_26227();
+                    if (!fluidState.method_15769()) {
                         fluidRenderer.renderLiquid(blockState, fluidState, blockPos);
                     }
 
-                    if (blockState.getRenderShape() == RenderShape.MODEL) {
-                        pos.set(blockPos.getX() & 15, blockPos.getY() & 15, blockPos.getZ() & 15);
+                    if (blockState.method_26217() == class_2464.field_11458) {
+                        pos.set(blockPos.method_10263() & 15, blockPos.method_10264() & 15, blockPos.method_10260() & 15);
                         blockRenderer.renderBlock(blockState, blockPos, pos);
                     }
                 }
@@ -132,7 +132,7 @@ public class BuildTask extends ChunkTask {
         TerrainBuilder trasnlucentTerrainBuilder = bufferBuilders.builder(TerrainRenderType.TRANSLUCENT);
         if (trasnlucentTerrainBuilder.getBufferBuilder(QuadFacing.UNDEFINED.ordinal()).getVertices() > 0) {
             trasnlucentTerrainBuilder.setupQuadSortingPoints();
-            trasnlucentTerrainBuilder.setupQuadSorting(camX - (float) startBlockPos.getX(), camY - (float) startBlockPos.getY(), camZ - (float) startBlockPos.getZ());
+            trasnlucentTerrainBuilder.setupQuadSorting(camX - (float) startBlockPos.method_10263(), camY - (float) startBlockPos.method_10264(), camZ - (float) startBlockPos.method_10260());
             compileResult.transparencyState = trasnlucentTerrainBuilder.getSortState();
         }
 
@@ -147,7 +147,7 @@ public class BuildTask extends ChunkTask {
             builder.clear();
         }
 
-        compileResult.visibilitySet = visGraph.resolve();
+        compileResult.visibilitySet = visGraph.method_3679();
         this.region = null;
         return compileResult;
     }
@@ -167,12 +167,12 @@ public class BuildTask extends ChunkTask {
     private TerrainRenderType compactRenderTypes(TerrainRenderType renderType) {
         if (Initializer.CONFIG.uniqueOpaqueLayer) {
             renderType = switch (renderType) {
-                case SOLID, CUTOUT, CUTOUT_MIPPED -> TerrainRenderType.CUTOUT_MIPPED;
+                case SOLID, CUTOUT -> TerrainRenderType.CUTOUT;
                 case TRANSLUCENT, TRIPWIRE -> TerrainRenderType.TRANSLUCENT;
             };
         } else {
             renderType = switch (renderType) {
-                case SOLID, CUTOUT_MIPPED -> TerrainRenderType.CUTOUT_MIPPED;
+                case SOLID -> TerrainRenderType.SOLID;
                 case CUTOUT -> TerrainRenderType.CUTOUT;
                 case TRANSLUCENT, TRIPWIRE -> TerrainRenderType.TRANSLUCENT;
             };
@@ -181,11 +181,11 @@ public class BuildTask extends ChunkTask {
         return renderType;
     }
 
-    private <E extends BlockEntity> void handleBlockEntity(CompileResult compileResult, E blockEntity) {
-        BlockEntityRenderer<E, BlockEntityRenderState> blockEntityRenderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
+    private <E extends class_2586> void handleBlockEntity(CompileResult compileResult, E blockEntity) {
+        class_827<E, class_11954> blockEntityRenderer = class_310.method_1551().method_31975().method_3550(blockEntity);
         if (blockEntityRenderer != null) {
             compileResult.blockEntities.add(blockEntity);
-            if (blockEntityRenderer.shouldRenderOffScreen()) {
+            if (blockEntityRenderer.method_3563()) {
                 compileResult.globalBlockEntities.add(blockEntity);
             }
         }

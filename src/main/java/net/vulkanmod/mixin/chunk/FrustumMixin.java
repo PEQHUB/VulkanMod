@@ -1,6 +1,6 @@
 package net.vulkanmod.mixin.chunk;
 
-import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.class_4604;
 import net.vulkanmod.interfaces.FrustumMixed;
 import net.vulkanmod.render.chunk.frustum.VFrustum;
 import org.joml.Matrix4f;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Frustum.class)
+@Mixin(class_4604.class)
 public class FrustumMixin implements FrustumMixed {
 
     @Shadow private double camX;

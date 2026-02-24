@@ -1,8 +1,8 @@
 package net.vulkanmod.config.gui.widget;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.network.chat.Component;
+import net.minecraft.class_2561;
+import net.minecraft.class_310;
+import net.minecraft.class_327;
 import net.vulkanmod.config.gui.render.GuiRenderer;
 import net.vulkanmod.config.option.SwitchOption;
 import net.vulkanmod.vulkan.util.ColorUtil;
@@ -10,7 +10,7 @@ import net.vulkanmod.vulkan.util.ColorUtil;
 public class SwitchOptionWidget extends OptionWidget<SwitchOption> {
     private boolean focused;
 
-    public SwitchOptionWidget(SwitchOption option, Component name) {
+    public SwitchOptionWidget(SwitchOption option, class_2561 name) {
         super(option, name);
         updateDisplayedValue();
     }
@@ -43,10 +43,10 @@ public class SwitchOptionWidget extends OptionWidget<SwitchOption> {
         GuiRenderer.renderBoxBorder(x0, y0, halfWidth * 2, height, 1,  color);
 
         color = this.active ? 0xFFFFFFFF : 0xFFA0A0A0;
-        Font textRenderer = Minecraft.getInstance().font;
+        class_327 textRenderer = class_310.method_1551().field_1772;
         int margin = Math.max(
-                textRenderer.width(Component.translatable("options.on").getString()) / 3,
-                textRenderer.width(Component.translatable("options.off").getString()) / 3
+                textRenderer.method_1727(class_2561.method_43471("options.on").getString()) / 3,
+                textRenderer.method_1727(class_2561.method_43471("options.off").getString()) / 3
         );
 
         int x = this.controlX + this.controlWidth / 2 - (int) (halfWidth * 1.5f) - 4 - margin;
@@ -71,17 +71,17 @@ public class SwitchOptionWidget extends OptionWidget<SwitchOption> {
 
     protected void updateDisplayedValue() {
         this.displayedValue = option.getNewValue()
-                ? Component.translatable("options.on")
-                : Component.translatable("options.off");
+                ? class_2561.method_43471("options.on")
+                : class_2561.method_43471("options.off");
     }
 
     @Override
-    public void setFocused(boolean bl) {
+    public void method_25365(boolean bl) {
         this.focused = bl;
     }
 
     @Override
-    public boolean isFocused() {
+    public boolean method_25370() {
         return this.focused;
     }
 

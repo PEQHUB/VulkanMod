@@ -1,97 +1,54 @@
 package net.vulkanmod.render.engine;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
-import com.mojang.blaze3d.opengl.GlTexture;
-import com.mojang.blaze3d.textures.AddressMode;
-import com.mojang.blaze3d.textures.FilterMode;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.TextureFormat;
 import it.unimi.dsi.fastutil.ints.*;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.class_10868;
 import net.vulkanmod.gl.VkGlTexture;
-import net.vulkanmod.vulkan.texture.SamplerManager;
 import net.vulkanmod.vulkan.texture.VulkanImage;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.vulkan.VK10;
 
 @Environment(EnvType.CLIENT)
-public class VkGpuTexture extends GlTexture {
-    private static final Reference2ReferenceOpenHashMap<GlTexture, VkGpuTexture> glToVkMap = new Reference2ReferenceOpenHashMap<>();
+public class VkGpuTexture extends class_10868 {
+    private static final Reference2ReferenceOpenHashMap<class_10868, VkGpuTexture> glToVkMap = new Reference2ReferenceOpenHashMap<>();
 
     protected VkGlTexture glTexture;
-    protected final int id;
+    protected final int field_57882;
     private final Int2ReferenceMap<VkFbo> fboCache = new Int2ReferenceOpenHashMap<>();
-    protected boolean closed;
-    protected boolean modesDirty = true;
+    protected boolean field_57883;
 
-    protected boolean useMipmaps;
-    protected FilterMode minFilter = FilterMode.NEAREST;
-    protected FilterMode magFilter = FilterMode.NEAREST;
-
+    VkTextureView fboView;
     boolean needsClear = false;
     int clearColor = 0;
     float depthClearValue = 1.0f;
 
     protected VkGpuTexture(int usage, String string, TextureFormat textureFormat, int width, int height, int layers, int mipLevel, int id, VkGlTexture glTexture) {
         super(usage, string, textureFormat, width, height, layers, mipLevel, id);
-        this.id = id;
+        this.field_57882 = id;
         this.glTexture = glTexture;
     }
 
     @Override
     public void close() {
-        if (!this.closed) {
-            this.closed = true;
-            GlStateManager._deleteTexture(this.id);
-
-            for (VkFbo fbo : this.fboCache.values()) {
-                fbo.close();
-            }
+        if (!this.field_57883) {
+            this.field_57883 = true;
+            GlStateManager._deleteTexture(this.field_57882);
         }
     }
 
     @Override
     public boolean isClosed() {
-        return this.closed;
+        return this.field_57883;
     }
 
-    public void flushModeChanges() {
-        if (this.modesDirty) {
-            int maxLod = this.useMipmaps ? this.getMipLevels() - 1 : 0;
-
-            int magFilterVk = this.magFilter == FilterMode.LINEAR ? VK10.VK_FILTER_LINEAR : VK10.VK_FILTER_NEAREST;
-            int minFilterVk = this.minFilter == FilterMode.LINEAR ? VK10.VK_FILTER_LINEAR : VK10.VK_FILTER_NEAREST;
-
-            long sampler = SamplerManager.getSampler(VK10.VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, VK10.VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
-                                                     minFilterVk, magFilterVk, VK10.VK_SAMPLER_MIPMAP_MODE_LINEAR,
-                                                     maxLod, false, 0, -1);
-
-            glTexture.getVulkanImage().setSampler(sampler);
-
-            this.modesDirty = false;
-        }
-    }
-
-    public int glId() {
-        return this.id;
-    }
-
-    public void setAddressMode(AddressMode addressMode) {
-        this.modesDirty = true;
-    }
-
-    public void setTextureFilter(FilterMode filterMode, boolean bl) {
-        this.minFilter = filterMode;
-        this.magFilter = filterMode;
-        this.useMipmaps = bl;
-        this.modesDirty = true;
-    }
-
-    public void setUseMipmaps(boolean bl) {
-        this.useMipmaps = bl;
-        this.modesDirty = true;
+    public int method_68427() {
+        return this.field_57882;
     }
 
     public void setClearColor(int clearColor) {
@@ -109,23 +66,29 @@ public class VkGpuTexture extends GlTexture {
     }
 
     public VkFbo getFbo(@Nullable GpuTexture depthAttachment) {
-        int depthAttachmentId = depthAttachment == null ? 0 : ((VkGpuTexture)depthAttachment).id;
-        return this.fboCache.computeIfAbsent(depthAttachmentId, j -> new VkFbo(this, (VkGpuTexture) depthAttachment));
+        int depthAttachmentId = depthAttachment == null ? 0 : ((VkGpuTexture)depthAttachment).field_57882;
+
+        if (this.fboView == null) {
+            VkGpuDevice gpuDevice = (VkGpuDevice) RenderSystem.getDevice();
+            this.fboView = (VkTextureView) gpuDevice.createTextureView(this, 0, this.getMipLevels());
+        }
+
+        return this.fboCache.computeIfAbsent(depthAttachmentId, j -> new VkFbo(this.fboView, (VkGpuTexture) depthAttachment));
     }
 
     public VulkanImage getVulkanImage() {
         return glTexture.getVulkanImage();
     }
 
-    public static VkGpuTexture fromGlTexture(GlTexture glTexture) {
+    public static VkGpuTexture fromGlTexture(class_10868 glTexture) {
         return glToVkMap.computeIfAbsent(glTexture, glTexture1 -> {
             var name = glTexture.getLabel();
-            int id = glTexture.glId();
+            int id = glTexture.method_68427();
             VkGlTexture vglTexture = VkGlTexture.getTexture(id);
             VkGpuTexture gpuTexture = new VkGpuTexture(0, name, glTexture.getFormat(),
                                                        glTexture.getWidth(0), glTexture.getHeight(0),
                                                        1, glTexture.getMipLevels(),
-                                                       glTexture.glId(), vglTexture);
+                                                       glTexture.method_68427(), vglTexture);
 
             return gpuTexture;
         });
@@ -133,7 +96,7 @@ public class VkGpuTexture extends GlTexture {
 
     public static TextureFormat textureFormat(int format) {
         return switch (format) {
-            case VK10.VK_FORMAT_R8G8B8A8_UNORM, VK10.VK_FORMAT_B8G8R8A8_UNORM, VK10.VK_FORMAT_R8G8B8A8_SRGB -> TextureFormat.RGBA8;
+            case VK10.VK_FORMAT_R8G8B8A8_UNORM, VK10.VK_FORMAT_B8G8R8A8_UNORM -> TextureFormat.RGBA8;
             case VK10.VK_FORMAT_R8_UNORM -> TextureFormat.RED8;
             case VK10.VK_FORMAT_D32_SFLOAT -> TextureFormat.DEPTH32;
             default -> null;

@@ -1,11 +1,11 @@
 package net.vulkanmod.mixin.chunk;
 
-import net.minecraft.client.renderer.SectionBufferBuilderPool;
+import net.minecraft.class_8901;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(SectionBufferBuilderPool.class)
+@Mixin(class_8901.class)
 public class SectionBufferBuilderPoolM {
 
 	@ModifyVariable(method = "allocate", at = @At("STORE"), ordinal = 1)

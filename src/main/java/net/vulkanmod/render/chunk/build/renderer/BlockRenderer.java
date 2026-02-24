@@ -1,20 +1,18 @@
 package net.vulkanmod.render.chunk.build.renderer;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.renderer.v1.mesh.ShadeMode;
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.SingleThreadedRandomSource;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.class_1087;
+import net.minecraft.class_11515;
+import net.minecraft.class_1920;
+import net.minecraft.class_2338;
+import net.minecraft.class_2382;
+import net.minecraft.class_243;
+import net.minecraft.class_2680;
+import net.minecraft.class_310;
+import net.minecraft.class_4588;
+import net.minecraft.class_4696;
+import net.minecraft.class_6575;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.render.chunk.build.frapi.mesh.MutableQuadViewImpl;
 import net.vulkanmod.render.chunk.build.frapi.render.AbstractBlockRenderContext;
@@ -49,34 +47,34 @@ public class BlockRenderer extends AbstractBlockRenderContext {
         super();
         this.setupLightPipelines(flatLightPipeline, smoothLightPipeline);
 
-        this.random = new SingleThreadedRandomSource(42L);
+        this.random = new class_6575(42L);
     }
 
-    public void renderBlock(BlockState blockState, BlockPos blockPos, Vector3f pos) {
+    public void renderBlock(class_2680 blockState, class_2338 blockPos, Vector3f pos) {
         this.pos = pos;
         this.blockPos = blockPos;
         this.blockState = blockState;
-        this.random.setSeed(blockState.getSeed(blockPos));
+        this.random.method_43052(blockState.method_26190(blockPos));
 
-        TerrainRenderType renderType = TerrainRenderType.get(ItemBlockRenderTypes.getChunkRenderType(blockState));
+        TerrainRenderType renderType = TerrainRenderType.get(class_4696.method_23679(blockState));
         renderType = TerrainRenderType.getRemapped(renderType);
         this.renderType = renderType;
         this.terrainBuilder = this.resources.builderPack.builder(renderType);
         this.terrainBuilder.setBlockAttributes(blockState);
 
-        BlockStateModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+        class_1087 model = class_310.method_1551().method_1541().method_3349(blockState);
 
-        BlockAndTintGetter renderRegion = this.renderRegion;
-        Vec3 offset = blockState.getOffset(blockPos);
-        pos.add((float) offset.x, (float) offset.y, (float) offset.z);
+        class_1920 renderRegion = this.renderRegion;
+        class_243 offset = blockState.method_26226(blockPos);
+        pos.add((float) offset.field_1352, (float) offset.field_1351, (float) offset.field_1350);
 
-        this.prepareForBlock(blockState, blockPos, blockState.getLightEmission() == 0);
+        this.prepareForBlock(blockState, blockPos, blockState.method_26213() == 0);
 
         model.emitQuads(this.getEmitter(), renderRegion, blockPos, blockState, this.random, this::isFaceCulled);
     }
 
     @Override
-    protected VertexConsumer getVertexConsumer(ChunkSectionLayer layer) {
+    protected class_4588 getVertexConsumer(class_11515 layer) {
         return null;
     }
 
@@ -95,7 +93,7 @@ public class BlockRenderer extends AbstractBlockRenderContext {
         bufferQuad(terrainBuilder, this.pos, quad, this.quadLightData);
     }
 
-    private TerrainBuilder getBufferBuilder(ChunkSectionLayer layer) {
+    private TerrainBuilder getBufferBuilder(class_11515 layer) {
         if (layer == null) {
             return this.terrainBuilder;
         } else {
@@ -117,7 +115,8 @@ public class BlockRenderer extends AbstractBlockRenderContext {
 
         TerrainBufferBuilder bufferBuilder = terrainBuilder.getBufferBuilder(quadFacing.ordinal());
 
-        int packedNormal = quad.getNormal();
+        class_2382 normal = quad.getFacingDirection().method_62675();
+        int packedNormal = I32_SNorm.packNormal(normal.method_10263(), normal.method_10264(), normal.method_10260());
 
         float[] brightnessArr = quadLightData.br;
         int[] lights = quadLightData.lm;

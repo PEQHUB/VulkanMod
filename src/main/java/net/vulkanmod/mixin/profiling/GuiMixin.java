@@ -1,11 +1,10 @@
 package net.vulkanmod.mixin.profiling;
 
-import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.DebugScreenOverlay;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.class_310;
+import net.minecraft.class_329;
+import net.minecraft.class_332;
+import net.minecraft.class_340;
+import net.minecraft.class_9779;
 import net.vulkanmod.render.profiling.ProfilerOverlay;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,19 +13,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Gui.class)
+@Mixin(class_329.class)
 public class GuiMixin {
 
-    @Shadow @Final private DebugScreenOverlay debugOverlay;
+    @Shadow @Final private class_340 debugOverlay;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void createProfilerOverlay(Minecraft minecraft, CallbackInfo ci) {
+    private void createProfilerOverlay(class_310 minecraft, CallbackInfo ci) {
         ProfilerOverlay.createInstance(minecraft);
     }
 
     @Inject(method = "render", at = @At(value = "RETURN"))
-    private void renderProfilerOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (ProfilerOverlay.shouldRender && !this.debugOverlay.showDebugScreen())
+    private void renderProfilerOverlay(class_332 guiGraphics, class_9779 deltaTracker, CallbackInfo ci) {
+        if (ProfilerOverlay.shouldRender && !this.debugOverlay.method_53536())
             ProfilerOverlay.INSTANCE.render(guiGraphics);
     }
 }

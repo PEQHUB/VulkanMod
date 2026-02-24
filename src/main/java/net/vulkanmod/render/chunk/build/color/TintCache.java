@@ -1,11 +1,11 @@
 package net.vulkanmod.render.chunk.build.color;
 
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ColorResolver;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.class_1163;
+import net.minecraft.class_1959;
+import net.minecraft.class_2338;
+import net.minecraft.class_310;
+import net.minecraft.class_6539;
 import net.vulkanmod.render.chunk.build.biome.BiomeData;
 
 public class TintCache {
@@ -13,7 +13,7 @@ public class TintCache {
     private static final int BOUNDARY_WIDTH = 16;
     private static final int LAYER_COUNT = SECTION_WIDTH + (BOUNDARY_WIDTH * 2);
 
-    private final Reference2ReferenceOpenHashMap<ColorResolver, Layer[]> layers;
+    private final Reference2ReferenceOpenHashMap<class_6539, Layer[]> layers;
 
     private BiomeData biomeData;
     private int blendRadius, totalWidth;
@@ -28,14 +28,14 @@ public class TintCache {
         this.layers = new Reference2ReferenceOpenHashMap<>();
 
         // Default resolvers
-        this.layers.put(BiomeColors.FOLIAGE_COLOR_RESOLVER, allocateLayers());
-        this.layers.put(BiomeColors.GRASS_COLOR_RESOLVER, allocateLayers());
-        this.layers.put(BiomeColors.WATER_COLOR_RESOLVER, allocateLayers());
+        this.layers.put(class_1163.field_5664, allocateLayers());
+        this.layers.put(class_1163.field_5665, allocateLayers());
+        this.layers.put(class_1163.field_5666, allocateLayers());
     }
 
     public void init(BiomeData biomeData, int blendRadius, int secX, int secY, int secZ) {
         this.biomeData = biomeData;
-        this.blendRadius = Minecraft.getInstance().options.biomeBlendRadius().get();
+        this.blendRadius = class_310.method_1551().field_1690.method_41805().method_41753();
         this.totalWidth = (blendRadius * 2) + 16;
 
         this.secX = secX;
@@ -72,8 +72,8 @@ public class TintCache {
         }
     }
 
-    public int getColor(BlockPos blockPos, ColorResolver colorResolver) {
-        int relY = blockPos.getY() - this.minY;
+    public int getColor(class_2338 blockPos, class_6539 colorResolver) {
+        int relY = blockPos.method_10264() - this.minY;
 
         if (!this.layers.containsKey(colorResolver)) {
             addResolver(colorResolver);
@@ -87,14 +87,14 @@ public class TintCache {
 
         int[] values = layer.getValues();
 
-        int relX = blockPos.getX() - this.minX;
-        int relZ = blockPos.getZ() - this.minZ;
+        int relX = blockPos.method_10263() - this.minX;
+        int relZ = blockPos.method_10260() - this.minZ;
 
         int idx = this.totalWidth * (relZ) + (relX);
         return values[idx];
     }
 
-    private void addResolver(ColorResolver colorResolver) {
+    private void addResolver(class_6539 colorResolver) {
         Layer[] layers1 = allocateLayers();
 
         for (Layer layer : layers1) {
@@ -114,14 +114,14 @@ public class TintCache {
         return layers;
     }
 
-    private void calculateLayer(Layer layer, ColorResolver colorResolver, int y) {
+    private void calculateLayer(Layer layer, class_6539 colorResolver, int y) {
         int absY = minY + y;
 
         int[] values = layer.values;
 
         for (int absZ = minZ; absZ <= maxZ; absZ++) {
             for (int absX = minX; absX <= maxX; absX++) {
-                Biome biome = this.biomeData.getBiome(absX, absY, absZ);
+                class_1959 biome = this.biomeData.getBiome(absX, absY, absZ);
 
                 final int idx = (absX - minX) + (absZ - minZ) * totalWidth;
                 values[idx] = colorResolver.getColor(biome, absX, absZ);

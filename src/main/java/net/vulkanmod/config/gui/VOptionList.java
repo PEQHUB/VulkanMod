@@ -2,9 +2,9 @@ package net.vulkanmod.config.gui;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.util.Mth;
+import net.minecraft.class_11909;
+import net.minecraft.class_3532;
+import net.minecraft.class_364;
 import net.vulkanmod.config.gui.render.GuiRenderer;
 import net.vulkanmod.config.gui.widget.OptionWidget;
 import net.vulkanmod.config.gui.widget.VAbstractWidget;
@@ -81,14 +81,14 @@ public class VOptionList extends GuiElement {
     }
 
     public void setScrollAmount(double d) {
-        this.scrollAmount = (float) Mth.clamp(d, 0.0, this.getMaxScroll());
+        this.scrollAmount = (float) class_3532.method_15350(d, 0.0, this.getMaxScroll());
     }
 
     private int getItemCount() {
         return this.children.size();
     }
 
-    GuiEventListener getFocused() {
+    class_364 getFocused() {
         return focused;
     }
 
@@ -97,29 +97,29 @@ public class VOptionList extends GuiElement {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean bl) {
-        this.updateScrollingState(event.x(), event.button());
-        if (this.isMouseOver(event.x(), event.y())) {
-            Entry entry = this.getEntryAtPos(event.x(), event.y());
-            if (entry != null && entry.mouseClicked(event, bl)) {
+    public boolean method_25402(class_11909 event, boolean bl) {
+        this.updateScrollingState(event.comp_4798(), event.method_74245());
+        if (this.method_25405(event.comp_4798(), event.comp_4799())) {
+            Entry entry = this.getEntryAtPos(event.comp_4798(), event.comp_4799());
+            if (entry != null && entry.method_25402(event, bl)) {
                 setFocused(entry);
-                entry.setFocused(true);
+                entry.method_25365(true);
                 return true;
             }
 
-            return event.button() == 0;
+            return event.method_74245() == 0;
         }
 
         return false;
     }
 
     @Override
-    public boolean mouseReleased(MouseButtonEvent event) {
-        if (this.isValidClickButton(event.button())) {
-            Entry entry = this.getEntryAtPos(event.x(), event.y());
+    public boolean method_25406(class_11909 event) {
+        if (this.isValidClickButton(event.method_74245())) {
+            Entry entry = this.getEntryAtPos(event.comp_4798(), event.comp_4799());
             if (entry != null) {
-                if (entry.mouseReleased(event)) {
-                    entry.setFocused(false);
+                if (entry.method_25406(event)) {
+                    entry.method_25365(false);
                     setFocused(null);
                     return true;
                 }
@@ -129,13 +129,13 @@ public class VOptionList extends GuiElement {
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
-        if (event.button() != 0) {
+    public boolean method_25403(class_11909 event, double deltaX, double deltaY) {
+        if (event.method_74245() != 0) {
             return false;
         }
 
         if (this.getFocused() != null) {
-            return this.getFocused().mouseDragged(event, deltaX, deltaY);
+            return this.getFocused().method_25403(event, deltaX, deltaY);
         }
 
         if (!this.scrolling) {
@@ -143,9 +143,9 @@ public class VOptionList extends GuiElement {
         }
 
         double maxScroll = this.getMaxScroll();
-        if (event.y() < this.y) {
+        if (event.comp_4799() < this.y) {
             this.setScrollAmount(0.0);
-        } else if (event.y() > this.getBottom()) {
+        } else if (event.comp_4799() > this.getBottom()) {
             this.setScrollAmount(maxScroll);
         } else if (maxScroll > 0.0) {
             double barHeight = (double) this.height * this.height / this.getTotalLength();
@@ -156,7 +156,7 @@ public class VOptionList extends GuiElement {
         return true;
     }
 
-    public boolean mouseScrolled(double mouseX, double mouseY, double xScroll, double yScroll) {
+    public boolean method_25401(double mouseX, double mouseY, double xScroll, double yScroll) {
         this.setScrollAmount(this.getScrollAmount() - yScroll * (double) this.totalItemHeight / 2.0);
         return true;
     }
@@ -211,7 +211,7 @@ public class VOptionList extends GuiElement {
             int height = this.getHeight();
             int totalLength = this.getTotalLength();
             int barHeight = (int) ((float) (height * height) / totalLength);
-            barHeight = Mth.clamp(barHeight, 32, height - 8);
+            barHeight = class_3532.method_15340(barHeight, 32, height - 8);
 
             int scrollAmount = (int) this.getScrollAmount();
             int barY = scrollAmount * (height - barHeight) / maxScroll + this.getY();
@@ -236,13 +236,13 @@ public class VOptionList extends GuiElement {
         if (this.focused != null)
             return focused.widget;
 
-        if (!this.isMouseOver(mouseX, mouseY))
+        if (!this.method_25405(mouseX, mouseY))
             return null;
 
         for (VOptionList.Entry entry : this.children) {
             var widget = entry.widget;
 
-            if (widget == null || !widget.isMouseOver(mouseX, mouseY))
+            if (widget == null || !widget.method_25405(mouseX, mouseY))
                 continue;
             return widget;
         }
@@ -275,7 +275,7 @@ public class VOptionList extends GuiElement {
         return i == 0;
     }
 
-    protected static class Entry implements GuiEventListener {
+    protected static class Entry implements class_364 {
         final VAbstractWidget widget;
         final int margin;
 
@@ -304,28 +304,28 @@ public class VOptionList extends GuiElement {
         }
 
         @Override
-        public boolean mouseClicked(MouseButtonEvent event, boolean bl) {
-            return widget.mouseClicked(event, bl);
+        public boolean method_25402(class_11909 event, boolean bl) {
+            return widget.method_25402(event, bl);
         }
 
         @Override
-        public boolean mouseReleased(MouseButtonEvent event) {
-            return widget.mouseReleased(event);
+        public boolean method_25406(class_11909 event) {
+            return widget.method_25406(event);
         }
 
         @Override
-        public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
-            return widget.mouseDragged(event, deltaX, deltaY);
+        public boolean method_25403(class_11909 event, double deltaX, double deltaY) {
+            return widget.method_25403(event, deltaX, deltaY);
         }
 
         @Override
-        public boolean isFocused() {
+        public boolean method_25370() {
             return false;
         }
 
         @Override
-        public void setFocused(boolean bl) {
-            widget.setFocused(bl);
+        public void method_25365(boolean bl) {
+            widget.method_25365(bl);
         }
     }
 }

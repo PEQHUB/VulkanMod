@@ -1,13 +1,12 @@
 package net.vulkanmod.mixin.render.frapi;
 
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.class_324;
+import net.minecraft.class_776;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.client.color.block.BlockColors;
-
-@Mixin(BlockRenderDispatcher.class)
+@Mixin(class_776.class)
 public interface BlockRenderDispatcherAccessor {
     @Accessor("blockColors")
-    BlockColors getBlockColors();
+    class_324 getBlockColors();
 }

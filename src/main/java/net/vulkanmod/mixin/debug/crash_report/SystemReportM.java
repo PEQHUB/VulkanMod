@@ -1,13 +1,13 @@
 package net.vulkanmod.mixin.debug.crash_report;
 
-import net.minecraft.SystemReport;
+import net.minecraft.class_6396;
 import net.vulkanmod.vulkan.device.DeviceManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(SystemReport.class)
+@Mixin(class_6396.class)
 public class SystemReportM {
 
 	@Inject(method = "appendToCrashReportString", at = @At("RETURN"))

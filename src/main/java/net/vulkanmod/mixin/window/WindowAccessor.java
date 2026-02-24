@@ -1,13 +1,13 @@
 package net.vulkanmod.mixin.window;
 
-import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.platform.WindowEventHandler;
+import net.minecraft.class_1041;
+import net.minecraft.class_3678;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(Window.class)
+@Mixin(class_1041.class)
 public interface WindowAccessor {
 
     @Accessor
-    WindowEventHandler getEventHandler();
+    class_3678 getEventHandler();
 }

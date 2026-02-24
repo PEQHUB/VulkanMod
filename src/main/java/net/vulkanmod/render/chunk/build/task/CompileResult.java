@@ -1,7 +1,7 @@
 package net.vulkanmod.render.chunk.build.task;
 
-import net.minecraft.client.renderer.chunk.VisibilitySet;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.class_2586;
+import net.minecraft.class_854;
 import net.vulkanmod.interfaces.VisibilitySetExtended;
 import net.vulkanmod.render.chunk.RenderSection;
 import net.vulkanmod.render.chunk.build.UploadBuffer;
@@ -16,11 +16,11 @@ public class CompileResult {
     public final RenderSection renderSection;
     public final boolean fullUpdate;
 
-    final List<BlockEntity> globalBlockEntities = new ArrayList<>();
-    final List<BlockEntity> blockEntities = new ArrayList<>();
+    final List<class_2586> globalBlockEntities = new ArrayList<>();
+    final List<class_2586> blockEntities = new ArrayList<>();
     public final EnumMap<TerrainRenderType, UploadBuffer> renderedLayers = new EnumMap<>(TerrainRenderType.class);
 
-    VisibilitySet visibilitySet;
+    class_854 visibilitySet;
     QuadSorter.SortState transparencyState;
     CompiledSection compiledSection;
 

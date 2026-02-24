@@ -1,26 +1,23 @@
 package net.vulkanmod.render.chunk.build.frapi;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableMesh;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.render.BlockVertexConsumerProvider;
 import net.fabricmc.fabric.api.renderer.v1.render.FabricBlockModelRenderer;
 import net.fabricmc.fabric.api.renderer.v1.render.ItemRenderTypeGetter;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderLayerHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.core.BlockPos;
-
+import net.fabricmc.fabric.mixin.client.indigo.renderer.BlockRenderDispatcherAccessor;
+import net.minecraft.class_10444;
+import net.minecraft.class_1087;
+import net.minecraft.class_1920;
+import net.minecraft.class_2338;
+import net.minecraft.class_2464;
+import net.minecraft.class_2680;
+import net.minecraft.class_4587;
+import net.minecraft.class_4597;
+import net.minecraft.class_776;
+import net.minecraft.class_778;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockState;
-import net.vulkanmod.mixin.render.frapi.BlockRenderDispatcherAccessor;
 import net.vulkanmod.render.chunk.build.frapi.accessor.AccessLayerRenderState;
 import net.vulkanmod.render.chunk.build.frapi.mesh.MutableMeshImpl;
 import net.vulkanmod.render.chunk.build.frapi.render.BlockRenderContext;
@@ -40,43 +37,41 @@ public class VulkanModRenderer implements Renderer {
 	}
 
 	@Override
-	public void render(ModelBlockRenderer modelBlockRenderer, BlockAndTintGetter blockAndTintGetter,
-					   BlockStateModel blockStateModel, BlockState blockState, BlockPos blockPos, PoseStack poseStack,
+	public void render(class_778 modelBlockRenderer, class_1920 blockAndTintGetter,
+					   class_1087 blockStateModel, class_2680 blockState, class_2338 blockPos, class_4587 poseStack,
 					   BlockVertexConsumerProvider blockVertexConsumerProvider, boolean cull, long seed, int overlay) {
 		BlockRenderContext.POOL.get().render(blockAndTintGetter, blockStateModel, blockState, blockPos, poseStack, blockVertexConsumerProvider, cull, seed, overlay);
 	}
 
 	@Override
-	public void render(PoseStack.Pose pose, BlockVertexConsumerProvider blockVertexConsumerProvider, BlockStateModel blockStateModel,
-					   float v, float v1, float v2, int i, int i1, BlockAndTintGetter blockAndTintGetter,
-					   BlockPos blockPos, BlockState blockState) {
+	public void render(class_4587.class_4665 pose, BlockVertexConsumerProvider blockVertexConsumerProvider, class_1087 blockStateModel,
+					   float v, float v1, float v2, int i, int i1, class_1920 blockAndTintGetter,
+					   class_2338 blockPos, class_2680 blockState) {
 		SimpleBlockRenderContext.POOL.get().bufferModel(pose, blockVertexConsumerProvider, blockStateModel, v, v1, v2, i, i1, blockAndTintGetter, blockPos, blockState);
 	}
 
 	@Override
-	public void renderBlockAsEntity(BlockRenderDispatcher blockRenderDispatcher, BlockState blockState,
-									PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int overlay,
-									BlockAndTintGetter blockAndTintGetter, BlockPos pos) {
-		RenderShape blockRenderType = blockState.getRenderShape();
+	public void renderBlockAsEntity(class_776 blockRenderDispatcher, class_2680 state, class_4587 poseStack, class_4597 bufferSource, int light, int overlay, class_1920 blockView, class_2338 pos) {
+		class_2464 blockRenderType = state.method_26217();
 
-		if (blockRenderType != RenderShape.INVISIBLE) {
-			BlockStateModel model = blockRenderDispatcher.getBlockModel(blockState);
-			int tint = ((BlockRenderDispatcherAccessor) blockRenderDispatcher).getBlockColors().getColor(blockState, null, null, 0);
+		if (blockRenderType != class_2464.field_11455) {
+			class_1087 model = blockRenderDispatcher.method_3349(state);
+			int tint = ((BlockRenderDispatcherAccessor) blockRenderDispatcher).getBlockColors().method_1697(state, null, null, 0);
 			float red = (tint >> 16 & 255) / 255.0F;
 			float green = (tint >> 8 & 255) / 255.0F;
 			float blue = (tint & 255) / 255.0F;
-			FabricBlockModelRenderer.render(poseStack.last(), layer -> multiBufferSource.getBuffer(RenderLayerHelper.getEntityBlockLayer(layer)), model, red, green, blue, light, overlay, blockAndTintGetter, pos, blockState);
-            Minecraft.getInstance().getModelManager().specialBlockModelRenderer().renderByBlock(blockState.getBlock(), ItemDisplayContext.NONE, poseStack, Minecraft.getInstance().gameRenderer.getSubmitNodeStorage(), light, overlay, 0);
+			FabricBlockModelRenderer.render(poseStack.method_23760(), RenderLayerHelper.entityDelegate(bufferSource), model, red, green, blue, light, overlay, blockView, pos, state);
 		}
 	}
 
 	@Override
-	public QuadEmitter getLayerRenderStateEmitter(ItemStackRenderState.LayerRenderState layer) {
+	public QuadEmitter getLayerRenderStateEmitter(class_10444.class_10446 layer) {
 		return ((AccessLayerRenderState) layer).getMutableMesh().emitter();
 	}
 
 	@Override
-	public void setLayerRenderTypeGetter(ItemStackRenderState.LayerRenderState layer, ItemRenderTypeGetter renderTypeGetter) {
-		// No-op: VulkanMod does not currently support custom item render type getters.
+	public void setLayerRenderTypeGetter(class_10444.class_10446 layer,
+										 ItemRenderTypeGetter renderTypeGetter) {
+		((AccessLayerRenderState) layer).setRenderTypeGetter(renderTypeGetter);
 	}
 }

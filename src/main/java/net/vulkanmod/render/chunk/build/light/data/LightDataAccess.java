@@ -1,12 +1,12 @@
 package net.vulkanmod.render.chunk.build.light.data;
 
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.class_1920;
+import net.minecraft.class_1944;
+import net.minecraft.class_2338;
+import net.minecraft.class_265;
+import net.minecraft.class_2680;
+import net.minecraft.class_761;
+import net.minecraft.class_765;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.interfaces.VoxelShapeExtended;
 import net.vulkanmod.render.chunk.build.light.LightMode;
@@ -43,8 +43,8 @@ public abstract class LightDataAccess {
 
     private static final float AO_INV = 1.0f / 2048.0f;
 
-    private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-    protected BlockAndTintGetter region;
+    private final class_2338.class_2339 pos = new class_2338.class_2339();
+    protected class_1920 region;
 
     final boolean subBlockLighting;
 
@@ -64,12 +64,12 @@ public abstract class LightDataAccess {
                         z + dir.getStepZ());
     }
 
-    public int get(BlockPos pos, SimpleDirection dir) {
-        return this.get(pos.getX(), pos.getY(), pos.getZ(), dir);
+    public int get(class_2338 pos, SimpleDirection dir) {
+        return this.get(pos.method_10263(), pos.method_10264(), pos.method_10260(), dir);
     }
 
-    public int get(BlockPos pos) {
-        return this.get(pos.getX(), pos.getY(), pos.getZ());
+    public int get(class_2338 pos) {
+        return this.get(pos.method_10263(), pos.method_10264(), pos.method_10260());
     }
 
     /**
@@ -79,21 +79,21 @@ public abstract class LightDataAccess {
     public abstract int get(int x, int y, int z);
 
     protected int compute(int x, int y, int z) {
-        BlockPos pos = this.pos.set(x, y, z);
-        BlockState state = region.getBlockState(pos);
+        class_2338 pos = this.pos.method_10103(x, y, z);
+        class_2680 state = region.method_8320(pos);
 
-        boolean em = state.emissiveRendering(region, pos);
+        boolean em = state.method_26208(region, pos);
 
         boolean op;
         if (this.subBlockLighting)
-            op = state.canOcclude();
+            op = state.method_26225();
         else
-            op = state.isViewBlocking(region, pos) && state.getLightBlock() != 0;
+            op = state.method_26230(region, pos) && state.method_26193() != 0;
 
-        boolean fo = state.isSolidRender();
-        boolean fc = state.isCollisionShapeFullBlock(region, pos);
+        boolean fo = state.method_26216();
+        boolean fc = state.method_26234(region, pos);
 
-        int lu = state.getLightEmission();
+        int lu = state.method_26213();
 
         // OPTIMIZE: Do not calculate light data if the block is full and opaque and does not emit light.
         int bl;
@@ -104,20 +104,20 @@ public abstract class LightDataAccess {
         }
         else {
             if (em) {
-                bl = region.getBrightness(LightLayer.BLOCK, pos);
-                sl = region.getBrightness(LightLayer.SKY, pos);
+                bl = region.method_8314(class_1944.field_9282, pos);
+                sl = region.method_8314(class_1944.field_9284, pos);
             }
             else {
-                int light = LevelRenderer.getLightColor(LevelRenderer.BrightnessGetter.DEFAULT, region, state, pos);
-                bl = LightTexture.block(light);
-                sl = LightTexture.sky(light);
+                int light = class_761.method_23793(class_761.class_10948.field_58200, region, state, pos);
+                bl = class_765.method_24186(light);
+                sl = class_765.method_24187(light);
             }
         }
 
         // FIX: Do not apply AO from blocks that emit light
         float ao;
         if (lu == 0) {
-            ao = state.getShadeBrightness(region, pos);
+            ao = state.method_26210(region, pos);
         }
         else {
             ao = 1.0f;
@@ -129,7 +129,7 @@ public abstract class LightDataAccess {
 
         int crs = (fo || fc) && lu == 0 && useAo ? 0xFF : 0;
         if (!fo && op) {
-            VoxelShape shape = state.getShape(region, pos);
+            class_265 shape = state.method_26218(region, pos);
             crs = ((VoxelShapeExtended) (shape)).getCornerOcclusion();
         }
 
@@ -206,23 +206,23 @@ public abstract class LightDataAccess {
      * Computes the combined lightmap using block light, sky light, and luminance values.
      *
      * <p>This method's logic is equivalent to
-     * {@link LevelRenderer#getLightColor(BlockAndTintGetter, BlockPos)}, but without the
+     * {@link class_761#method_23794(class_1920, class_2338)}, but without the
      * emissive check.
      */
     public static int getLightmap(int word) {
 //        return LightTexture.pack(Math.max(unpackBL(word), unpackLU(word)), unpackSL(word));
-        return LightTexture.pack(unpackBL(word), unpackSL(word));
+        return class_765.method_23687(unpackBL(word), unpackSL(word));
     }
 
     public static int getEmissiveLightmap(int word) {
         if (unpackEM(word)) {
-            return LightTexture.FULL_BRIGHT;
+            return class_765.field_32767;
         } else {
             return getLightmap(word);
         }
     }
 
-    public BlockAndTintGetter getRegion() {
+    public class_1920 getRegion() {
         return this.region;
     }
 }

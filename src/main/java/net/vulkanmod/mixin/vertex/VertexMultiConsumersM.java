@@ -1,9 +1,9 @@
 package net.vulkanmod.mixin.vertex;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.core.Direction;
+import net.minecraft.class_2350;
+import net.minecraft.class_4583;
+import net.minecraft.class_4587;
+import net.minecraft.class_4588;
 import net.vulkanmod.interfaces.ExtendedVertexBuilder;
 import net.vulkanmod.render.vertex.format.I32_SNorm;
 import org.joml.Matrix3f;
@@ -22,8 +22,8 @@ public class VertexMultiConsumersM {
 
     @Mixin(targets = "com/mojang/blaze3d/vertex/VertexMultiConsumer$Double")
     public static class DoubleM implements ExtendedVertexBuilder {
-        @Shadow @Final private VertexConsumer first;
-        @Shadow @Final private VertexConsumer second;
+        @Shadow @Final private class_4588 first;
+        @Shadow @Final private class_4588 second;
 
         @Unique
         private ExtendedVertexBuilder firstExt;
@@ -39,7 +39,7 @@ public class VertexMultiConsumersM {
         }
 
         @Inject(method = "<init>", at = @At("RETURN"))
-        private void checkDelegates(VertexConsumer vertexConsumer, VertexConsumer vertexConsumer2, CallbackInfo ci) {
+        private void checkDelegates(class_4588 vertexConsumer, class_4588 vertexConsumer2, CallbackInfo ci) {
             this.canUseFastVertex = (ExtendedVertexBuilder.of(this.first) != null)
                     && (ExtendedVertexBuilder.of(this.second) != null);
 
@@ -58,7 +58,7 @@ public class VertexMultiConsumersM {
 
     @Mixin(targets = "com/mojang/blaze3d/vertex/VertexMultiConsumer$Multiple")
     public static class MultipleM implements ExtendedVertexBuilder {
-        @Shadow @Final private VertexConsumer[] delegates;
+        @Shadow @Final private class_4588[] delegates;
 
         @Unique
         private boolean canUseFastVertex = false;
@@ -69,8 +69,8 @@ public class VertexMultiConsumersM {
         }
 
         @Inject(method = "<init>", at = @At("RETURN"))
-        private void checkDelegates(VertexConsumer[] vertexConsumers, CallbackInfo ci) {
-            for (VertexConsumer delegate : this.delegates) {
+        private void checkDelegates(class_4588[] vertexConsumers, CallbackInfo ci) {
+            for (class_4588 delegate : this.delegates) {
                 if (ExtendedVertexBuilder.of(delegate) == null) {
                     this.canUseFastVertex = false;
                     return;
@@ -82,7 +82,7 @@ public class VertexMultiConsumersM {
 
         @Override
         public void vertex(float x, float y, float z, int packedColor, float u, float v, int overlay, int light, int packedNormal) {
-            for (VertexConsumer vertexConsumer : this.delegates) {
+            for (class_4588 vertexConsumer : this.delegates) {
                 ExtendedVertexBuilder extendedVertexBuilder = (ExtendedVertexBuilder) vertexConsumer;
 
                 extendedVertexBuilder.vertex(x, y, z, packedColor, u, v, overlay, light, packedNormal);
@@ -90,9 +90,9 @@ public class VertexMultiConsumersM {
         }
     }
 
-    @Mixin(SheetedDecalTextureGenerator.class)
+    @Mixin(class_4583.class)
     public static abstract class SheetDecalM implements ExtendedVertexBuilder {
-        @Shadow @Final private VertexConsumer delegate;
+        @Shadow @Final private class_4588 delegate;
         @Shadow @Final private Matrix3f normalInversePose;
         @Shadow @Final private Matrix4f cameraInversePose;
         @Shadow @Final private float textureScale;
@@ -109,7 +109,7 @@ public class VertexMultiConsumersM {
         }
 
         @Inject(method = "<init>", at = @At("RETURN"))
-        private void checkDelegates(VertexConsumer vertexConsumer, PoseStack.Pose pose, float f, CallbackInfo ci) {
+        private void checkDelegates(class_4588 vertexConsumer, class_4587.class_4665 pose, float f, CallbackInfo ci) {
             this.canUseFastVertex = (ExtendedVertexBuilder.of(this.delegate) != null);
         }
 
@@ -123,16 +123,16 @@ public class VertexMultiConsumersM {
             position.set(x, y , z, 1.0f);
 
             this.normalInversePose.transform(normal);
-            Direction direction = Direction.getApproximateNearest(normal.x(), normal.y(), normal.z());
+            class_2350 direction = class_2350.method_10147(normal.x(), normal.y(), normal.z());
             this.cameraInversePose.transform(position);
             position.rotateY(3.1415927F);
             position.rotateX(-1.5707964F);
-            position.rotate(direction.getRotation());
+            position.rotate(direction.method_23224());
             float f = -position.x() * this.textureScale;
             float g = -position.y() * this.textureScale;
 
             final int color = 0xFFFFFFFF;
-            this.delegate.addVertex(x, y, z, color, f, g, overlay, light, nx, ny, nz);
+            this.delegate.method_23919(x, y, z, color, f, g, overlay, light, nx, ny, nz);
         }
     }
 }

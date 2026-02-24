@@ -90,7 +90,7 @@ public class QuadSorter {
         this.sortingPointsIndices = new int[pointCount];
     }
 
-    public void putSortedQuadIndices(TerrainBufferBuilder bufferBuilder, VertexFormat.IndexType indexType) {
+    public void putSortedQuadIndices(TerrainBufferBuilder bufferBuilder, VertexFormat.class_5595 indexType) {
         float[] distances = this.distances;
         int[] sortingPointsIndices = this.sortingPointsIndices;
 
@@ -105,7 +105,7 @@ public class QuadSorter {
 
         long ptr = bufferBuilder.getPtr();
 
-        final int size = indexType.bytes;
+        final int size = indexType.field_27375;
         final int stride = 4; // 4 vertices in a quad
         for (int i = 0; i < sortingPointsIndices.length; ++i) {
             final int quadIndex = sortingPointsIndices[i];
@@ -122,7 +122,7 @@ public class QuadSorter {
         }
     }
 
-    public void putSortedQuadIndices(TerrainBuilder bufferBuilder, VertexFormat.IndexType indexType) {
+    public void putSortedQuadIndices(TerrainBuilder bufferBuilder, VertexFormat.class_5595 indexType) {
         float[] distances = new float[this.sortingPoints.length];
         int[] sortingPoints = new int[this.sortingPoints.length];
 
@@ -137,7 +137,7 @@ public class QuadSorter {
 
         long ptr = bufferBuilder.indexBufferPtr;
 
-        final int size = indexType.bytes;
+        final int size = indexType.field_27375;
         final int stride = 4; // 4 vertices in a quad
         for (int i = 0; i < sortingPoints.length; ++i) {
             final int quadIndex = sortingPoints[i];

@@ -1,11 +1,12 @@
 package net.vulkanmod.render.chunk.build.light.smooth;
 
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.core.BlockPos;
 import net.vulkanmod.render.chunk.util.SimpleDirection;
 import net.vulkanmod.render.chunk.build.light.data.LightDataAccess;
 
 import static net.vulkanmod.render.chunk.build.light.data.LightDataAccess.*;
+
+import net.minecraft.class_2338;
+import net.minecraft.class_765;
 
 class AoFaceData {
     public final int[] lm = new int[4];
@@ -16,10 +17,10 @@ class AoFaceData {
 
     protected int flags;
 
-    public void initLightData(LightDataAccess cache, BlockPos pos, SimpleDirection direction, boolean offset) {
-        final int oX = pos.getX();
-        final int oY = pos.getY();
-        final int oZ = pos.getZ();
+    public void initLightData(LightDataAccess cache, class_2338 pos, SimpleDirection direction, boolean offset) {
+        final int oX = pos.method_10263();
+        final int oY = pos.method_10264();
+        final int oZ = pos.method_10260();
 
         final int x;
         final int y;
@@ -225,16 +226,16 @@ class AoFaceData {
         // FIX: Apply the fullbright lightmap from emissive blocks at the very end so it cannot influence
         // the minimum lightmap and produce incorrect results (for example, sculk sensors in a dark room)
         if (aem) {
-            a = LightTexture.FULL_BRIGHT;
+            a = class_765.field_32767;
         }
         if (bem) {
-            b = LightTexture.FULL_BRIGHT;
+            b = class_765.field_32767;
         }
         if (cem) {
-            c = LightTexture.FULL_BRIGHT;
+            c = class_765.field_32767;
         }
         if (dem) {
-            d = LightTexture.FULL_BRIGHT;
+            d = class_765.field_32767;
         }
 
         return ((a + b + c + d) >> 2) & 0xFF00FF;

@@ -1,6 +1,6 @@
 package net.vulkanmod.render.chunk.build.task;
 
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.class_243;
 import net.vulkanmod.render.chunk.RenderSection;
 import net.vulkanmod.render.chunk.WorldRenderer;
 import net.vulkanmod.render.chunk.build.UploadBuffer;
@@ -27,10 +27,10 @@ public class SortTransparencyTask extends ChunkTask {
             return Result.CANCELLED;
         }
 
-        Vec3 vec3 = WorldRenderer.getCameraPos();
-        float x = (float) vec3.x;
-        float y = (float) vec3.y;
-        float z = (float) vec3.z;
+        class_243 vec3 = WorldRenderer.getCameraPos();
+        float x = (float) vec3.field_1352;
+        float y = (float) vec3.field_1351;
+        float z = (float) vec3.field_1350;
 
         CompiledSection compiledSection = this.section.getCompiledSection();
         QuadSorter.SortState transparencyState = compiledSection.transparencyState;
@@ -49,7 +49,6 @@ public class SortTransparencyTask extends ChunkTask {
         bufferBuilder.reset();
 
         if (this.cancelled.get()) {
-            compileResult.renderedLayers.values().forEach(UploadBuffer::release);
             return Result.CANCELLED;
         }
 

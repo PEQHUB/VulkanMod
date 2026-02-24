@@ -1,21 +1,21 @@
 package net.vulkanmod.mixin.vertex;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.OutlineBufferSource;
+import net.minecraft.class_4588;
+import net.minecraft.class_4618;
 import net.vulkanmod.interfaces.ExtendedVertexBuilder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(OutlineBufferSource.EntityOutlineGenerator.class)
+@Mixin(class_4618.class_4586.class)
 public class EntityOutlineGeneratorM implements ExtendedVertexBuilder {
 
     private ExtendedVertexBuilder extDelegate;
     private boolean canUseFastVertex = false;
 
     @Inject(method = "<init>*", at = @At("RETURN"))
-    private void getExtBuilder(VertexConsumer vertexConsumer, int i, CallbackInfo ci) {
+    private void getExtBuilder(class_4588 vertexConsumer, int i, CallbackInfo ci) {
         if (vertexConsumer instanceof ExtendedVertexBuilder) {
             this.extDelegate = (ExtendedVertexBuilder) vertexConsumer;
             this.canUseFastVertex = true;

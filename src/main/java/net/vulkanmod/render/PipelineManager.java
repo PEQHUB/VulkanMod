@@ -1,9 +1,9 @@
 package net.vulkanmod.render;
 
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.class_1921;
+import net.minecraft.class_290;
 import net.vulkanmod.render.chunk.build.thread.ThreadBuilderPack;
 import net.vulkanmod.render.shader.ShaderLoadUtil;
 import net.vulkanmod.render.vertex.CustomVertexFormat;
@@ -34,25 +34,23 @@ public abstract class PipelineManager {
     }
 
     public static void setDefaultShader() {
-        setShaderGetter(
-                renderType -> renderType == TerrainRenderType.TRANSLUCENT ? terrainShaderEarlyZ : terrainShader);
+        setShaderGetter(renderType -> terrainShader);
     }
 
     private static void createBasicPipelines() {
         terrainShaderEarlyZ = createPipeline("terrain_earlyZ", terrainVertexFormat);
         terrainShader = createPipeline("terrain", terrainVertexFormat);
         fastBlitPipeline = createPipeline("blit", CustomVertexFormat.NONE);
-        cloudsPipeline = createPipeline("clouds", DefaultVertexFormat.POSITION_COLOR);
+        cloudsPipeline = createPipeline("clouds", class_290.field_1576);
     }
 
     private static GraphicsPipeline createPipeline(String configName, VertexFormat vertexFormat) {
         Pipeline.Builder pipelineBuilder = new Pipeline.Builder(vertexFormat, configName);
 
-        final String path = ShaderLoadUtil.resolveShaderPath("basic");
-        JsonObject config = ShaderLoadUtil.getJsonConfig(path, configName);
+        JsonObject config = ShaderLoadUtil.getJsonConfig("basic", configName);
         pipelineBuilder.parseBindings(config);
 
-        ShaderLoadUtil.loadShaders(pipelineBuilder, config, configName, path);
+        ShaderLoadUtil.loadShaders(pipelineBuilder, config, configName, "basic");
 
         var pipeline = pipelineBuilder.createGraphicsPipeline();
 
@@ -71,11 +69,11 @@ public abstract class PipelineManager {
         shaderGetter = consumer;
     }
 
-    public static GraphicsPipeline getTerrainDirectShader(RenderType renderType) {
+    public static GraphicsPipeline getTerrainDirectShader(class_1921 renderType) {
         return terrainShader;
     }
 
-    public static GraphicsPipeline getTerrainIndirectShader(RenderType renderType) {
+    public static GraphicsPipeline getTerrainIndirectShader(class_1921 renderType) {
         return terrainShaderEarlyZ;
     }
 

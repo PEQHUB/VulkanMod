@@ -1,24 +1,28 @@
 package net.vulkanmod.render.chunk.build.frapi.render;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.Object2ByteLinkedOpenHashMap;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadAtlas;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.block.BlockColor;
-import net.minecraft.client.color.block.BlockColors;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.phys.shapes.BooleanOp;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.class_1087;
+import net.minecraft.class_10889;
+import net.minecraft.class_11515;
+import net.minecraft.class_1920;
+import net.minecraft.class_1922;
+import net.minecraft.class_2338;
+import net.minecraft.class_2350;
+import net.minecraft.class_247;
+import net.minecraft.class_259;
+import net.minecraft.class_265;
+import net.minecraft.class_2680;
+import net.minecraft.class_310;
+import net.minecraft.class_322;
+import net.minecraft.class_324;
+import net.minecraft.class_4588;
+import net.minecraft.class_4696;
+import net.minecraft.class_5819;
+import net.minecraft.class_765;
 import net.vulkanmod.interfaces.color.BlockColorsExtended;
 import net.vulkanmod.render.chunk.build.color.BlockColorRegistry;
 import net.vulkanmod.render.chunk.build.frapi.VulkanModRenderer;
@@ -28,11 +32,6 @@ import org.jetbrains.annotations.Nullable;
 import net.vulkanmod.render.chunk.build.frapi.helper.ColorHelper;
 import net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat;
 import net.vulkanmod.render.chunk.build.frapi.mesh.MutableQuadViewImpl;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.state.BlockState;
-
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -53,23 +52,14 @@ public abstract class AbstractBlockRenderContext extends AbstractRenderContext {
 			renderQuad(this);
 		}
 
-//		@Override
-//		public void emitBlockQuads(QuadEmitter emitter, BakedModel model, BlockState state,
-//								   Supplier<RandomSource> randomSupplier, Predicate<@Nullable Direction> cullTest) {
-//			if (this.hasTransform) {
-//				super.emitBlockQuads(emitter, model, state, randomSupplier, cullTest);
-//			} else {
-//				AbstractBlockRenderContext.this.emitVanillaBlockQuads(model, state, randomSupplier, cullTest);
-//			}
-//		}
 	};
 
-	protected BlockState blockState;
-	protected BlockPos blockPos;
-	protected BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos();
-	protected ChunkSectionLayer defaultLayer;
+	protected class_2680 blockState;
+	protected class_2338 blockPos;
+	protected class_2338.class_2339 tempPos = new class_2338.class_2339();
+	protected class_11515 defaultLayer;
 
-	protected BlockAndTintGetter renderRegion;
+	protected class_1920 renderRegion;
 
 	protected final Object2ByteLinkedOpenHashMap<ShapePairKey> occlusionCache = new Object2ByteLinkedOpenHashMap<>(2048, 0.25F) {
 		protected void rehash(int i) {
@@ -83,7 +73,7 @@ public abstract class AbstractBlockRenderContext extends AbstractRenderContext {
 	protected boolean useAO;
 	protected boolean defaultAO;
 
-	protected RandomSource random;
+	protected class_5819 random;
 
 	protected boolean enableCulling = true;
 	protected int cullCompletionFlags;
@@ -92,7 +82,7 @@ public abstract class AbstractBlockRenderContext extends AbstractRenderContext {
 	protected AbstractBlockRenderContext() {
 		this.occlusionCache.defaultReturnValue((byte) 127);
 
-		BlockColors blockColors = Minecraft.getInstance().getBlockColors();
+		class_324 blockColors = class_310.method_1551().method_1505();
 		this.blockColorRegistry = BlockColorsExtended.from(blockColors).getColorResolverMap();
 	}
 
@@ -101,33 +91,33 @@ public abstract class AbstractBlockRenderContext extends AbstractRenderContext {
 		this.smoothLightPipeline = smoothLightPipeline;
 	}
 
-	public void prepareForWorld(BlockAndTintGetter blockView, boolean enableCulling) {
+	public void prepareForWorld(class_1920 blockView, boolean enableCulling) {
 		this.renderRegion = blockView;
 		this.enableCulling = enableCulling;
 	}
 
-	public void prepareForBlock(BlockState blockState, BlockPos blockPos, boolean modelAo) {
+	public void prepareForBlock(class_2680 blockState, class_2338 blockPos, boolean modelAo) {
 		this.blockPos = blockPos;
 		this.blockState = blockState;
-		this.defaultLayer = ItemBlockRenderTypes.getChunkRenderType(blockState);
+		this.defaultLayer = class_4696.method_23679(blockState);
 
-		this.useAO = Minecraft.useAmbientOcclusion();
-		this.defaultAO = this.useAO && modelAo && blockState.getLightEmission() == 0;
+		this.useAO = class_310.method_1588();
+		this.defaultAO = this.useAO && modelAo && blockState.method_26213() == 0;
 
 		this.cullCompletionFlags = 0;
 		this.cullResultFlags = 0;
 	}
 
-	public boolean isFaceCulled(@Nullable Direction face) {
+	public boolean isFaceCulled(@Nullable class_2350 face) {
 		return !this.shouldRenderFace(face);
 	}
 
-	public boolean shouldRenderFace(Direction face) {
+	public boolean shouldRenderFace(class_2350 face) {
 		if (face == null || !enableCulling) {
 			return true;
 		}
 
-		final int mask = 1 << face.get3DDataValue();
+		final int mask = 1 << face.method_10146();
 
 		if ((cullCompletionFlags & mask) == 0) {
 			cullCompletionFlags |= mask;
@@ -143,28 +133,28 @@ public abstract class AbstractBlockRenderContext extends AbstractRenderContext {
 		}
 	}
 
-	public boolean faceNotOccluded(BlockState blockState, Direction face) {
-		BlockGetter blockGetter = this.renderRegion;
+	public boolean faceNotOccluded(class_2680 blockState, class_2350 face) {
+		class_1922 blockGetter = this.renderRegion;
 
-		BlockPos adjPos = tempPos.setWithOffset(blockPos, face);
-		BlockState adjBlockState = blockGetter.getBlockState(adjPos);
+		class_2338 adjPos = tempPos.method_25505(blockPos, face);
+		class_2680 adjBlockState = blockGetter.method_8320(adjPos);
 
-		if (blockState.skipRendering(adjBlockState, face)) {
+		if (blockState.method_26187(adjBlockState, face)) {
 			return false;
 		}
 
-		if (adjBlockState.canOcclude()) {
-			VoxelShape shape = blockState.getFaceOcclusionShape(face);
+		if (adjBlockState.method_26225()) {
+			class_265 shape = blockState.method_26173(face);
 
-			if (shape.isEmpty())
+			if (shape.method_1110())
 				return true;
 
-			VoxelShape adjShape = adjBlockState.getFaceOcclusionShape(face.getOpposite());
+			class_265 adjShape = adjBlockState.method_26173(face.method_10153());
 
-			if (adjShape.isEmpty())
+			if (adjShape.method_1110())
 				return true;
 
-			if (shape == Shapes.block() && adjShape == Shapes.block()) {
+			if (shape == class_259.method_1077() && adjShape == class_259.method_1077()) {
 				return false;
 			}
 
@@ -174,7 +164,7 @@ public abstract class AbstractBlockRenderContext extends AbstractRenderContext {
 			if (b != 127) {
 				return b != 0;
 			} else {
-				boolean bl = Shapes.joinIsNotEmpty(shape, adjShape, BooleanOp.ONLY_FIRST);
+				boolean bl = class_259.method_1074(shape, adjShape, class_247.field_16886);
 
 				if (occlusionCache.size() == 2048) {
 					occlusionCache.removeLastByte();
@@ -198,7 +188,7 @@ public abstract class AbstractBlockRenderContext extends AbstractRenderContext {
 		this.renderQuad(quadView);
 	}
 
-	protected abstract VertexConsumer getVertexConsumer(ChunkSectionLayer layer);
+	protected abstract class_4588 getVertexConsumer(class_11515 layer);
 
 	private void renderQuad(MutableQuadViewImpl quad) {
 		if (isFaceCulled(quad.cullFace())) {
@@ -223,8 +213,8 @@ public abstract class AbstractBlockRenderContext extends AbstractRenderContext {
 		}
 	}
 
-	private int getBlockColor(BlockAndTintGetter region, int colorIndex) {
-		BlockColor blockColor = this.blockColorRegistry.getBlockColor(this.blockState.getBlock());
+	private int getBlockColor(class_1920 region, int colorIndex) {
+		class_322 blockColor = this.blockColorRegistry.getBlockColor(this.blockState.method_26204());
 
 		int color = blockColor != null ? blockColor.getColor(blockState, region, blockPos, colorIndex) : -1;
 		return 0xFF000000 | color;
@@ -240,7 +230,7 @@ public abstract class AbstractBlockRenderContext extends AbstractRenderContext {
 			for (int i = 0; i < 4; i++) {
 				quad.color(i, ColorHelper.multiplyRGB(quad.color(i), data.br[i]));
 //				quad.lightmap(i, LightTexture.FULL_BRIGHT);
-				data.lm[i] = LightTexture.FULL_BRIGHT;
+				data.lm[i] = class_765.field_32767;
 			}
 		} else {
 			for (int i = 0; i < 4; i++) {
@@ -251,23 +241,23 @@ public abstract class AbstractBlockRenderContext extends AbstractRenderContext {
 		}
 	}
 
-	public ChunkSectionLayer effectiveRenderLayer(@Nullable ChunkSectionLayer quadRenderLayer) {
+	public class_11515 effectiveRenderLayer(@Nullable class_11515 quadRenderLayer) {
 		return quadRenderLayer == null ? defaultLayer : quadRenderLayer;
 	}
 
-	public void emitVanillaBlockQuads(BlockStateModel model, @Nullable BlockState state, Supplier<RandomSource> randomSupplier, Predicate<Direction> cullTest) {
+	public void emitVanillaBlockQuads(class_1087 model, @Nullable class_2680 state, Supplier<class_5819> randomSupplier, Predicate<class_2350> cullTest) {
 		MutableQuadViewImpl quad = this.editorQuad;
 //		final RenderMaterial defaultMaterial = state.getLightEmission() == 0 ? STANDARD_MATERIAL : NO_AO_MATERIAL;
 
 		for (int i = 0; i <= ModelHelper.NULL_FACE_ID; i++) {
-			final Direction cullFace = ModelHelper.faceFromIndex(i);
+			final class_2350 cullFace = ModelHelper.faceFromIndex(i);
 
 			if (cullTest.test(cullFace)) {
 				// Skip entire quad list if possible.
 				continue;
 			}
 
-			final List<BlockModelPart> parts = ((BlockStateModel) this).collectParts(random);
+			final List<class_10889> parts = ((class_1087) this).method_68512(random);
 			final int partCount = parts.size();
 
 			for (int j = 0; j < partCount; j++) {
@@ -278,7 +268,7 @@ public abstract class AbstractBlockRenderContext extends AbstractRenderContext {
 	}
 
 	// TODO move elsewhere
-	record ShapePairKey(VoxelShape first, VoxelShape second) {
+	record ShapePairKey(class_265 first, class_265 second) {
 		public boolean equals(Object object) {
 			if (object instanceof ShapePairKey shapePairKey && this.first == shapePairKey.first && this.second == shapePairKey.second) {
 				return true;

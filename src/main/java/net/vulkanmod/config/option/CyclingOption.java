@@ -1,6 +1,6 @@
 package net.vulkanmod.config.option;
 
-import net.minecraft.network.chat.Component;
+import net.minecraft.class_2561;
 import net.vulkanmod.config.gui.widget.CyclingOptionWidget;
 import net.vulkanmod.config.gui.widget.OptionWidget;
 import org.apache.commons.lang3.ArrayUtils;
@@ -12,7 +12,7 @@ public class CyclingOption<E> extends Option<E> {
     private E[] values;
     private int index;
 
-    public CyclingOption(Component name, E[] values, Consumer<E> setter, Supplier<E> getter) {
+    public CyclingOption(class_2561 name, E[] values, Consumer<E> setter, Supplier<E> getter) {
         super(name, setter, getter);
         this.values = values;
 

@@ -90,11 +90,11 @@ public class Drawer {
         this.uniformBuffers[currentFrame].reset();
     }
 
-    public void draw(ByteBuffer vertexData, VertexFormat.Mode mode, VertexFormat vertexFormat, int vertexCount) {
+    public void draw(ByteBuffer vertexData, VertexFormat.class_5596 mode, VertexFormat vertexFormat, int vertexCount) {
         draw(vertexData, null, mode, vertexFormat, vertexCount);
     }
 
-    public void draw(ByteBuffer vertexData, ByteBuffer indexData, VertexFormat.Mode mode, VertexFormat vertexFormat, int vertexCount) {
+    public void draw(ByteBuffer vertexData, ByteBuffer indexData, VertexFormat.class_5596 mode, VertexFormat vertexFormat, int vertexCount) {
         VertexBuffer vertexBuffer = this.vertexBuffers[this.currentFrame];
         int size = vertexFormat.getVertexSize() * vertexCount;
         vertexBuffer.copyBuffer(vertexData, size);
@@ -196,19 +196,20 @@ public class Drawer {
         return this.uniformBuffers[this.currentFrame];
     }
 
-    public AutoIndexBuffer getAutoIndexBuffer(VertexFormat.Mode mode, int vertexCount) {
+    public AutoIndexBuffer getAutoIndexBuffer(VertexFormat.class_5596 mode, int vertexCount) {
         return switch (mode) {
-            case QUADS -> {
+            case field_27382 -> {
                 int indexCount = vertexCount * 3 / 2;
 
                 yield indexCount > AutoIndexBuffer.U16_MAX_VERTEX_COUNT
                         ? this.quadsIntIndexBuffer : this.quadsIndexBuffer;
             }
-            case LINES -> this.linesIndexBuffer;
-            case TRIANGLE_FAN -> this.triangleFanIndexBuffer;
-            case TRIANGLE_STRIP -> this.triangleStripIndexBuffer;
-            case DEBUG_LINE_STRIP -> this.debugLineStripIndexBuffer;
-            case TRIANGLES, DEBUG_LINES, POINTS -> null;
+            case field_27377 -> this.linesIndexBuffer;
+            case field_27381 -> this.triangleFanIndexBuffer;
+            case field_27380 -> this.triangleStripIndexBuffer;
+            case field_29345 -> this.debugLineStripIndexBuffer;
+            case field_63316 -> null;
+            case field_27379, field_29344 -> null;
 		};
     }
 }

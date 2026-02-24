@@ -1,47 +1,47 @@
 package net.vulkanmod.config.gui.render;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.gui.render.state.GuiElementRenderState;
+import net.minecraft.class_11231;
+import net.minecraft.class_11244;
+import net.minecraft.class_4588;
+import net.minecraft.class_8030;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
 
 public record PolygonRenderState (
         RenderPipeline pipeline,
-        TextureSetup textureSetup,
+        class_11231 textureSetup,
         Matrix3x2f pose,
         float[][] vertices,
         int col,
-        @Nullable ScreenRectangle scissorArea,
-        @Nullable ScreenRectangle bounds
-) implements GuiElementRenderState {
+        @Nullable class_8030 scissorArea,
+        @Nullable class_8030 bounds
+) implements class_11244 {
 
     public PolygonRenderState(
             RenderPipeline renderPipeline,
-            TextureSetup textureSetup,
+            class_11231 textureSetup,
             Matrix3x2f pose,
             float[][] vertices,
             int color,
-            @Nullable ScreenRectangle screenRectangle
+            @Nullable class_8030 screenRectangle
     ) {
         this(renderPipeline, textureSetup, pose, vertices, color, screenRectangle,
              getBounds(vertices, pose, screenRectangle));
     }
 
     @Override
-    public void buildVertices(VertexConsumer vertexConsumer) {
+    public void method_70917(class_4588 vertexConsumer) {
         for (float[] vertex : vertices) {
             float x = vertex[0];
             float y = vertex[1];
-            vertexConsumer.addVertexWith2DPose(this.pose(), x, y)
-                          .setColor(this.col);
+            vertexConsumer.method_70815(this.pose(), x, y)
+                          .method_39415(this.col);
         }
     }
 
     @Nullable
-    private static ScreenRectangle getBounds(float[][] vertices, Matrix3x2f matrix3x2f, @Nullable ScreenRectangle screenRectangle) {
+    private static class_8030 getBounds(float[][] vertices, Matrix3x2f matrix3x2f, @Nullable class_8030 screenRectangle) {
         float x0 = vertices[0][0];
         float x1 = vertices[0][0];
         float y0 = vertices[0][1];
@@ -66,8 +66,8 @@ public record PolygonRenderState (
             }
         }
 
-        ScreenRectangle screenRectangle2 = new ScreenRectangle((int) x0, (int) y0, (int) (x1 - x0), (int) (y1 - y0)).transformMaxBounds(matrix3x2f);
-        return screenRectangle != null ? screenRectangle.intersection(screenRectangle2) : screenRectangle2;
+        class_8030 screenRectangle2 = new class_8030((int) x0, (int) y0, (int) (x1 - x0), (int) (y1 - y0)).method_71523(matrix3x2f);
+        return screenRectangle != null ? screenRectangle.method_49701(screenRectangle2) : screenRectangle2;
     }
 }
 

@@ -1,6 +1,6 @@
 package net.vulkanmod.config.option;
 
-import net.minecraft.network.chat.Component;
+import net.minecraft.class_2561;
 import net.vulkanmod.config.gui.widget.OptionWidget;
 
 import java.util.function.Consumer;
@@ -8,8 +8,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public abstract class Option<T> {
-    protected final Component name;
-    protected Component tooltip;
+    protected final class_2561 name;
+    protected class_2561 tooltip;
 
     protected Consumer<T> onApply;
     protected Supplier<T> valueSupplier;
@@ -17,7 +17,7 @@ public abstract class Option<T> {
     protected T value;
     protected T newValue;
 
-    protected Function<T, Component> translator;
+    protected Function<T, class_2561> translator;
 
     OptionWidget<?> widget;
 
@@ -25,7 +25,7 @@ public abstract class Option<T> {
     protected Runnable onChange;
     protected Supplier<Boolean> activationFn;
 
-    public Option(Component name, Consumer<T> setter, Supplier<T> getter, Function<T, Component> translator) {
+    public Option(class_2561 name, Consumer<T> setter, Supplier<T> getter, Function<T, class_2561> translator) {
         this.name = name;
 
         this.onApply = setter;
@@ -36,7 +36,7 @@ public abstract class Option<T> {
         this.translator = translator;
     }
 
-    public Option(Component name, Consumer<T> setter, Supplier<T> getter) {
+    public Option(class_2561 name, Consumer<T> setter, Supplier<T> getter) {
         this.name = name;
 
         this.onApply = setter;
@@ -55,7 +55,7 @@ public abstract class Option<T> {
         return this;
     }
 
-    public Option<T> setTranslator(Function<T, Component> translator) {
+    public Option<T> setTranslator(Function<T, class_2561> translator) {
         this.translator = translator;
         return this;
     }
@@ -94,7 +94,7 @@ public abstract class Option<T> {
         this.widget.setActive(this.active);
     }
 
-    public Component getName() {
+    public class_2561 getName() {
         return this.name;
     }
 
@@ -119,16 +119,16 @@ public abstract class Option<T> {
         return this.newValue;
     }
 
-    public Component getDisplayedValue() {
+    public class_2561 getDisplayedValue() {
         return this.translator.apply(this.newValue);
     }
 
-    public Option<T> setTooltip(Component text) {
+    public Option<T> setTooltip(class_2561 text) {
         this.tooltip = text;
         return this;
     }
 
-    public Component getTooltip() {
+    public class_2561 getTooltip() {
         return this.tooltip;
     }
 }

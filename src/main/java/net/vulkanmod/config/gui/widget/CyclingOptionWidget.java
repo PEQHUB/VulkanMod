@@ -1,9 +1,9 @@
 package net.vulkanmod.config.gui.widget;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.network.chat.Component;
+import net.minecraft.class_11231;
+import net.minecraft.class_2561;
+import net.minecraft.class_310;
+import net.minecraft.class_327;
 import net.vulkanmod.config.gui.render.GuiRenderer;
 import net.vulkanmod.config.option.CyclingOption;
 import net.vulkanmod.render.shader.CustomRenderPipelines;
@@ -15,7 +15,7 @@ public class CyclingOptionWidget extends OptionWidget<CyclingOption<?>> {
 
     private boolean focused;
 
-    public CyclingOptionWidget(CyclingOption<?> option, Component name) {
+    public CyclingOptionWidget(CyclingOption<?> option, class_2561 name) {
         super(option, name);
         this.leftButton = new Button(Button.Direction.LEFT);
         this.rightButton = new Button(Button.Direction.RIGHT);
@@ -41,7 +41,7 @@ public class CyclingOptionWidget extends OptionWidget<CyclingOption<?>> {
         this.rightButton.setStatus(option.index() < option.getValues().length - 1);
 
         int color = this.active ? 0xFFFFFFFF : 0xFFA0A0A0;
-        Font textRenderer = Minecraft.getInstance().font;
+        class_327 textRenderer = class_310.method_1551().field_1772;
         int x = this.controlX + this.controlWidth / 2;
         int y = this.y + (this.height - 9) / 2;
         GuiRenderer.drawCenteredString(textRenderer, this.getDisplayedValue(), x, y, color);
@@ -101,12 +101,12 @@ public class CyclingOptionWidget extends OptionWidget<CyclingOption<?>> {
     }
 
     @Override
-    public void setFocused(boolean bl) {
+    public void method_25365(boolean bl) {
         this.focused = bl;
     }
 
     @Override
-    public boolean isFocused() {
+    public boolean method_25370() {
         return this.focused;
     }
 
@@ -174,7 +174,7 @@ public class CyclingOptionWidget extends OptionWidget<CyclingOption<?>> {
             }
 
 
-            GuiRenderer.submitPolygon(CustomRenderPipelines.GUI_TRIANGLES, TextureSetup.noTexture(), vertices, color);
+            GuiRenderer.submitPolygon(CustomRenderPipelines.GUI_TRIANGLES, class_11231.method_70899(), vertices, color);
         }
 
         enum Direction {

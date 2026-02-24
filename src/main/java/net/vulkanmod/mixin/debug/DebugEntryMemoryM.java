@@ -1,10 +1,10 @@
 package net.vulkanmod.mixin.debug;
 
-import net.minecraft.client.gui.components.debug.DebugEntryMemory;
-import net.minecraft.client.gui.components.debug.DebugScreenDisplayer;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.class_11618;
+import net.minecraft.class_11630;
+import net.minecraft.class_1937;
+import net.minecraft.class_2818;
+import net.minecraft.class_2960;
 import net.vulkanmod.vulkan.memory.MemoryManager;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -16,10 +16,10 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Locale;
 
-@Mixin(DebugEntryMemory.class)
+@Mixin(class_11618.class)
 public abstract class DebugEntryMemoryM {
 
-    @Shadow @Final private static Identifier GROUP;
+    @Shadow @Final private static class_2960 GROUP;
 
     @Shadow
     protected static long bytesToMegabytes(long l) {
@@ -30,12 +30,12 @@ public abstract class DebugEntryMemoryM {
 //    @Shadow @Final private DebugEntryMemory.AllocationRateCalculator allocationRateCalculator;
 
     @Overwrite
-    public void display(DebugScreenDisplayer debugScreenDisplayer, @Nullable Level level, @Nullable LevelChunk levelChunk, @Nullable LevelChunk levelChunk2) {
+    public void display(class_11630 debugScreenDisplayer, @Nullable class_1937 level, @Nullable class_2818 levelChunk, @Nullable class_2818 levelChunk2) {
         long l = Runtime.getRuntime().maxMemory();
         long m = Runtime.getRuntime().totalMemory();
         long n = Runtime.getRuntime().freeMemory();
         long o = m - n;
-        debugScreenDisplayer.addToGroup(
+        debugScreenDisplayer.method_72744(
                 GROUP,
                 List.of(
                         String.format(Locale.ROOT, "Mem: %2d%% %03d/%03dMB", o * 100L / l, bytesToMegabytes(o), bytesToMegabytes(l)),

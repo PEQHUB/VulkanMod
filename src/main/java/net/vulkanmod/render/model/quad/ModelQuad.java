@@ -1,7 +1,7 @@
 package net.vulkanmod.render.model.quad;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.Direction;
+import net.minecraft.class_1058;
+import net.minecraft.class_2350;
 import net.vulkanmod.render.chunk.cull.QuadFacing;
 
 /**
@@ -16,8 +16,8 @@ public class ModelQuad implements ModelQuadView {
 
     private final int[] data = new int[4 * VERTEX_SIZE];
 
-    Direction direction;
-    TextureAtlasSprite sprite;
+    class_2350 direction;
+    class_1058 sprite;
 
     private int flags;
     
@@ -62,12 +62,12 @@ public class ModelQuad implements ModelQuadView {
     }
 
     @Override
-    public Direction getFacingDirection() {
+    public class_2350 getFacingDirection() {
         return this.direction;
     }
 
     @Override
-    public Direction lightFace() {
+    public class_2350 lightFace() {
         return this.direction;
     }
 
@@ -108,7 +108,7 @@ public class ModelQuad implements ModelQuadView {
         this.flags = f;
     }
 
-    public void setSprite(TextureAtlasSprite sprite) {
+    public void setSprite(class_1058 sprite) {
         this.sprite = sprite;
     }
 }

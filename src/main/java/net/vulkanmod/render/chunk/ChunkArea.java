@@ -1,6 +1,6 @@
 package net.vulkanmod.render.chunk;
 
-import net.minecraft.core.BlockPos;
+import net.minecraft.class_2338;
 import net.vulkanmod.render.chunk.buffer.DrawBuffers;
 import net.vulkanmod.render.chunk.frustum.VFrustum;
 import net.vulkanmod.render.chunk.util.StaticQueue;
@@ -90,8 +90,8 @@ public class ChunkArea {
 
     }
 
-    public byte getFrustumIndex(BlockPos pos) {
-        return getFrustumIndex(pos.getX(), pos.getY(), pos.getZ());
+    public byte getFrustumIndex(class_2338 pos) {
+        return getFrustumIndex(pos.method_10263(), pos.method_10264(), pos.method_10260());
     }
 
     public byte getFrustumIndex(int x, int y, int z) {

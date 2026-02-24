@@ -1,6 +1,6 @@
 package net.vulkanmod.render.profiling;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.class_310;
 
 public abstract class BuildTimeProfiler {
 
@@ -24,7 +24,7 @@ public abstract class BuildTimeProfiler {
 
     public static void startBench() {
         bench = true;
-        Minecraft.getInstance().levelRenderer.allChanged();
+        class_310.method_1551().field_1769.method_3279();
     }
 
     public static float getDeltaTime() {

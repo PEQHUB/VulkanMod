@@ -1,15 +1,15 @@
 package net.vulkanmod.render.chunk.graph;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.SectionPos;
-import net.minecraft.util.Mth;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.class_1937;
+import net.minecraft.class_2338;
+import net.minecraft.class_243;
+import net.minecraft.class_310;
+import net.minecraft.class_3532;
+import net.minecraft.class_3695;
+import net.minecraft.class_4076;
+import net.minecraft.class_4184;
+import net.minecraft.class_4604;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.interfaces.FrustumMixed;
 import net.vulkanmod.render.chunk.*;
@@ -24,8 +24,8 @@ import org.joml.FrustumIntersection;
 import java.util.List;
 
 public class SectionGraph {
-    Minecraft minecraft;
-    private final Level level;
+    class_310 minecraft;
+    private final class_1937 level;
 
     private final SectionGrid sectionGrid;
     private final ChunkAreaManager chunkAreaManager;
@@ -43,27 +43,27 @@ public class SectionGraph {
     int nonEmptyChunks;
 
 
-    public SectionGraph(Level level, SectionGrid sectionGrid, TaskDispatcher taskDispatcher) {
+    public SectionGraph(class_1937 level, SectionGrid sectionGrid, TaskDispatcher taskDispatcher) {
         this.level = level;
         this.sectionGrid = sectionGrid;
         this.chunkAreaManager = sectionGrid.getChunkAreaManager();
         this.taskDispatcher = taskDispatcher;
 
         this.chunkAreaQueue = new AreaSetQueue(sectionGrid.getChunkAreaManager().size);
-        this.minecraft = Minecraft.getInstance();
+        this.minecraft = class_310.method_1551();
         this.renderRegionCache = WorldRenderer.getInstance().renderRegionCache;
     }
 
-    public void update(Camera camera, Frustum frustum, boolean spectator) {
+    public void update(class_4184 camera, class_4604 frustum, boolean spectator) {
         Profiler profiler = Profiler.getMainProfiler();
-        ProfilerFiller mcProfiler = net.minecraft.util.profiling.Profiler.get();
+        class_3695 mcProfiler = net.minecraft.class_10209.method_64146();
 
-        BlockPos blockpos = camera.blockPosition();
+        class_2338 blockpos = camera.method_19328();
 
-        mcProfiler.popPush("update");
+        mcProfiler.method_15405("update");
 
-        boolean flag = this.minecraft.smartCull;
-        if (spectator && this.level.getBlockState(blockpos).isSolidRender()) {
+        boolean flag = this.minecraft.field_1730;
+        if (spectator && this.level.method_8320(blockpos).method_26216()) {
             flag = false;
         }
 
@@ -72,7 +72,7 @@ public class SectionGraph {
         this.sectionGrid.updateFrustumVisibility(this.frustum);
         profiler.pop();
 
-        mcProfiler.push("partial_update");
+        mcProfiler.method_15396("partial_update");
 
         this.initUpdate();
         this.initializeQueueForFullUpdate(camera);
@@ -84,19 +84,19 @@ public class SectionGraph {
 
         this.scheduleRebuilds();
 
-        mcProfiler.pop();
+        mcProfiler.method_15407();
     }
 
-    private void initializeQueueForFullUpdate(Camera camera) {
-        Vec3 vec3 = camera.position();
-        BlockPos blockpos = camera.blockPosition();
+    private void initializeQueueForFullUpdate(class_4184 camera) {
+        class_243 vec3 = camera.method_71156();
+        class_2338 blockpos = camera.method_19328();
         RenderSection renderSection = this.sectionGrid.getSectionAtBlockPos(blockpos);
 
         if (renderSection == null) {
-            boolean flag = blockpos.getY() > this.level.getMinY();
-            int y = flag ? this.level.getMaxY() - 8 : this.level.getMinY() + 8;
-            int x = Mth.floor(vec3.x / 16.0D) * 16;
-            int z = Mth.floor(vec3.z / 16.0D) * 16;
+            boolean flag = blockpos.method_10264() > this.level.method_31607();
+            int y = flag ? this.level.method_31600() - 8 : this.level.method_31607() + 8;
+            int x = class_3532.method_15357(vec3.field_1352 / 16.0D) * 16;
+            int z = class_3532.method_15357(vec3.field_1350 / 16.0D) * 16;
 
             List<RenderSection> list = Lists.newArrayList();
             int renderDistance = WorldRenderer.getInstance().getRenderDistance();
@@ -104,7 +104,7 @@ public class SectionGraph {
             for (int x1 = -renderDistance; x1 <= renderDistance; ++x1) {
                 for (int z1 = -renderDistance; z1 <= renderDistance; ++z1) {
 
-                    RenderSection renderSection1 = this.sectionGrid.getSectionAtBlockPos(new BlockPos(x + SectionPos.sectionToBlockCoord(x1, 8), y, z + SectionPos.sectionToBlockCoord(z1, 8)));
+                    RenderSection renderSection1 = this.sectionGrid.getSectionAtBlockPos(new class_2338(x + class_4076.method_32205(x1, 8), y, z + class_4076.method_32205(z1, 8)));
                     if (renderSection1 != null) {
                         initFirstNode(renderSection1, this.lastFrame);
                         list.add(renderSection1);

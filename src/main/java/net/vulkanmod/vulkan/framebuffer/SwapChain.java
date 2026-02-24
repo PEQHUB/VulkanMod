@@ -236,8 +236,8 @@ public class SwapChain extends Framebuffer {
         return this.swapChainImages.get(Renderer.getCurrentImage());
     }
 
-    public long getImageView(int i) {
-        return this.swapChainImages.get(i).getImageView();
+    public long getColorAttachmentView() {
+        return this.getColorAttachment().getImageView();
     }
 
     private VkSurfaceFormatKHR getFormat(VkSurfaceFormatKHR.Buffer availableFormats) {

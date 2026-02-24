@@ -1,34 +1,34 @@
 package net.vulkanmod.render.chunk.build;
 
 import it.unimi.dsi.fastutil.longs.Long2ReferenceLinkedOpenHashMap;
-import net.minecraft.core.SectionPos;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.DataLayer;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.minecraft.world.level.chunk.PalettedContainer;
+import net.minecraft.class_1923;
+import net.minecraft.class_1937;
+import net.minecraft.class_1944;
+import net.minecraft.class_2680;
+import net.minecraft.class_2804;
+import net.minecraft.class_2818;
+import net.minecraft.class_2826;
+import net.minecraft.class_2841;
+import net.minecraft.class_4076;
 import net.vulkanmod.interfaces.biome.BiomeManagerExtended;
 import net.vulkanmod.render.chunk.build.biome.BiomeData;
 
 public class RenderRegionBuilder {
-    private static final DataLayer DEFAULT_SKY_LIGHT_DATA_LAYER = new DataLayer(15);
-    private static final DataLayer DEFAULT_BLOCK_LIGHT_DATA_LAYER = new DataLayer(0);
+    private static final class_2804 DEFAULT_SKY_LIGHT_DATA_LAYER = new class_2804(15);
+    private static final class_2804 DEFAULT_BLOCK_LIGHT_DATA_LAYER = new class_2804(0);
 
     private static final int MAX_CACHE_ENTRIES = 256;
-    private final Long2ReferenceLinkedOpenHashMap<LevelChunk> levelChunkCache = new Long2ReferenceLinkedOpenHashMap<>(MAX_CACHE_ENTRIES);
+    private final Long2ReferenceLinkedOpenHashMap<class_2818> levelChunkCache = new Long2ReferenceLinkedOpenHashMap<>(MAX_CACHE_ENTRIES);
 
-    public RenderRegion createRegion(Level level, int secX, int secY, int secZ) {
-        LevelChunk levelChunk = getLevelChunk(level, secX, secZ);
-        var sections = levelChunk.getSections();
-        LevelChunkSection section = sections[level.getSectionIndexFromSectionY(secY)];
+    public RenderRegion createRegion(class_1937 level, int secX, int secY, int secZ) {
+        class_2818 levelChunk = getLevelChunk(level, secX, secZ);
+        var sections = levelChunk.method_12006();
+        class_2826 section = sections[level.method_31603(secY)];
 
-        if (section == null || section.hasOnlyAir())
+        if (section == null || section.method_38292())
             return null;
 
-        var blockEntityMap = levelChunk.getBlockEntities();
+        var blockEntityMap = levelChunk.method_12214();
 
         int minSecX = secX - 1;
         int minSecZ = secZ - 1;
@@ -37,18 +37,18 @@ public class RenderRegionBuilder {
         int maxSecZ = secZ + 1;
         int maxSecY = secY + 1;
 
-        PalettedContainer<BlockState>[] blockData = new PalettedContainer[RenderRegion.SIZE];
+        class_2841<class_2680>[] blockData = new class_2841[RenderRegion.SIZE];
 
-        DataLayer[][] lightData = new DataLayer[RenderRegion.SIZE][2 /* Light types */];
+        class_2804[][] lightData = new class_2804[RenderRegion.SIZE][2 /* Light types */];
 
-        long biomeZoomSeed = BiomeManagerExtended.of(level.getBiomeManager()).getBiomeZoomSeed();
+        long biomeZoomSeed = BiomeManagerExtended.of(level.method_22385()).getBiomeZoomSeed();
         BiomeData biomeData = new BiomeData(biomeZoomSeed, minSecX, minSecY, minSecZ);
 
-        final int minHeightSec = level.getMinY() >> 4;
+        final int minHeightSec = level.method_31607() >> 4;
         for (int x = minSecX; x <= maxSecX; ++x) {
             for (int z = minSecZ; z <= maxSecZ; ++z) {
-                LevelChunk levelChunk1 = getLevelChunk(level, x, z);
-                sections = levelChunk1.getSections();
+                class_2818 levelChunk1 = getLevelChunk(level, x, z);
+                sections = levelChunk1.method_12006();
 
                 for (int y = minSecY; y <= maxSecY; ++y) {
                     int sectionIdx = y - minHeightSec;
@@ -57,12 +57,12 @@ public class RenderRegionBuilder {
                     final int relX = (x - minSecX), relY = (y - minSecY), relZ = (z - minSecZ);
                     final int idx = (relY * RenderRegion.WIDTH + relZ) * RenderRegion.WIDTH + relX;
 
-                    PalettedContainer<BlockState> values = section == null || section.hasOnlyAir() ? null : section.getStates().copy();
+                    class_2841<class_2680> values = section == null || section.method_38292() ? null : section.method_12265().method_39957();
 
                     blockData[idx] = values;
 
-                    SectionPos pos = SectionPos.of(x, y, z);
-                    DataLayer[] dataLayers = getSectionDataLayers(level, pos);
+                    class_4076 pos = class_4076.method_18676(x, y, z);
+                    class_2804[] dataLayers = getSectionDataLayers(level, pos);
 
                     lightData[idx] = dataLayers;
 
@@ -74,37 +74,37 @@ public class RenderRegionBuilder {
         return new RenderRegion(level, secX, secY, secZ, blockData, lightData, biomeData, blockEntityMap);
     }
 
-    private DataLayer[] getSectionDataLayers(Level level, SectionPos pos) {
-        DataLayer[] dataLayers = new DataLayer[2];
+    private class_2804[] getSectionDataLayers(class_1937 level, class_4076 pos) {
+        class_2804[] dataLayers = new class_2804[2];
 
-        DataLayer blockDataLayer;
-        blockDataLayer = level.getLightEngine().getLayerListener(LightLayer.BLOCK).getDataLayerData(pos);
+        class_2804 blockDataLayer;
+        blockDataLayer = level.method_22336().method_15562(class_1944.field_9282).method_15544(pos);
 
         if (blockDataLayer == null)
             blockDataLayer = DEFAULT_BLOCK_LIGHT_DATA_LAYER;
 
-        dataLayers[LightLayer.BLOCK.ordinal()] = blockDataLayer;
+        dataLayers[class_1944.field_9282.ordinal()] = blockDataLayer;
 
-        DataLayer skyDataLayer;
-        if (level.dimensionType().hasSkyLight()) {
-            skyDataLayer = level.getLightEngine().getLayerListener(LightLayer.SKY).getDataLayerData(pos);
+        class_2804 skyDataLayer;
+        if (level.method_8597().comp_642()) {
+            skyDataLayer = level.method_22336().method_15562(class_1944.field_9284).method_15544(pos);
 
             if (skyDataLayer == null)
                 skyDataLayer = DEFAULT_SKY_LIGHT_DATA_LAYER;
         } else
             skyDataLayer = null;
 
-        dataLayers[LightLayer.SKY.ordinal()] = skyDataLayer;
+        dataLayers[class_1944.field_9284.ordinal()] = skyDataLayer;
 
         return dataLayers;
     }
 
-    private LevelChunk getLevelChunk(Level level, int x, int z) {
-        long l = ChunkPos.asLong(x, z);
-        LevelChunk chunk = this.levelChunkCache.getAndMoveToFirst(l);
+    private class_2818 getLevelChunk(class_1937 level, int x, int z) {
+        long l = class_1923.method_8331(x, z);
+        class_2818 chunk = this.levelChunkCache.getAndMoveToFirst(l);
 
         if (chunk == null) {
-            chunk = level.getChunk(x, z);
+            chunk = level.method_8497(x, z);
 
             while (levelChunkCache.size() >= MAX_CACHE_ENTRIES) {
                 levelChunkCache.removeLast();
@@ -117,7 +117,7 @@ public class RenderRegionBuilder {
     }
 
     public void remove(int x, int z) {
-        levelChunkCache.remove(ChunkPos.asLong(x, z));
+        levelChunkCache.remove(class_1923.method_8331(x, z));
     }
 
     public void clear() {

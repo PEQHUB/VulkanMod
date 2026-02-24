@@ -1,7 +1,7 @@
 package net.vulkanmod.render.chunk.build.task;
 
 import com.google.common.collect.Lists;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.class_2586;
 import net.vulkanmod.render.vertex.QuadSorter;
 
 import org.jetbrains.annotations.Nullable;
@@ -11,14 +11,14 @@ public class CompiledSection {
     public static final CompiledSection UNCOMPILED = new CompiledSection();
 
     boolean isCompletelyEmpty = false;
-    final List<BlockEntity> blockEntities = Lists.newArrayList();
+    final List<class_2586> blockEntities = Lists.newArrayList();
     @Nullable QuadSorter.SortState transparencyState;
 
     public boolean hasTransparencyState() {
         return this.transparencyState != null;
     }
 
-    public List<BlockEntity> getBlockEntities() {
+    public List<class_2586> getBlockEntities() {
         return this.blockEntities;
     }
 }

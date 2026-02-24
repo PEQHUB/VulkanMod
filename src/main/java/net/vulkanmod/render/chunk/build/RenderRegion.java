@@ -1,21 +1,21 @@
 package net.vulkanmod.render.chunk.build;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.SectionPos;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.ColorResolver;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.DataLayer;
-import net.minecraft.world.level.chunk.PalettedContainer;
-import net.minecraft.world.level.levelgen.DebugLevelSource;
-import net.minecraft.world.level.lighting.LevelLightEngine;
-import net.minecraft.world.level.material.FluidState;
+import net.minecraft.class_1920;
+import net.minecraft.class_1937;
+import net.minecraft.class_1944;
+import net.minecraft.class_2246;
+import net.minecraft.class_2338;
+import net.minecraft.class_2350;
+import net.minecraft.class_2586;
+import net.minecraft.class_2680;
+import net.minecraft.class_2804;
+import net.minecraft.class_2841;
+import net.minecraft.class_2891;
+import net.minecraft.class_310;
+import net.minecraft.class_3568;
+import net.minecraft.class_3610;
+import net.minecraft.class_4076;
+import net.minecraft.class_6539;
 import net.vulkanmod.render.chunk.build.biome.BiomeData;
 import net.vulkanmod.render.chunk.build.color.TintCache;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
-public class RenderRegion implements BlockAndTintGetter {
+public class RenderRegion implements class_1920 {
     public static final int WIDTH = 3;
     public static final int SIZE = WIDTH * WIDTH * WIDTH;
 
@@ -33,27 +33,27 @@ public class RenderRegion implements BlockAndTintGetter {
     public static final int REGION_BLOCK_WIDTH = 16 + BOUNDARY_BLOCK_WIDTH * 2;
     public static final int BLOCK_COUNT = REGION_BLOCK_WIDTH * REGION_BLOCK_WIDTH * REGION_BLOCK_WIDTH;
 
-    public static final BlockState AIR_BLOCK_STATE = Blocks.AIR.defaultBlockState();
+    public static final class_2680 AIR_BLOCK_STATE = class_2246.field_10124.method_9564();
 
     private final int minSecX, minSecY, minSecZ;
     private final int minX, minY, minZ;
     private final int maxX, maxY, maxZ;
-    private final Level level;
+    private final class_1937 level;
     private final int blendRadius;
 
-    private final PalettedContainer<BlockState>[] blockDataContainers;
-    private final BlockState[] blockData;
-    private final DataLayer[][] lightData;
+    private final class_2841<class_2680>[] blockDataContainers;
+    private final class_2680[] blockData;
+    private final class_2804[][] lightData;
 
     private BiomeData biomeData;
     private TintCache tintCache;
 
-    private final Map<BlockPos, BlockEntity> blockEntityMap;
+    private final Map<class_2338, class_2586> blockEntityMap;
 
-    private final Function<BlockPos, BlockState> blockStateGetter;
+    private final Function<class_2338, class_2680> blockStateGetter;
 
-    RenderRegion(Level level, int x, int y, int z, PalettedContainer<BlockState>[] blockData, DataLayer[][] lightData,
-                 BiomeData biomeData, Map<BlockPos, BlockEntity> blockEntityMap) {
+    RenderRegion(class_1937 level, int x, int y, int z, class_2841<class_2680>[] blockData, class_2804[][] lightData,
+                 BiomeData biomeData, Map<class_2338, class_2586> blockEntityMap) {
         this.level = level;
 
         this.minSecX = x - 1;
@@ -71,22 +71,22 @@ public class RenderRegion implements BlockAndTintGetter {
         this.biomeData = biomeData;
         this.blockEntityMap = blockEntityMap;
 
-        this.blockData = new BlockState[BLOCK_COUNT];
+        this.blockData = new class_2680[BLOCK_COUNT];
 
-        this.blockStateGetter = level.isDebug() ? this::debugBlockState : this::defaultBlockState;
+        this.blockStateGetter = level.method_27982() ? this::debugBlockState : this::defaultBlockState;
 
-        this.blendRadius = Minecraft.getInstance().options.biomeBlendRadius().get();
+        this.blendRadius = class_310.method_1551().field_1690.method_41805().method_41753();
     }
 
     public void loadBlockStates() {
-        Arrays.fill(blockData, Blocks.AIR.defaultBlockState());
+        Arrays.fill(blockData, class_2246.field_10124.method_9564());
 
         for (int x = 0; x <= 2; ++x) {
             for (int z = 0; z <= 2; ++z) {
                 for (int y = 0; y <= 2; ++y) {
                     final int idx = getSectionIdx(x, y, z);
 
-                    PalettedContainer<BlockState> container = blockDataContainers[idx];
+                    class_2841<class_2680> container = blockDataContainers[idx];
 
                     if (container == null)
                         continue;
@@ -111,7 +111,7 @@ public class RenderRegion implements BlockAndTintGetter {
         }
     }
 
-    void loadSectionBlockStates(PalettedContainer<BlockState> container, BlockState[] blockStates,
+    void loadSectionBlockStates(class_2841<class_2680> container, class_2680[] blockStates,
                                 int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
 
         for (int y = minY; y < maxY; ++y) {
@@ -120,8 +120,8 @@ public class RenderRegion implements BlockAndTintGetter {
                     final int idx = getBlockIdx(x - this.minX, y - this.minY, z - this.minZ);
 
                     blockStates[idx] = container != null ?
-                            container.get(x & 15, y & 15, z & 15)
-                            : Blocks.AIR.defaultBlockState();
+                            container.method_12321(x & 15, y & 15, z & 15)
+                            : class_2246.field_10124.method_9564();
                 }
             }
         }
@@ -132,72 +132,72 @@ public class RenderRegion implements BlockAndTintGetter {
         this.tintCache.init(biomeData, blendRadius, minSecX + 1, minSecY + 1, minSecZ + 1);
     }
 
-    public BlockState getBlockState(BlockPos blockPos) {
+    public class_2680 method_8320(class_2338 blockPos) {
         return blockStateGetter.apply(blockPos);
     }
 
-    public FluidState getFluidState(BlockPos blockPos) {
-        return this.getBlockState(blockPos).getFluidState();
+    public class_3610 method_8316(class_2338 blockPos) {
+        return this.method_8320(blockPos).method_26227();
     }
 
-    public float getShade(Direction direction, boolean bl) {
-        return this.level.getShade(direction, bl);
+    public float method_24852(class_2350 direction, boolean bl) {
+        return this.level.method_24852(direction, bl);
     }
 
-    public LevelLightEngine getLightEngine() {
-        return this.level.getLightEngine();
+    public class_3568 method_22336() {
+        return this.level.method_22336();
     }
 
-    public int getBrightness(LightLayer lightLayer, BlockPos blockPos) {
-        if (outsideRegion(blockPos.getX(), blockPos.getY(), blockPos.getZ())) {
+    public int method_8314(class_1944 lightLayer, class_2338 blockPos) {
+        if (outsideRegion(blockPos.method_10263(), blockPos.method_10264(), blockPos.method_10260())) {
             return 0;
         }
 
-        int secX = SectionPos.blockToSectionCoord(blockPos.getX()) - this.minSecX;
-        int secY = SectionPos.blockToSectionCoord(blockPos.getY()) - this.minSecY;
-        int secZ = SectionPos.blockToSectionCoord(blockPos.getZ()) - this.minSecZ;
+        int secX = class_4076.method_18675(blockPos.method_10263()) - this.minSecX;
+        int secY = class_4076.method_18675(blockPos.method_10264()) - this.minSecY;
+        int secZ = class_4076.method_18675(blockPos.method_10260()) - this.minSecZ;
 
-        DataLayer dataLayer = this.lightData[getSectionIdx(secX, secY, secZ)][lightLayer.ordinal()];
-        return dataLayer == null ? 0 : dataLayer.get(blockPos.getX() & 15, blockPos.getY() & 15, blockPos.getZ() & 15);
+        class_2804 dataLayer = this.lightData[getSectionIdx(secX, secY, secZ)][lightLayer.ordinal()];
+        return dataLayer == null ? 0 : dataLayer.method_12139(blockPos.method_10263() & 15, blockPos.method_10264() & 15, blockPos.method_10260() & 15);
     }
 
-    public int getRawBrightness(BlockPos blockPos, int i) {
-        if (outsideRegion(blockPos.getX(), blockPos.getY(), blockPos.getZ())) {
+    public int method_22335(class_2338 blockPos, int i) {
+        if (outsideRegion(blockPos.method_10263(), blockPos.method_10264(), blockPos.method_10260())) {
             return 0;
         }
 
-        int secX = SectionPos.blockToSectionCoord(blockPos.getX()) - this.minSecX;
-        int secY = SectionPos.blockToSectionCoord(blockPos.getY()) - this.minSecY;
-        int secZ = SectionPos.blockToSectionCoord(blockPos.getZ()) - this.minSecZ;
+        int secX = class_4076.method_18675(blockPos.method_10263()) - this.minSecX;
+        int secY = class_4076.method_18675(blockPos.method_10264()) - this.minSecY;
+        int secZ = class_4076.method_18675(blockPos.method_10260()) - this.minSecZ;
 
-        DataLayer[] dataLayers = this.lightData[getSectionIdx(secX, secY, secZ)];
-        DataLayer skyLightLayer = dataLayers[LightLayer.SKY.ordinal()];
-        DataLayer blockLightLayer = dataLayers[LightLayer.BLOCK.ordinal()];
+        class_2804[] dataLayers = this.lightData[getSectionIdx(secX, secY, secZ)];
+        class_2804 skyLightLayer = dataLayers[class_1944.field_9284.ordinal()];
+        class_2804 blockLightLayer = dataLayers[class_1944.field_9282.ordinal()];
 
-        int relX = blockPos.getX() & 15;
-        int relY = blockPos.getY() & 15;
-        int relZ = blockPos.getZ() & 15;
+        int relX = blockPos.method_10263() & 15;
+        int relY = blockPos.method_10264() & 15;
+        int relZ = blockPos.method_10260() & 15;
 
-        int skyLight = skyLightLayer == null ? 0 : skyLightLayer.get(relX, relY, relZ) - i;
-        int blockLight = blockLightLayer == null ? 0 : blockLightLayer.get(relX, relY, relZ);
+        int skyLight = skyLightLayer == null ? 0 : skyLightLayer.method_12139(relX, relY, relZ) - i;
+        int blockLight = blockLightLayer == null ? 0 : blockLightLayer.method_12139(relX, relY, relZ);
         return Math.max(skyLight, blockLight);
     }
 
     @Nullable
-    public BlockEntity getBlockEntity(@NotNull BlockPos blockPos) {
+    public class_2586 method_8321(@NotNull class_2338 blockPos) {
         return this.blockEntityMap.get(blockPos);
     }
 
-    public int getBlockTint(BlockPos blockPos, ColorResolver colorResolver) {
+    public int method_23752(class_2338 blockPos, class_6539 colorResolver) {
         return tintCache.getColor(blockPos, colorResolver);
     }
 
-    public int getMinY() {
-        return this.level.getMinY();
+    public int method_31607() {
+        return this.level.method_31607();
     }
 
-    public int getHeight() {
-        return this.level.getHeight();
+    public int method_31605() {
+        return this.level.method_31605();
     }
 
     public int getSectionIdx(int secX, int secY, int secZ) {
@@ -212,10 +212,10 @@ public class RenderRegion implements BlockAndTintGetter {
         return x < minX || x >= maxX || y < minY || y >= maxY || z < minZ || z >= maxZ;
     }
 
-    public BlockState defaultBlockState(BlockPos blockPos) {
-        int x = blockPos.getX();
-        int y = blockPos.getY();
-        int z = blockPos.getZ();
+    public class_2680 defaultBlockState(class_2338 blockPos) {
+        int x = blockPos.method_10263();
+        int y = blockPos.method_10264();
+        int z = blockPos.method_10260();
 
         if (outsideRegion(x, y, z)) {
             return AIR_BLOCK_STATE;
@@ -228,19 +228,19 @@ public class RenderRegion implements BlockAndTintGetter {
         return blockData[getBlockIdx(x, y, z)];
     }
 
-    public BlockState debugBlockState(BlockPos blockPos) {
-        int x = blockPos.getX();
-        int y = blockPos.getY();
-        int z = blockPos.getZ();
+    public class_2680 debugBlockState(class_2338 blockPos) {
+        int x = blockPos.method_10263();
+        int y = blockPos.method_10264();
+        int z = blockPos.method_10260();
 
-        BlockState blockState = null;
+        class_2680 blockState = null;
         if (y == 60) {
-            blockState = Blocks.BARRIER.defaultBlockState();
+            blockState = class_2246.field_10499.method_9564();
         }
         else if (y == 70) {
-            blockState = DebugLevelSource.getBlockStateFor(x, z);
+            blockState = class_2891.method_12578(x, z);
         }
 
-        return blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
+        return blockState == null ? class_2246.field_10124.method_9564() : blockState;
     }
 }

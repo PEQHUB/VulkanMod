@@ -3,22 +3,21 @@ package net.vulkanmod.render.shader;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DepthTestFunction;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.RenderPipelines;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.class_10799;
+import net.minecraft.class_290;
 
 public class CustomRenderPipelines {
 
     public static final List<RenderPipeline> pipelines = new ArrayList<>();
 
-    public static final RenderPipeline.Snippet GUI_TRIANGLES_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+    public static final RenderPipeline.Snippet GUI_TRIANGLES_SNIPPET = RenderPipeline.builder(class_10799.field_60125)
                                                                            .withVertexShader("core/gui")
                                                                            .withFragmentShader("core/gui")
                                                                            .withBlend(BlendFunction.TRANSLUCENT)
-                                                                           .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.TRIANGLES)
+                                                                           .withVertexFormat(class_290.field_1576, VertexFormat.class_5596.field_27379)
                                                                            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
                                                                            .buildSnippet();
 

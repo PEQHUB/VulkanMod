@@ -1,16 +1,15 @@
 package net.vulkanmod.config.gui;
 
-import net.minecraft.util.Util;
-import net.minecraft.client.gui.ComponentPath;
-import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.narration.NarratableEntry;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.navigation.FocusNavigationEvent;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.class_156;
+import net.minecraft.class_364;
+import net.minecraft.class_6379;
+import net.minecraft.class_6382;
+import net.minecraft.class_8016;
+import net.minecraft.class_8023;
+import net.minecraft.class_8030;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class GuiElement implements GuiEventListener, NarratableEntry {
+public abstract class GuiElement implements class_364, class_6379 {
 
     protected int width;
     protected int height;
@@ -57,16 +56,16 @@ public abstract class GuiElement implements GuiEventListener, NarratableEntry {
 
     public void updateState(double mX, double mY) {
         // Update hover
-        if (isMouseOver(mX, mY)) {
+        if (method_25405(mX, mY)) {
             if (!this.hovered) {
-                this.hoverStartTime = Util.getMillis();
+                this.hoverStartTime = class_156.method_658();
             }
 
             this.hovered = true;
-            this.hoverTime = (int) (Util.getMillis() - this.hoverStartTime);
+            this.hoverTime = (int) (class_156.method_658() - this.hoverStartTime);
         } else {
             if (this.hovered) {
-                this.hoverStopTime = Util.getMillis();
+                this.hoverStopTime = class_156.method_658();
             }
             this.hovered = false;
             this.hoverTime = 0;
@@ -78,51 +77,51 @@ public abstract class GuiElement implements GuiEventListener, NarratableEntry {
             return Math.min(((this.hoverTime) / time), 1.0f);
         }
         else {
-            int delta = (int) (Util.getMillis() - this.hoverStopTime);
+            int delta = (int) (class_156.method_658() - this.hoverStopTime);
             return Math.max(1.0f - (delta / time), 0.0f);
         }
     }
 
     @Nullable
     @Override
-    public ComponentPath nextFocusPath(FocusNavigationEvent focusNavigationEvent) {
-        return GuiEventListener.super.nextFocusPath(focusNavigationEvent);
+    public class_8016 method_48205(class_8023 focusNavigationEvent) {
+        return class_364.super.method_48205(focusNavigationEvent);
     }
 
     @Override
-    public boolean isMouseOver(double mouseX, double mouseY) {
+    public boolean method_25405(double mouseX, double mouseY) {
         return mouseX >= this.x && mouseY >= this.y
                 && mouseX <= (this.x + this.width) && mouseY <= (this.y + this.height);
     }
 
     @Nullable
     @Override
-    public ComponentPath getCurrentFocusPath() {
-        return GuiEventListener.super.getCurrentFocusPath();
+    public class_8016 method_48218() {
+        return class_364.super.method_48218();
     }
 
     @Override
-    public ScreenRectangle getRectangle() {
-        return GuiEventListener.super.getRectangle();
+    public class_8030 method_48202() {
+        return class_364.super.method_48202();
     }
 
     @Override
-    public void setFocused(boolean bl) {
+    public void method_25365(boolean bl) {
 
     }
 
     @Override
-    public boolean isFocused() {
+    public boolean method_25370() {
         return false;
     }
 
     @Override
-    public NarrationPriority narrationPriority() {
-        return NarrationPriority.NONE;
+    public class_6380 method_37018() {
+        return class_6380.field_33784;
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    public void method_37020(class_6382 narrationElementOutput) {
 
     }
 }

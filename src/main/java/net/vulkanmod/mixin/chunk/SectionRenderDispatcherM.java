@@ -1,11 +1,11 @@
 package net.vulkanmod.mixin.chunk;
 
-import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
+import net.minecraft.class_846;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(SectionRenderDispatcher.class)
+@Mixin(class_846.class)
 public class SectionRenderDispatcherM {
 
 	// TODO

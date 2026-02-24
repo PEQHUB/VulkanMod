@@ -1,17 +1,19 @@
 package net.vulkanmod.render.sky;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
-import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.CloudStatus;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.Mth;
-import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.class_1011;
+import net.minecraft.class_287;
+import net.minecraft.class_289;
+import net.minecraft.class_290;
+import net.minecraft.class_2960;
+import net.minecraft.class_310;
+import net.minecraft.class_3298;
+import net.minecraft.class_3300;
+import net.minecraft.class_3532;
+import net.minecraft.class_4063;
+import net.minecraft.class_9801;
 import net.vulkanmod.render.PipelineManager;
 import net.vulkanmod.render.VBO;
 import net.vulkanmod.vulkan.Renderer;
@@ -25,7 +27,7 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 
 public class CloudRenderer {
-    private static final Identifier TEXTURE_LOCATION = Identifier.withDefaultNamespace("textures/environment/clouds.png");
+    private static final class_2960 TEXTURE_LOCATION = class_2960.method_60656("textures/environment/clouds.png");
 
     private static final int DIR_NEG_Y_BIT = 1 << 0;
     private static final int DIR_POS_Y_BIT = 1 << 1;
@@ -47,7 +49,7 @@ public class CloudRenderer {
     private int prevCloudZ;
     private byte prevCloudY;
 
-    private CloudStatus prevCloudsType;
+    private class_4063 prevCloudsType;
 
     private boolean generateClouds;
     private VBO cloudBuffer;
@@ -60,12 +62,12 @@ public class CloudRenderer {
         this.cloudGrid = createCloudGrid(TEXTURE_LOCATION);
     }
 
-    public void renderClouds(ClientLevel level, float ticks, float partialTicks, double camX, double camY, double camZ) {
-        Minecraft minecraft = Minecraft.getInstance();
+    public void renderClouds(float cloudHeight, int cloudColor, double camX, double camY, double camZ, long gameTime, float partialTicks) {
+        class_310 minecraft = class_310.method_1551();
 
-        float cloudHeight = level.environmentAttributes().getDimensionValue(EnvironmentAttributes.CLOUD_HEIGHT);
-        double timeOffset = (ticks + partialTicks) * 0.03F;
-        double centerX = (camX + timeOffset);
+        float timeOffset = (float)(gameTime % (this.cloudGrid.width * 400L)) + partialTicks;
+        double centerX = camX + timeOffset * 0.03F;
+
         double centerZ = camZ + 0.33F * CELL_WIDTH;
         double centerY = cloudHeight - (float) camY + 0.33F;
 
@@ -84,12 +86,12 @@ public class CloudRenderer {
         }
 
         if (centerCellX != this.prevCloudX || centerCellZ != this.prevCloudZ
-                || (minecraft.options.getCloudsType() != this.prevCloudsType)
+                || (minecraft.field_1690.method_1632() != this.prevCloudsType)
                 || (this.prevCloudY != yState)
                 || this.cloudBuffer == null) {
             this.prevCloudX = centerCellX;
             this.prevCloudZ = centerCellZ;
-            this.prevCloudsType = minecraft.options.getCloudsType();
+            this.prevCloudsType = minecraft.field_1690.method_1632();
             this.prevCloudY = yState;
             this.generateClouds = true;
         }
@@ -102,7 +104,7 @@ public class CloudRenderer {
 
             this.resetBuffer();
 
-            MeshData cloudsMesh = this.buildClouds(Tesselator.getInstance(), centerCellX, centerCellZ, centerY);
+            class_9801 cloudsMesh = this.buildClouds(class_289.method_1348(), centerCellX, centerCellZ, centerY);
 
             if (cloudsMesh == null) {
                 return;
@@ -130,12 +132,10 @@ public class CloudRenderer {
 
         VRenderSystem.setModelOffset(-xTranslation, 0, -zTranslation);
 
-        // TODO
-        int cloudColorInt = level.environmentAttributes().getDimensionValue(EnvironmentAttributes.CLOUD_COLOR);
-        float cloudR = ((cloudColorInt >> 16) & 0xFF) / 255.0f;
-        float cloudG = ((cloudColorInt >> 8) & 0xFF) / 255.0f;
-        float cloudB = (cloudColorInt & 0xFF) / 255.0f;
-        VRenderSystem.setShaderColor(cloudR, cloudG, cloudB, 0.8f);
+        float r = ColorUtil.ARGB.unpackR(cloudColor);
+        float g = ColorUtil.ARGB.unpackG(cloudColor);
+        float b = ColorUtil.ARGB.unpackB(cloudColor);
+        VRenderSystem.setShaderColor(r, g, b, 0.8f);
 
         GraphicsPipeline pipeline = PipelineManager.getCloudsPipeline();
         VRenderSystem.enableBlend();
@@ -149,7 +149,7 @@ public class CloudRenderer {
         VRenderSystem.setPolygonModeGL(GL11.GL_FILL);
         VRenderSystem.setPrimitiveTopologyGL(GL11.GL_TRIANGLES);
 
-        boolean fastClouds = this.prevCloudsType == CloudStatus.FAST;
+        boolean fastClouds = this.prevCloudsType == class_4063.field_18163;
         boolean insideClouds = yState == Y_INSIDE_CLOUDS;
         boolean disableCull = insideClouds || (fastClouds && centerY <= 0.0f);
 
@@ -184,19 +184,19 @@ public class CloudRenderer {
         }
     }
 
-    private MeshData buildClouds(Tesselator tesselator, int centerCellX, int centerCellZ, double cloudY) {
+    private class_9801 buildClouds(class_289 tesselator, int centerCellX, int centerCellZ, double cloudY) {
         final float upFaceBrightness = 1.0f;
         final float xDirBrightness = 0.9f;
         final float downFaceBrightness = 0.7f;
         final float zDirBrightness = 0.8f;
 
-        BufferBuilder bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        class_287 bufferBuilder = tesselator.method_60827(VertexFormat.class_5596.field_27382, class_290.field_1576);
 
-        int cloudRange = Math.min(Minecraft.getInstance().options.cloudRange().get(), 128) * 16;
-        int renderDistance = Mth.ceil(cloudRange / 12.0F);
+        int cloudRange = Math.min(class_310.method_1551().field_1690.method_71270().method_41753(), 128) * 16;
+        int renderDistance = class_3532.method_15386(cloudRange / 12.0F);
         boolean insideClouds = this.prevCloudY == Y_INSIDE_CLOUDS;
 
-        if (this.prevCloudsType == CloudStatus.FANCY) {
+        if (this.prevCloudsType == class_4063.field_18164) {
 
             for (int cellX = -renderDistance; cellX < renderDistance; ++cellX) {
                 for (int cellZ = -renderDistance; cellZ < renderDistance; ++cellZ) {
@@ -281,27 +281,27 @@ public class CloudRenderer {
             }
         }
 
-        return bufferBuilder.build();
+        return bufferBuilder.method_60794();
     }
 
-    private static void putVertex(BufferBuilder bufferBuilder, float x, float y, float z, int color) {
-        bufferBuilder.addVertex(x, y, z).setColor(color);
+    private static void putVertex(class_287 bufferBuilder, float x, float y, float z, int color) {
+        bufferBuilder.method_22912(x, y, z).method_39415(color);
     }
 
-    private static CloudGrid createCloudGrid(Identifier textureLocation) {
-        ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+    private static CloudGrid createCloudGrid(class_2960 textureLocation) {
+        class_3300 resourceManager = class_310.method_1551().method_1478();
 
         try {
-            Resource resource = resourceManager.getResourceOrThrow(textureLocation);
+            class_3298 resource = resourceManager.getResourceOrThrow(textureLocation);
 
-            try (var inputStream = resource.open()) {
-                NativeImage image = NativeImage.read(inputStream);
+            try (var inputStream = resource.method_14482()) {
+                class_1011 image = class_1011.method_4309(inputStream);
 
-                int width = image.getWidth();
-                int height = image.getHeight();
+                int width = image.method_4307();
+                int height = image.method_4323();
                 Validate.isTrue(width == height, "Image width and height must be the same");
 
-                int[] pixels = image.getPixelsABGR();
+                int[] pixels = image.method_48463();
 
                 return new CloudGrid(pixels, width);
             }

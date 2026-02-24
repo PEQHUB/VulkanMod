@@ -4,9 +4,6 @@ import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderPass;
-import com.mojang.blaze3d.systems.ScissorState;
-import com.mojang.blaze3d.textures.GpuSampler;
-import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import java.util.Collection;
@@ -17,15 +14,16 @@ import java.util.function.Supplier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.SharedConstants;
+import net.minecraft.class_11219;
+import net.minecraft.class_12137;
+import net.minecraft.class_155;
 import net.vulkanmod.interfaces.shader.ExtendedRenderPipeline;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
 
 @Environment(EnvType.CLIENT)
 public class VkRenderPass implements RenderPass {
     protected static final int MAX_VERTEX_BUFFERS = 1;
-    public static final boolean VALIDATION = SharedConstants.IS_RUNNING_IN_IDE;
+    public static final boolean VALIDATION = class_155.field_1125;
     private final VkCommandEncoder encoder;
     private final boolean hasDepthTexture;
     private boolean closed;
@@ -34,16 +32,19 @@ public class VkRenderPass implements RenderPass {
     protected final GpuBuffer[] vertexBuffers = new GpuBuffer[1];
     @Nullable
     protected GpuBuffer indexBuffer;
-    protected VertexFormat.IndexType indexType = VertexFormat.IndexType.INT;
-    private final ScissorState scissorState = new ScissorState();
+    protected VertexFormat.class_5595 indexType = VertexFormat.class_5595.field_27373;
+    private final class_11219 scissorState = new class_11219();
     protected final HashMap<String, GpuBufferSlice> uniforms = new HashMap<>();
-    protected final HashMap<String, GpuTextureView> samplers = new HashMap<>();
+    protected final HashMap<String, TextureViewAndSampler> samplers = new HashMap<>();
     protected final Set<String> dirtyUniforms = new HashSet<>();
     protected int pushedDebugGroups;
 
-    public VkRenderPass(VkCommandEncoder commandEncoder, boolean bl) {
+    private final boolean autoManaged;
+
+    public VkRenderPass(VkCommandEncoder commandEncoder, boolean hasDepthTexture, boolean autoManaged) {
         this.encoder = commandEncoder;
-        this.hasDepthTexture = bl;
+        this.hasDepthTexture = hasDepthTexture;
+        this.autoManaged = autoManaged;
     }
 
     public boolean hasDepthTexture() {
@@ -87,11 +88,18 @@ public class VkRenderPass implements RenderPass {
     }
 
     @Override
-    public void bindTexture(String string, @Nullable GpuTextureView gpuTextureView, @Nullable GpuSampler gpuSampler) {
-        if (gpuTextureView == null) {
+    public void bindTexture(String string, @Nullable GpuTextureView gpuTextureView,
+                            @Nullable class_12137 gpuSampler) {
+        if (gpuSampler == null) {
             this.samplers.remove(string);
         } else {
-            this.samplers.put(string, gpuTextureView);
+            var texture = (VkGpuTexture) gpuTextureView.texture();
+
+            // Debug
+            if (texture.needsClear())
+                System.nanoTime();
+
+            this.samplers.put(string, new TextureViewAndSampler((VkTextureView)gpuTextureView, (VkSampler)gpuSampler));
         }
 
         this.dirtyUniforms.add(string);
@@ -116,35 +124,35 @@ public class VkRenderPass implements RenderPass {
 
     @Override
     public void enableScissor(int i, int j, int k, int l) {
-        this.scissorState.enable(i, j, k, l);
+        this.scissorState.method_70814(i, j, k, l);
     }
 
     @Override
     public void disableScissor() {
-        this.scissorState.disable();
+        this.scissorState.method_70813();
     }
 
     public boolean isScissorEnabled() {
-        return this.scissorState.enabled();
+        return this.scissorState.method_72091();
     }
 
     public int getScissorX() {
-        return this.scissorState.x();
+        return this.scissorState.method_72092();
     }
 
     public int getScissorY() {
-        return this.scissorState.y();
+        return this.scissorState.method_72093();
     }
 
     public int getScissorWidth() {
-        return this.scissorState.width();
+        return this.scissorState.method_72094();
     }
 
     public int getScissorHeight() {
-        return this.scissorState.height();
+        return this.scissorState.method_72095();
     }
 
-    public ScissorState getScissorState() { return this.scissorState; }
+    public class_11219 getScissorState() { return this.scissorState; }
 
     @Override
     public void setVertexBuffer(int i, GpuBuffer gpuBuffer) {
@@ -156,25 +164,25 @@ public class VkRenderPass implements RenderPass {
     }
 
     @Override
-    public void setIndexBuffer(@Nullable GpuBuffer gpuBuffer, VertexFormat.IndexType indexType) {
+    public void setIndexBuffer(@Nullable GpuBuffer gpuBuffer, VertexFormat.class_5595 indexType) {
         this.indexBuffer = gpuBuffer;
         this.indexType = indexType;
     }
 
     @Override
-    public void drawIndexed(int i, int j, int k, int l) {
+    public void drawIndexed(int vertexOffset, int firstIndex, int vertexCount, int instanceCount) {
         if (this.closed) {
             throw new IllegalStateException("Can't use a closed render pass");
         } else {
-            this.encoder.executeDraw(this, i, j, k, this.indexType, l);
+            this.encoder.executeDraw(this, vertexOffset, firstIndex, vertexCount, this.indexType, instanceCount);
         }
     }
 
     @Override
     public <T> void drawMultipleIndexed(
-            Collection<RenderPass.Draw<T>> collection,
+            Collection<RenderPass.class_10884<T>> collection,
             @Nullable GpuBuffer gpuBuffer,
-            @Nullable VertexFormat.IndexType indexType,
+            @Nullable VertexFormat.class_5595 indexType,
             Collection<String> collection2,
             T object
     ) {
@@ -186,11 +194,11 @@ public class VkRenderPass implements RenderPass {
     }
 
     @Override
-    public void draw(int i, int j) {
+    public void draw(int vertexOffset, int vertexCount) {
         if (this.closed) {
             throw new IllegalStateException("Can't use a closed render pass");
         } else {
-            this.encoder.executeDraw(this, i, 0, j, null, 1);
+            this.encoder.executeDraw(this, vertexOffset, 0, vertexCount, null, 1);
         }
     }
 
@@ -202,12 +210,16 @@ public class VkRenderPass implements RenderPass {
             }
 
             this.closed = true;
-            this.encoder.finishRenderPass();
+            this.encoder.finishRenderPass(!this.autoManaged);
         }
     }
 
     public @Nullable RenderPipeline getPipeline() {
         return pipeline;
+    }
+
+    @Environment(EnvType.CLIENT)
+    protected record TextureViewAndSampler(VkTextureView view, VkSampler sampler) {
     }
 }
 

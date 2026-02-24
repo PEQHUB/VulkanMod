@@ -1,7 +1,7 @@
 package net.vulkanmod.render.vertex;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.class_2680;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.render.PipelineManager;
 import net.vulkanmod.render.chunk.cull.QuadFacing;
@@ -17,6 +17,7 @@ public class TerrainBuilder {
     protected long indexBufferPtr;
 
     private int indexBufferCapacity;
+    protected long bufferPtr;
 
     private final VertexFormat format;
 
@@ -61,9 +62,9 @@ public class TerrainBuilder {
     }
 
     private void resizeIndexBuffer(int i) {
-        this.indexBufferPtr = ALLOCATOR.realloc(this.indexBufferPtr, i);
+        this.bufferPtr = ALLOCATOR.realloc(this.bufferPtr, i);
         LOGGER.debug("Needed to grow index buffer: Old size {} bytes, new size {} bytes.", this.indexBufferCapacity, i);
-        if (this.indexBufferPtr == 0L) {
+        if (this.bufferPtr == 0L) {
             throw new OutOfMemoryError("Failed to resize buffer from " + this.indexBufferCapacity + " bytes to " + i + " bytes");
         } else {
             this.indexBufferCapacity = i;
@@ -114,12 +115,12 @@ public class TerrainBuilder {
 
         int indexCount = vertexCount / 4 * 6;
 
-        VertexFormat.IndexType indexType = VertexFormat.IndexType.least(indexCount);
+        VertexFormat.class_5595 indexType = VertexFormat.class_5595.method_31972(indexCount);
         boolean sequentialIndexing;
 
         // TODO sorting
         if (this.needsSorting) {
-            int indexBufferSize = indexCount * indexType.bytes;
+            int indexBufferSize = indexCount * indexType.field_27375;
             this.ensureIndexCapacity(indexBufferSize);
 
             this.quadSorter.putSortedQuadIndices(this, indexType);
@@ -160,29 +161,21 @@ public class TerrainBuilder {
         }
     }
 
-    public void free() {
-        ALLOCATOR.free(this.indexBufferPtr);
-
-        for (TerrainBufferBuilder bufferBuilder : this.bufferBuilders) {
-            bufferBuilder.free();
-        }
+    public void setBlockAttributes(class_2680 blockState) {
     }
 
-    public void setBlockAttributes(BlockState blockState) {
-    }
-
-    public record DrawState(int vertexSize, int indexCount, VertexFormat.IndexType indexType,
+    public record DrawState(int vertexSize, int indexCount, VertexFormat.class_5595 indexType,
                             boolean indexOnly, boolean sequentialIndex) {
 
         private int indexBufferSize() {
-            return this.sequentialIndex ? 0 : this.indexCount * this.indexType.bytes;
+            return this.sequentialIndex ? 0 : this.indexCount * this.indexType.field_27375;
         }
 
         public int indexCount() {
             return this.indexCount;
         }
 
-        public VertexFormat.IndexType indexType() {
+        public VertexFormat.class_5595 indexType() {
             return this.indexType;
         }
 

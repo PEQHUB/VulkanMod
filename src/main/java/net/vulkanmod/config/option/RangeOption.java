@@ -1,7 +1,7 @@
 package net.vulkanmod.config.option;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
+import net.minecraft.class_2561;
+import net.minecraft.class_3532;
 import net.vulkanmod.config.gui.widget.OptionWidget;
 import net.vulkanmod.config.gui.widget.RangeOptionWidget;
 
@@ -14,23 +14,23 @@ public class RangeOption extends Option<Integer> {
     int max;
     int step;
 
-    public RangeOption(Component name, int min, int max, int step, Function<Integer, Component> translator, Consumer<Integer> setter, Supplier<Integer> getter) {
+    public RangeOption(class_2561 name, int min, int max, int step, Function<Integer, class_2561> translator, Consumer<Integer> setter, Supplier<Integer> getter) {
         super(name, setter, getter, translator);
         this.min = min;
         this.max = max;
         this.step = step;
     }
 
-    public RangeOption(Component name, int min, int max, int step, Consumer<Integer> setter, Supplier<Integer> getter) {
-        this(name, min, max, step, (i) -> Component.literal(String.valueOf(i)), setter, getter);
+    public RangeOption(class_2561 name, int min, int max, int step, Consumer<Integer> setter, Supplier<Integer> getter) {
+        this(name, min, max, step, (i) -> class_2561.method_43470(String.valueOf(i)), setter, getter);
     }
 
     public OptionWidget<?> createWidget() {
         return new RangeOptionWidget(this, this.name);
     }
 
-    public Component getName() {
-        return Component.nullToEmpty(this.name.getString() + ": " + this.getNewValue().toString());
+    public class_2561 getName() {
+        return class_2561.method_30163(this.name.getString() + ": " + this.getNewValue().toString());
     }
 
     public float getScaledValue() {
@@ -40,7 +40,7 @@ public class RangeOption extends Option<Integer> {
     }
 
     public void setValue(float f) {
-        double n = Mth.lerp(f, min, max);
+        double n = class_3532.method_16439(f, min, max);
 
         n = this.step * Math.round(n / this.step);
 

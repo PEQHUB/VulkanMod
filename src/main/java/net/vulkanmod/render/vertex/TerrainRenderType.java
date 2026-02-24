@@ -1,7 +1,7 @@
 package net.vulkanmod.render.vertex;
 
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.class_11515;
+import net.minecraft.class_1921;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.interfaces.ExtendedRenderType;
 import net.vulkanmod.vulkan.VRenderSystem;
@@ -11,24 +11,21 @@ import java.util.function.Function;
 
 public enum TerrainRenderType {
     SOLID(0.0f),
-    CUTOUT_MIPPED(0.5f),
     CUTOUT(0.1f),
-    TRANSLUCENT(0.0f),
+    TRANSLUCENT(0.01f),
     TRIPWIRE(0.1f);
 
     public static final TerrainRenderType[] VALUES = TerrainRenderType.values();
 
-    public static final EnumSet<TerrainRenderType> COMPACT_RENDER_TYPES = EnumSet.of(CUTOUT_MIPPED, TRANSLUCENT);
-    public static final EnumSet<TerrainRenderType> SEMI_COMPACT_RENDER_TYPES = EnumSet.of(CUTOUT_MIPPED, CUTOUT, TRANSLUCENT);
+    public static final EnumSet<TerrainRenderType> COMPACT_RENDER_TYPES = EnumSet.of(CUTOUT, TRANSLUCENT);
+    public static final EnumSet<TerrainRenderType> SEMI_COMPACT_RENDER_TYPES = EnumSet.of(SOLID, CUTOUT, TRANSLUCENT);
 
     private static Function<TerrainRenderType, TerrainRenderType> remapper;
 
     static {
         SEMI_COMPACT_RENDER_TYPES.add(CUTOUT);
-        SEMI_COMPACT_RENDER_TYPES.add(CUTOUT_MIPPED);
         SEMI_COMPACT_RENDER_TYPES.add(TRANSLUCENT);
 
-        COMPACT_RENDER_TYPES.add(CUTOUT_MIPPED);
         COMPACT_RENDER_TYPES.add(TRANSLUCENT);
     }
 
@@ -42,16 +39,16 @@ public enum TerrainRenderType {
         VRenderSystem.alphaCutout = this.alphaCutout;
     }
 
-    public static TerrainRenderType get(RenderType renderType) {
+    public static TerrainRenderType get(class_1921 renderType) {
         return ((ExtendedRenderType)renderType).getTerrainRenderType();
     }
 
-    public static TerrainRenderType get(ChunkSectionLayer layer) {
+    public static TerrainRenderType get(class_11515 layer) {
         return switch (layer) {
-            case SOLID -> SOLID;
-            case CUTOUT -> CUTOUT;
-            case TRANSLUCENT -> TRANSLUCENT;
-            case TRIPWIRE -> TRIPWIRE;
+            case field_60923 -> SOLID;
+            case field_60925 -> CUTOUT;
+            case field_60926 -> TRANSLUCENT;
+            case field_60927 -> TRIPWIRE;
         };
     }
 
@@ -59,32 +56,30 @@ public enum TerrainRenderType {
         return switch (name) {
             case "solid" -> TerrainRenderType.SOLID;
             case "cutout" -> TerrainRenderType.CUTOUT;
-            case "cutout_mipped" -> TerrainRenderType.CUTOUT_MIPPED;
             case "translucent" -> TerrainRenderType.TRANSLUCENT;
             case "tripwire" -> TerrainRenderType.TRIPWIRE;
             default -> null;
         };
     }
 
-    public static ChunkSectionLayer getLayer(TerrainRenderType renderType) {
+    public static class_11515 getLayer(TerrainRenderType renderType) {
         return switch (renderType) {
-            case SOLID -> ChunkSectionLayer.SOLID;
-            case CUTOUT -> ChunkSectionLayer.CUTOUT;
-            case CUTOUT_MIPPED -> ChunkSectionLayer.CUTOUT;
-            case TRANSLUCENT -> ChunkSectionLayer.TRANSLUCENT;
-            case TRIPWIRE -> ChunkSectionLayer.TRIPWIRE;
+            case SOLID -> class_11515.field_60923;
+            case CUTOUT -> class_11515.field_60925;
+            case TRANSLUCENT -> class_11515.field_60926;
+            case TRIPWIRE -> class_11515.field_60927;
         };
     }
 
     public static void updateMapping() {
         if (Initializer.CONFIG.uniqueOpaqueLayer) {
             remapper = (renderType) -> switch (renderType) {
-                case SOLID, CUTOUT, CUTOUT_MIPPED -> TerrainRenderType.CUTOUT_MIPPED;
+                case SOLID, CUTOUT -> TerrainRenderType.CUTOUT;
                 case TRANSLUCENT, TRIPWIRE -> TerrainRenderType.TRANSLUCENT;
             };
         } else {
             remapper = (renderType) -> switch (renderType) {
-                case SOLID, CUTOUT_MIPPED -> TerrainRenderType.CUTOUT_MIPPED;
+                case SOLID -> TerrainRenderType.SOLID;
                 case CUTOUT -> TerrainRenderType.CUTOUT;
                 case TRANSLUCENT, TRIPWIRE -> TerrainRenderType.TRANSLUCENT;
             };

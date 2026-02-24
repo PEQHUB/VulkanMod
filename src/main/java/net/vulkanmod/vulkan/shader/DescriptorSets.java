@@ -48,7 +48,7 @@ public class DescriptorSets {
         }
     }
 
-    public void bindSets(VkCommandBuffer commandBuffer, UniformBuffer uniformBuffer, int bindPoint) {
+    protected void bindSets(VkCommandBuffer commandBuffer, UniformBuffer uniformBuffer, int bindPoint) {
         try (MemoryStack stack = stackPush()) {
 
             this.updateUniforms(uniformBuffer);
@@ -62,18 +62,12 @@ public class DescriptorSets {
     private void updateUniforms(UniformBuffer globalUB) {
         int i = 0;
         for (UBO ubo : pipeline.getBuffers()) {
-            // Prevent NPE in case UBO has no bound buffer slice
-            if (ubo.getBufferSlice().getBuffer() == null) {
-                ubo.setUseGlobalBuffer(true);
-                ubo.setUpdate(true);
-            }
-
             boolean useOwnUB = !ubo.useGlobalBuffer();
 
             int offset;
             if (useOwnUB) {
                 BufferSlice bufferSlice = ubo.getBufferSlice();
-                offset = bufferSlice.getOffset();
+                offset = (int) bufferSlice.getOffset();
             }
             else {
                 offset = (int) globalUB.getUsedBytes();

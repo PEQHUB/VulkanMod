@@ -1,18 +1,18 @@
 package net.vulkanmod.render.chunk.build.frapi.render;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.renderer.v1.mesh.ShadeMode;
 import net.fabricmc.fabric.api.renderer.v1.render.BlockVertexConsumerProvider;
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.class_1087;
+import net.minecraft.class_11515;
+import net.minecraft.class_1920;
+import net.minecraft.class_2338;
+import net.minecraft.class_243;
+import net.minecraft.class_2680;
+import net.minecraft.class_4587;
+import net.minecraft.class_4588;
+import net.minecraft.class_4696;
+import net.minecraft.class_5819;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.render.chunk.build.frapi.mesh.MutableQuadViewImpl;
 import net.vulkanmod.render.chunk.build.light.LightMode;
@@ -29,7 +29,7 @@ public class BlockRenderContext extends AbstractBlockRenderContext {
 	public static final ThreadLocal<BlockRenderContext> POOL = ThreadLocal.withInitial(BlockRenderContext::new);
 
 	private BlockVertexConsumerProvider vertexConsumers;
-    private ChunkSectionLayer defaultRenderLayer;
+    private class_11515 defaultRenderLayer;
 
 	private final ArrayLightDataCache lightDataCache = new ArrayLightDataCache();
 
@@ -46,24 +46,24 @@ public class BlockRenderContext extends AbstractBlockRenderContext {
 
 		this.setupLightPipelines(flatLightPipeline, smoothLightPipeline);
 
-		random = RandomSource.create();
+		random = class_5819.method_43047();
     }
 
-	public void render(BlockAndTintGetter blockView, BlockStateModel model, BlockState state, BlockPos pos, PoseStack matrixStack, BlockVertexConsumerProvider buffers, boolean cull, long seed, int overlay) {
-		Vec3 offset = state.getOffset(pos);
-		matrixStack.translate(offset.x, offset.y, offset.z);
+	public void render(class_1920 blockView, class_1087 model, class_2680 state, class_2338 pos, class_4587 matrixStack, BlockVertexConsumerProvider buffers, boolean cull, long seed, int overlay) {
+		class_243 offset = state.method_26226(pos);
+		matrixStack.method_22904(offset.field_1352, offset.field_1351, offset.field_1350);
 
 		this.blockPos = pos;
 		this.vertexConsumers = buffers;
-        this.defaultRenderLayer = ItemBlockRenderTypes.getChunkRenderType(state);
-		this.matrices = matrixStack.last();
+        this.defaultRenderLayer = class_4696.method_23679(state);
+		this.matrices = matrixStack.method_23760();
 		this.overlay = overlay;
-		this.random.setSeed(seed);
+		this.random.method_43052(seed);
 
 		this.lightDataCache.reset(blockView, pos);
 
 		this.prepareForWorld(blockView, cull);
-		this.prepareForBlock(state, pos, state.getLightEmission() == 0);
+		this.prepareForBlock(state, pos, state.method_26213() == 0);
 
 		model.emitQuads(getEmitter(), blockView, pos, state, random, this::isFaceCulled);
 
@@ -71,7 +71,7 @@ public class BlockRenderContext extends AbstractBlockRenderContext {
 	}
 
 	@Override
-	protected VertexConsumer getVertexConsumer(ChunkSectionLayer layer) {
+	protected class_4588 getVertexConsumer(class_11515 layer) {
 		return vertexConsumers.getBuffer(layer);
 	}
 
@@ -80,9 +80,9 @@ public class BlockRenderContext extends AbstractBlockRenderContext {
 		final boolean ao = this.useAO && (aoMode == TriState.TRUE || (aoMode == TriState.DEFAULT && this.defaultAO));
 		final boolean emissive = quad.emissive();
 		final boolean vanillaShade = quad.shadeMode() == ShadeMode.VANILLA;
-        final ChunkSectionLayer quadRenderLayer = quad.renderLayer();
-        final ChunkSectionLayer renderLayer = quadRenderLayer == null ? defaultRenderLayer : quadRenderLayer;
-		final VertexConsumer vertexConsumer = getVertexConsumer(renderLayer);
+        final class_11515 quadRenderLayer = quad.renderLayer();
+        final class_11515 renderLayer = quadRenderLayer == null ? defaultRenderLayer : quadRenderLayer;
+		final class_4588 vertexConsumer = getVertexConsumer(renderLayer);
 
 		LightPipeline lightPipeline = ao ? this.smoothLightPipeline : this.flatLightPipeline;
 

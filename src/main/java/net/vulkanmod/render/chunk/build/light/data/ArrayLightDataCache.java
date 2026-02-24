@@ -1,10 +1,9 @@
 package net.vulkanmod.render.chunk.build.light.data;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.SectionPos;
-import net.minecraft.world.level.BlockAndTintGetter;
-
 import java.util.Arrays;
+import net.minecraft.class_1920;
+import net.minecraft.class_2338;
+import net.minecraft.class_4076;
 
 /**
  * A light data cache which uses a flat-array to store the light data for the blocks in a given chunk and its direct
@@ -24,7 +23,7 @@ public class ArrayLightDataCache extends LightDataAccess {
         this.light = new int[BLOCK_LENGTH * BLOCK_LENGTH * BLOCK_LENGTH];
     }
 
-    public void reset(BlockAndTintGetter blockAndTintGetter, int x, int y, int z) {
+    public void reset(class_1920 blockAndTintGetter, int x, int y, int z) {
         this.region = blockAndTintGetter;
 
         this.xOffset = x - NEIGHBOR_BLOCK_RADIUS;
@@ -34,28 +33,28 @@ public class ArrayLightDataCache extends LightDataAccess {
         Arrays.fill(this.light, 0);
     }
 
-    public void reset(BlockAndTintGetter blockAndTintGetter, BlockPos origin) {
+    public void reset(class_1920 blockAndTintGetter, class_2338 origin) {
         this.region = blockAndTintGetter;
 
-        this.xOffset = origin.getX() - NEIGHBOR_BLOCK_RADIUS;
-        this.yOffset = origin.getY() - NEIGHBOR_BLOCK_RADIUS;
-        this.zOffset = origin.getZ() - NEIGHBOR_BLOCK_RADIUS;
+        this.xOffset = origin.method_10263() - NEIGHBOR_BLOCK_RADIUS;
+        this.yOffset = origin.method_10264() - NEIGHBOR_BLOCK_RADIUS;
+        this.zOffset = origin.method_10260() - NEIGHBOR_BLOCK_RADIUS;
 
         Arrays.fill(this.light, 0);
     }
 
-    public void reset(SectionPos origin) {
-        this.xOffset = origin.minBlockX() - NEIGHBOR_BLOCK_RADIUS;
-        this.yOffset = origin.minBlockY() - NEIGHBOR_BLOCK_RADIUS;
-        this.zOffset = origin.minBlockZ() - NEIGHBOR_BLOCK_RADIUS;
+    public void reset(class_4076 origin) {
+        this.xOffset = origin.method_19527() - NEIGHBOR_BLOCK_RADIUS;
+        this.yOffset = origin.method_19528() - NEIGHBOR_BLOCK_RADIUS;
+        this.zOffset = origin.method_19529() - NEIGHBOR_BLOCK_RADIUS;
 
         Arrays.fill(this.light, 0);
     }
 
-    public void reset(BlockPos origin) {
-        this.xOffset = origin.getX() - NEIGHBOR_BLOCK_RADIUS;
-        this.yOffset = origin.getY() - NEIGHBOR_BLOCK_RADIUS;
-        this.zOffset = origin.getZ() - NEIGHBOR_BLOCK_RADIUS;
+    public void reset(class_2338 origin) {
+        this.xOffset = origin.method_10263() - NEIGHBOR_BLOCK_RADIUS;
+        this.yOffset = origin.method_10264() - NEIGHBOR_BLOCK_RADIUS;
+        this.zOffset = origin.method_10260() - NEIGHBOR_BLOCK_RADIUS;
 
         Arrays.fill(this.light, 0);
     }

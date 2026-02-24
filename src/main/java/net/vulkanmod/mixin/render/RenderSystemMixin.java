@@ -1,10 +1,11 @@
 package net.vulkanmod.mixin.render;
 
-import com.mojang.blaze3d.shaders.ShaderSource;
 import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.renderer.DynamicUniforms;
+import net.minecraft.class_11282;
+import net.minecraft.class_12136;
+import net.minecraft.class_12289;
 import net.vulkanmod.render.engine.VkGpuDevice;
 import net.vulkanmod.vulkan.Renderer;
 import net.vulkanmod.vulkan.VRenderSystem;
@@ -20,15 +21,12 @@ public abstract class RenderSystemMixin {
     @Shadow private static @Nullable Thread renderThread;
 
     @Shadow private static @Nullable GpuDevice DEVICE;
-    @Shadow private static @Nullable DynamicUniforms dynamicUniforms;
-
+    @Shadow private static @Nullable class_11282 dynamicUniforms;
+    @Shadow private static class_12136 samplerCache;
     @Shadow private static String apiDescription;
 
-    @Shadow
-    public static void assertOnRenderThread() {}
-
     @Overwrite(remap = false)
-    public static void initRenderer(long l, int i, boolean bl, ShaderSource shaderSource, boolean bl2) {
+    public static void initRenderer(long l, int i, boolean bl, class_12289 shaderSource, boolean bl2) {
         renderThread.setPriority(Thread.NORM_PRIORITY + 2);
 
         VRenderSystem.initRenderer();
@@ -38,6 +36,8 @@ public abstract class RenderSystemMixin {
 
         Renderer.initRenderer();
 
-        dynamicUniforms = new DynamicUniforms();
+        dynamicUniforms = new class_11282();
+        samplerCache.method_75292();
     }
+
 }

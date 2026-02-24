@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.class_3518;
 import net.vulkanmod.vulkan.Renderer;
 import net.vulkanmod.vulkan.Vulkan;
 import net.vulkanmod.vulkan.device.DeviceManager;
@@ -163,7 +163,7 @@ public abstract class Pipeline {
 
     public abstract void cleanUp();
 
-    protected void destroyDescriptorSets() {
+    void destroyDescriptorSets() {
         for (DescriptorSets descriptorSets : this.descriptorSets) {
             descriptorSets.cleanUp();
         }
@@ -240,8 +240,10 @@ public abstract class Pipeline {
         this.descriptorSets[frame].bindSets(commandBuffer, uniformBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
     }
 
-    protected static long createShaderModule(ByteBuffer spirvCode) {
+    static long createShaderModule(ByteBuffer spirvCode) {
+
         try (MemoryStack stack = stackPush()) {
+
             VkShaderModuleCreateInfo createInfo = VkShaderModuleCreateInfo.calloc(stack);
 
             createInfo.sType(VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO);
@@ -324,10 +326,10 @@ public abstract class Pipeline {
             this.UBOs = new ArrayList<>();
             this.imageDescriptors = new ArrayList<>();
 
-            JsonArray jsonUbos = GsonHelper.getAsJsonArray(jsonObject, "UBOs", null);
-            JsonArray jsonManualUbos = GsonHelper.getAsJsonArray(jsonObject, "ManualUBOs", null);
-            JsonArray jsonSamplers = GsonHelper.getAsJsonArray(jsonObject, "samplers", null);
-            JsonArray jsonPushConstants = GsonHelper.getAsJsonArray(jsonObject, "PushConstants", null);
+            JsonArray jsonUbos = class_3518.method_15292(jsonObject, "UBOs", null);
+            JsonArray jsonManualUbos = class_3518.method_15292(jsonObject, "ManualUBOs", null);
+            JsonArray jsonSamplers = class_3518.method_15292(jsonObject, "samplers", null);
+            JsonArray jsonPushConstants = class_3518.method_15292(jsonObject, "PushConstants", null);
 
             if (jsonUbos != null) {
                 for (JsonElement jsonelement : jsonUbos) {
@@ -355,21 +357,21 @@ public abstract class Pipeline {
         }
 
         private void parseUboNode(JsonElement jsonelement) {
-            JsonObject uboJson = GsonHelper.convertToJsonObject(jsonelement, "UBO");
-            int binding = GsonHelper.getAsInt(uboJson, "binding");
-            int type = getStageFromString(GsonHelper.getAsString(uboJson, "type"));
+            JsonObject uboJson = class_3518.method_15295(jsonelement, "UBO");
+            int binding = class_3518.method_15260(uboJson, "binding");
+            int type = getStageFromString(class_3518.method_15265(uboJson, "type"));
 
             UBO ubo;
-            if (GsonHelper.isArrayNode(uboJson, "fields")) {
-                JsonArray fields = GsonHelper.getAsJsonArray(uboJson, "fields");
+            if (class_3518.method_15264(uboJson, "fields")) {
+                JsonArray fields = class_3518.method_15261(uboJson, "fields");
 
                 AlignedStruct.Builder builder = new AlignedStruct.Builder();
 
                 for (JsonElement field : fields) {
-                    JsonObject fieldObject = GsonHelper.convertToJsonObject(field, "uniform");
-                    String name = GsonHelper.getAsString(fieldObject, "name");
-                    String type2 = GsonHelper.getAsString(fieldObject, "type");
-                    int count = GsonHelper.getAsInt(fieldObject, "count");
+                    JsonObject fieldObject = class_3518.method_15295(field, "uniform");
+                    String name = class_3518.method_15265(fieldObject, "name");
+                    String type2 = class_3518.method_15265(fieldObject, "type");
+                    int count = class_3518.method_15260(fieldObject, "count");
 
                     Uniform.Info uniformInfo = Uniform.createUniformInfo(type2, name, count);
                     uniformInfo.setupSupplier();
@@ -395,7 +397,7 @@ public abstract class Pipeline {
                 ubo = builder.buildUBO(binding, type);
             }
             else {
-                int size = GsonHelper.getAsInt(uboJson, "size");
+                int size = class_3518.method_15260(uboJson, "size");
 
                 ubo = new UBO("UBO %d".formatted(binding), binding, type, size, null);
                 ubo.setUseGlobalBuffer(false);
@@ -408,10 +410,10 @@ public abstract class Pipeline {
         }
 
         private void parseManualUboNode(JsonElement jsonelement) {
-            JsonObject jsonobject = GsonHelper.convertToJsonObject(jsonelement, "ManualUBO");
-            int binding = GsonHelper.getAsInt(jsonobject, "binding");
-            int stage = getStageFromString(GsonHelper.getAsString(jsonobject, "type"));
-            int size = GsonHelper.getAsInt(jsonobject, "size");
+            JsonObject jsonobject = class_3518.method_15295(jsonelement, "ManualUBO");
+            int binding = class_3518.method_15260(jsonobject, "binding");
+            int stage = getStageFromString(class_3518.method_15265(jsonobject, "type"));
+            int size = class_3518.method_15260(jsonobject, "size");
 
             if (binding >= this.nextBinding)
                 this.nextBinding = binding + 1;
@@ -420,8 +422,8 @@ public abstract class Pipeline {
         }
 
         private void parseSamplerNode(JsonElement jsonelement) {
-            JsonObject jsonobject = GsonHelper.convertToJsonObject(jsonelement, "Sampler");
-            String name = GsonHelper.getAsString(jsonobject, "name");
+            JsonObject jsonobject = class_3518.method_15295(jsonelement, "Sampler");
+            String name = class_3518.method_15265(jsonobject, "name");
 
             int imageIdx = VTextureSelector.getTextureIdx(name);
             this.imageDescriptors.add(new ImageDescriptor(this.nextBinding, "sampler2D", name, imageIdx));
@@ -432,11 +434,11 @@ public abstract class Pipeline {
             AlignedStruct.Builder builder = new AlignedStruct.Builder();
 
             for (JsonElement jsonelement : jsonArray) {
-                JsonObject jsonobject2 = GsonHelper.convertToJsonObject(jsonelement, "PushConstants");
+                JsonObject jsonobject2 = class_3518.method_15295(jsonelement, "PushConstants");
 
-                String name = GsonHelper.getAsString(jsonobject2, "name");
-                String type2 = GsonHelper.getAsString(jsonobject2, "type");
-                int count = GsonHelper.getAsInt(jsonobject2, "count");
+                String name = class_3518.method_15265(jsonobject2, "name");
+                String type2 = class_3518.method_15265(jsonobject2, "type");
+                int count = class_3518.method_15260(jsonobject2, "count");
 
                 Uniform.Info uniformInfo = Uniform.createUniformInfo(type2, name, count);
                 uniformInfo.setupSupplier();

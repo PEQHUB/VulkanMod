@@ -1,7 +1,7 @@
 package net.vulkanmod.render;
 
-import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.class_9801;
 import net.vulkanmod.vulkan.Renderer;
 import net.vulkanmod.vulkan.memory.*;
 import net.vulkanmod.vulkan.memory.buffer.IndexBuffer;
@@ -18,7 +18,7 @@ public class VBO {
     private VertexBuffer vertexBuffer;
     private IndexBuffer indexBuffer;
 
-    private VertexFormat.Mode mode;
+    private VertexFormat.class_5596 mode;
     private boolean autoIndexed = false;
     private int indexCount;
     private int vertexCount;
@@ -27,25 +27,25 @@ public class VBO {
        this.memoryType = useGpuMem ? MemoryTypes.GPU_MEM : MemoryTypes.HOST_MEM;
     }
 
-    public void upload(MeshData meshData) {
-        MeshData.DrawState parameters = meshData.drawState();
+    public void upload(class_9801 meshData) {
+        class_9801.class_4574 parameters = meshData.method_60822();
 
-        this.indexCount = parameters.indexCount();
-        this.vertexCount = parameters.vertexCount();
-        this.mode = parameters.mode();
+        this.indexCount = parameters.comp_751();
+        this.vertexCount = parameters.comp_750();
+        this.mode = parameters.comp_752();
 
-        this.uploadVertexBuffer(parameters, meshData.vertexBuffer());
-        this.uploadIndexBuffer(meshData.indexBuffer());
+        this.uploadVertexBuffer(parameters, meshData.method_60818());
+        this.uploadIndexBuffer(meshData.method_60821());
 
         meshData.close();
     }
 
-    private void uploadVertexBuffer(MeshData.DrawState parameters, ByteBuffer data) {
+    private void uploadVertexBuffer(class_9801.class_4574 parameters, ByteBuffer data) {
         if (data != null) {
             if (this.vertexBuffer != null)
                 this.vertexBuffer.scheduleFree();
 
-            int size = parameters.format().getVertexSize() * parameters.vertexCount();
+            int size = parameters.comp_749().getVertexSize() * parameters.comp_750();
             this.vertexBuffer = new VertexBuffer(size, this.memoryType);
             this.vertexBuffer.copyBuffer(data, size);
         }
@@ -56,24 +56,24 @@ public class VBO {
 
             AutoIndexBuffer autoIndexBuffer;
             switch (this.mode) {
-                case TRIANGLE_FAN -> {
+                case field_27381 -> {
                     autoIndexBuffer = Renderer.getDrawer().getTriangleFanIndexBuffer();
                     this.indexCount = AutoIndexBuffer.DrawType.getTriangleStripIndexCount(this.vertexCount);
                 }
-                case TRIANGLE_STRIP -> {
+                case field_27380 -> {
                     autoIndexBuffer = Renderer.getDrawer().getTriangleStripIndexBuffer();
                     this.indexCount = AutoIndexBuffer.DrawType.getTriangleStripIndexCount(this.vertexCount);
                 }
-                case QUADS -> {
+                case field_27382 -> {
                     autoIndexBuffer = Renderer.getDrawer().getQuadsIndexBuffer();
                 }
-                case LINES -> {
+                case field_27377 -> {
                     autoIndexBuffer = Renderer.getDrawer().getLinesIndexBuffer();
                 }
-                case DEBUG_LINE_STRIP -> {
+                case field_29345 -> {
                     autoIndexBuffer = Renderer.getDrawer().getDebugLineStripIndexBuffer();
                 }
-                case TRIANGLES, DEBUG_LINES -> {
+                case field_27379, field_29344 -> {
                     autoIndexBuffer = null;
                 }
                 default -> throw new IllegalStateException("Unexpected draw mode: %s".formatted(this.mode));

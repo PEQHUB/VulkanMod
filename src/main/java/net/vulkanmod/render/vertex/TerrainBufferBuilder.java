@@ -1,6 +1,6 @@
 package net.vulkanmod.render.vertex;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.class_4588;
 import net.vulkanmod.Initializer;
 import net.vulkanmod.render.vertex.format.I32_SNorm;
 import org.apache.logging.log4j.Logger;
@@ -8,7 +8,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 
-public class TerrainBufferBuilder implements VertexConsumer {
+public class TerrainBufferBuilder implements class_4588 {
     private static final Logger LOGGER = Initializer.LOGGER;
     private static final MemoryUtil.MemoryAllocator ALLOCATOR = MemoryUtil.getAllocator(false);
 
@@ -72,10 +72,6 @@ public class TerrainBufferBuilder implements VertexConsumer {
         this.vertices = 0;
     }
 
-    public void free() {
-        ALLOCATOR.free(this.bufferPtr);
-    }
-
     public ByteBuffer getBuffer() {
         return MemoryUtil.memByteBuffer(this.bufferPtr, this.vertices * this.vertexSize);
     }
@@ -93,7 +89,7 @@ public class TerrainBufferBuilder implements VertexConsumer {
     }
 
 	@Override
-	public VertexConsumer addVertex(float x, float y, float z) {
+	public class_4588 method_22912(float x, float y, float z) {
 		this.elementPtr = this.bufferPtr + this.nextElementByte;
 		this.endVertex();
 
@@ -103,7 +99,7 @@ public class TerrainBufferBuilder implements VertexConsumer {
 	}
 
 	@Override
-	public VertexConsumer setColor(int r, int g, int b, int a) {
+	public class_4588 method_1336(int r, int g, int b, int a) {
 		int color = (a & 0xFF) << 24 | (b & 0xFF) << 16 | (g & 0xFF) << 8 | (r & 0xFF);
 
 		this.vertexBuilder.color(this.elementPtr, color);
@@ -111,28 +107,28 @@ public class TerrainBufferBuilder implements VertexConsumer {
 		return this;
 	}
 
-	@Override
-	public VertexConsumer setColor(int color) {
-		this.vertexBuilder.color(this.elementPtr, color);
+    @Override
+    public class_4588 method_39415(int color) {
+        this.vertexBuilder.color(this.elementPtr, color);
 
-		return this;
-	}
+        return this;
+    }
 
-	@Override
-	public VertexConsumer setUv(float u, float v) {
+    @Override
+	public class_4588 method_22913(float u, float v) {
 		this.vertexBuilder.uv(this.elementPtr, u, v);
 
 		return this;
 	}
 
-	public VertexConsumer setLight(int i) {
+	public class_4588 method_60803(int i) {
 		this.vertexBuilder.light(this.elementPtr, i);
 
 		return this;
 	}
 
 	@Override
-	public VertexConsumer setNormal(float f, float g, float h) {
+	public class_4588 method_22914(float f, float g, float h) {
 		int packedNormal = I32_SNorm.packNormal(f, g, h);
 
 		this.vertexBuilder.normal(this.elementPtr, packedNormal);
@@ -140,19 +136,18 @@ public class TerrainBufferBuilder implements VertexConsumer {
 		return this;
 	}
 
-	@Override
-	public VertexConsumer setUv1(int i, int j) {
+    @Override
+    public class_4588 method_75298(float f) {
+        return this;
+    }
+
+    @Override
+	public class_4588 method_60796(int i, int j) {
 		return this;
 	}
 
 	@Override
-	public VertexConsumer setUv2(int i, int j) {
-		return this;
-	}
-
-	@Override
-	public VertexConsumer setLineWidth(float lineWidth) {
-		// No-op: terrain rendering does not use line width
+	public class_4588 method_22921(int i, int j) {
 		return this;
 	}
 }

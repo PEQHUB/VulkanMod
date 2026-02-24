@@ -1,6 +1,6 @@
 package net.vulkanmod.config.option;
 
-import net.minecraft.network.chat.Component;
+import net.minecraft.class_2561;
 import net.vulkanmod.config.gui.widget.OptionWidget;
 import net.vulkanmod.config.gui.widget.SwitchOptionWidget;
 
@@ -8,8 +8,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class SwitchOption extends Option<Boolean> {
-    public SwitchOption(Component name, Consumer<Boolean> setter, Supplier<Boolean> getter) {
-        super(name, setter, getter, i -> Component.nullToEmpty(String.valueOf(i)));
+    public SwitchOption(class_2561 name, Consumer<Boolean> setter, Supplier<Boolean> getter) {
+        super(name, setter, getter, i -> class_2561.method_30163(String.valueOf(i)));
     }
 
     @Override

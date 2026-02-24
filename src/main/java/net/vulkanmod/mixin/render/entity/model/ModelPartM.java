@@ -1,8 +1,8 @@
 package net.vulkanmod.mixin.render.entity.model;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.class_4587;
+import net.minecraft.class_4588;
+import net.minecraft.class_630;
 import net.vulkanmod.interfaces.ExtendedVertexBuilder;
 import net.vulkanmod.interfaces.ModelPartCubeMixed;
 import net.vulkanmod.render.model.CubeModel;
@@ -18,22 +18,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-@Mixin(ModelPart.class)
+@Mixin(class_630.class)
 public abstract class ModelPartM {
-    @Shadow @Final private List<ModelPart.Cube> cubes;
+    @Shadow @Final private List<class_630.class_628> cubes;
 
     @Unique Vector3f normal = new Vector3f();
 
     @Inject(method = "compile", at = @At("HEAD"), cancellable = true)
-    private void injCompile(PoseStack.Pose pose, VertexConsumer vertexConsumer, int light, int overlay, int color, CallbackInfo ci) {
+    private void injCompile(class_4587.class_4665 pose, class_4588 vertexConsumer, int light, int overlay, int color, CallbackInfo ci) {
         this.renderCubes(pose, vertexConsumer, light, overlay, color);
         ci.cancel();
     }
 
     @Unique
-    public void renderCubes(PoseStack.Pose pose, VertexConsumer vertexConsumer, int light, int overlay, int color) {
-        Matrix4f matrix4f = pose.pose();
-        Matrix3f matrix3f = pose.normal();
+    public void renderCubes(class_4587.class_4665 pose, class_4588 vertexConsumer, int light, int overlay, int color) {
+        Matrix4f matrix4f = pose.method_23761();
+        Matrix3f matrix3f = pose.method_23762();
 
         ExtendedVertexBuilder vertexBuilder = ExtendedVertexBuilder.of(vertexConsumer);
 
@@ -42,7 +42,7 @@ public abstract class ModelPartM {
         if (useFastFormat) {
             color = ColorUtil.RGBA.fromArgb32(color);
 
-            for (ModelPart.Cube cube : this.cubes) {
+            for (class_630.class_628 cube : this.cubes) {
                 ModelPartCubeMixed cubeMixed = (ModelPartCubeMixed)(cube);
                 CubeModel cubeModel = cubeMixed.getCubeModel();
 
@@ -69,7 +69,7 @@ public abstract class ModelPartM {
             }
         }
         else {
-            for (ModelPart.Cube cube : this.cubes) {
+            for (class_630.class_628 cube : this.cubes) {
                 ModelPartCubeMixed cubeMixed = (ModelPartCubeMixed)(cube);
                 CubeModel cubeModel = cubeMixed.getCubeModel();
 
@@ -85,7 +85,7 @@ public abstract class ModelPartM {
 
                     for (CubeModel.Vertex vertex : vertices) {
                         Vector3f pos = vertex.pos();
-                        vertexConsumer.addVertex(pos.x(), pos.y(), pos.z(),
+                        vertexConsumer.method_23919(pos.x(), pos.y(), pos.z(),
                                                  color,
                                                  vertex.u(), vertex.v(),
                                                  overlay, light,

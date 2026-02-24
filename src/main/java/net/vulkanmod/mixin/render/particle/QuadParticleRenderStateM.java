@@ -1,7 +1,7 @@
 package net.vulkanmod.mixin.render.particle;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.state.QuadParticleRenderState;
+import net.minecraft.class_11944;
+import net.minecraft.class_4588;
 import net.vulkanmod.interfaces.ExtendedVertexBuilder;
 import net.vulkanmod.vulkan.util.ColorUtil;
 import org.joml.Quaternionf;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(QuadParticleRenderState.class)
+@Mixin(class_11944.class)
 public class QuadParticleRenderStateM {
 
     @Unique private final Quaternionf quaternionf = new Quaternionf();
@@ -18,7 +18,7 @@ public class QuadParticleRenderStateM {
 
     @Overwrite
     public void renderRotatedQuad(
-            VertexConsumer vertexConsumer, float x, float y, float z, float xr, float yr, float zr, float wr, float m, float u0, float u1, float v0, float v1, int color, int light
+            class_4588 vertexConsumer, float x, float y, float z, float xr, float yr, float zr, float wr, float m, float u0, float u1, float v0, float v1, int color, int light
     ) {
         quaternionf.set(xr, yr, zr, wr);
 

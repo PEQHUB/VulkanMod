@@ -1,15 +1,16 @@
 package net.vulkanmod.mixin.render.target;
 
-import com.mojang.blaze3d.pipeline.MainTarget;
-import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.*;
+import net.minecraft.class_276;
+import net.minecraft.class_6364;
 import net.vulkanmod.vulkan.Renderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-@Mixin(MainTarget.class)
-public class MainTargetMixin extends RenderTarget {
+@Mixin(class_6364.class)
+public class MainTargetMixin extends class_276 {
 
     public MainTargetMixin(boolean useDepth) {
         super("Main", useDepth);
@@ -21,39 +22,42 @@ public class MainTargetMixin extends RenderTarget {
      */
     @Overwrite
     private void createFrameBuffer(int width, int height) {
-        this.width = width;
-        this.height = height;
+        this.field_1482 = width;
+        this.field_1481 = height;
     }
 
     @Override
-    public void createBuffers(int i, int j) {
+    public void method_1231(int i, int j) {
         RenderSystem.assertOnRenderThread();
-        int k = RenderSystem.getDevice().getMaxTextureSize();
+        GpuDevice gpuDevice = RenderSystem.getDevice();
+        int k = gpuDevice.getMaxTextureSize();
         if (i > 0 && i <= k && j > 0 && j <= k) {
-            this.width = i;
-            this.height = j;
-            if (this.useDepth) {
-                this.depthTexture = RenderSystem.getDevice().createTexture(() -> this.label + " / Depth", 15, TextureFormat.DEPTH32, i, j, 1, 1);
+            this.field_1482 = i;
+            this.field_1481 = j;
+            if (this.field_1478) {
+                this.field_56739 = gpuDevice.createTexture(() -> this.field_56738 + " / Depth", 15, TextureFormat.DEPTH32, i, j, 1, 1);
+                this.field_60568 = gpuDevice.createTextureView(this.field_56739);
             }
 
-            this.colorTexture = RenderSystem.getDevice().createTexture(() -> this.label + " / Color", 15, TextureFormat.RGBA8, i, j, 1, 1);
+            this.field_1475 = gpuDevice.createTexture(() -> this.field_56738 + " / Color", 15, TextureFormat.RGBA8, i, j, 1, 1);
+            this.field_60567 = gpuDevice.createTextureView(this.field_1475);
         } else {
             throw new IllegalArgumentException("Window " + i + "x" + j + " size out of bounds (max. size: " + k + ")");
         }
     }
 
     @Override
-    public GpuTexture getColorTexture() {
+    public GpuTexture method_30277() {
         return Renderer.getInstance().getMainPass().getColorAttachment();
     }
 
     @Override
-    public GpuTextureView getColorTextureView() {
+    public GpuTextureView method_71639() {
         return Renderer.getInstance().getMainPass().getColorAttachmentView();
     }
 
     @Override
-    public GpuTexture getDepthTexture() {
+    public GpuTexture method_30278() {
         return Renderer.getInstance().getMainPass().getDepthAttachment();
     }
 }

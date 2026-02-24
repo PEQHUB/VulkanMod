@@ -1,17 +1,18 @@
 package net.vulkanmod.render.chunk.build.light.smooth;
 
-import net.minecraft.core.BlockPos;
 import net.vulkanmod.render.chunk.util.SimpleDirection;
 import net.vulkanmod.render.chunk.build.light.data.LightDataAccess;
 
 import static net.vulkanmod.render.chunk.build.light.data.LightDataAccess.*;
 
+import net.minecraft.class_2338;
+
 public class SubBlockAoFace extends AoFaceData {
 
-    public void initLightData(LightDataAccess cache, BlockPos pos, SimpleDirection direction, boolean offset) {
-        final int oX = pos.getX();
-        final int oY = pos.getY();
-        final int oZ = pos.getZ();
+    public void initLightData(LightDataAccess cache, class_2338 pos, SimpleDirection direction, boolean offset) {
+        final int oX = pos.method_10263();
+        final int oY = pos.method_10264();
+        final int oZ = pos.method_10260();
 
         final int x;
         final int y;
@@ -215,10 +216,10 @@ public class SubBlockAoFace extends AoFaceData {
         this.flags |= FaceDataFlags.HAS_LIGHT_DATA;
     }
 
-    public void calculateSelfOcclusion(LightDataAccess cache, BlockPos pos, SimpleDirection direction) {
-        final int x = pos.getX();
-        final int y = pos.getY();
-        final int z = pos.getZ();
+    public void calculateSelfOcclusion(LightDataAccess cache, class_2338 pos, SimpleDirection direction) {
+        final int x = pos.method_10263();
+        final int y = pos.method_10264();
+        final int z = pos.method_10260();
 
         final int e = cache.get(x, y, z);
 
@@ -244,10 +245,10 @@ public class SubBlockAoFace extends AoFaceData {
         ao[3] = c3ao;
     }
 
-    public void calculatePartialAlignedFace(LightDataAccess cache, BlockPos pos, SimpleDirection direction) {
-        final int x = pos.getX();
-        final int y = pos.getY();
-        final int z = pos.getZ();
+    public void calculatePartialAlignedFace(LightDataAccess cache, class_2338 pos, SimpleDirection direction) {
+        final int x = pos.method_10263();
+        final int y = pos.method_10264();
+        final int z = pos.method_10260();
 
         final int e = cache.get(x, y, z);
 

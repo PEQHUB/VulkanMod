@@ -2,9 +2,8 @@ package net.vulkanmod.render.chunk;
 
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.class_1937;
+import net.minecraft.class_2586;
 import net.vulkanmod.render.chunk.buffer.AreaBuffer;
 import net.vulkanmod.render.chunk.buffer.DrawBuffers;
 import net.vulkanmod.render.chunk.buffer.DrawParametersBuffer;
@@ -234,7 +233,7 @@ public class RenderSection {
     public BuildTask createCompileTask(RenderRegionBuilder renderRegionCache) {
         boolean flag = this.cancelTasks();
 
-        Level level = WorldRenderer.getLevel();
+        class_1937 level = WorldRenderer.getLevel();
         int secX = xOffset >> 4;
         int secZ = zOffset >> 4;
         int secY = yOffset >> 4;
@@ -356,12 +355,12 @@ public class RenderSection {
         return this.containsBlockEntities;
     }
 
-    public void updateGlobalBlockEntities(Collection<BlockEntity> fullSet) {
-        Set<BlockEntity> sectionSet = compileStatus.globalBlockEntities;
+    public void updateGlobalBlockEntities(Collection<class_2586> fullSet) {
+        Set<class_2586> sectionSet = compileStatus.globalBlockEntities;
 
         if (sectionSet.size() != fullSet.size() || !sectionSet.containsAll(fullSet)) {
-            Set<BlockEntity> toRemove = Sets.newHashSet(sectionSet);
-            Set<BlockEntity> toAdd = Sets.newHashSet(fullSet);
+            Set<class_2586> toRemove = Sets.newHashSet(sectionSet);
+            Set<class_2586> toAdd = Sets.newHashSet(fullSet);
             toAdd.removeAll(sectionSet);
             toRemove.removeAll(fullSet);
 
@@ -430,7 +429,7 @@ public class RenderSection {
 
     static class CompileStatus {
         CompiledSection compiledSection = CompiledSection.UNCOMPILED;
-        Set<BlockEntity> globalBlockEntities = new ObjectOpenHashSet<>();
+        Set<class_2586> globalBlockEntities = new ObjectOpenHashSet<>();
         BuildTask buildTask;
         SortTransparencyTask sortTask;
     }

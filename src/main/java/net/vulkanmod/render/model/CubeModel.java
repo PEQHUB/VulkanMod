@@ -1,11 +1,11 @@
 package net.vulkanmod.render.model;
 
-import net.minecraft.core.Direction;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 import java.util.Set;
+import net.minecraft.class_2350;
 
 public class CubeModel {
 
@@ -19,7 +19,7 @@ public class CubeModel {
 
     Vertex[] vertices;
 
-    public void setVertices(int u, int v, float minX, float minY, float minZ, float dimX, float dimY, float dimZ, float growX, float growY, float growZ, boolean mirror, float uTexScale, float vTexScale, Set<Direction> set) {
+    public void setVertices(int u, int v, float minX, float minY, float minZ, float dimX, float dimY, float dimZ, float growX, float growY, float growZ, boolean mirror, float uTexScale, float vTexScale, Set<class_2350> set) {
         this.minX = minX;
         this.minY = minY;
         this.minZ = minZ;
@@ -73,28 +73,28 @@ public class CubeModel {
         Vertex vertex8 = this.vertices[7];
 
         int idx = 0;
-        if (set.contains(Direction.DOWN)) {
-            this.polygons[idx++] = new Polygon(new Vertex[]{vertex6, vertex5, vertex1, vertex2}, x, ac, y, ad, uTexScale, vTexScale, mirror, Direction.DOWN);
+        if (set.contains(class_2350.field_11033)) {
+            this.polygons[idx++] = new Polygon(new Vertex[]{vertex6, vertex5, vertex1, vertex2}, x, ac, y, ad, uTexScale, vTexScale, mirror, class_2350.field_11033);
         }
 
-        if (set.contains(Direction.UP)) {
-            this.polygons[idx++] = new Polygon(new Vertex[]{vertex3, vertex4, vertex8, vertex7}, y, ad, z, ac, uTexScale, vTexScale, mirror, Direction.UP);
+        if (set.contains(class_2350.field_11036)) {
+            this.polygons[idx++] = new Polygon(new Vertex[]{vertex3, vertex4, vertex8, vertex7}, y, ad, z, ac, uTexScale, vTexScale, mirror, class_2350.field_11036);
         }
 
-        if (set.contains(Direction.WEST)) {
-            this.polygons[idx++] = new Polygon(new Vertex[]{vertex1, vertex5, vertex8, vertex4}, w, ad, x, ae, uTexScale, vTexScale, mirror, Direction.WEST);
+        if (set.contains(class_2350.field_11039)) {
+            this.polygons[idx++] = new Polygon(new Vertex[]{vertex1, vertex5, vertex8, vertex4}, w, ad, x, ae, uTexScale, vTexScale, mirror, class_2350.field_11039);
         }
 
-        if (set.contains(Direction.NORTH)) {
-            this.polygons[idx++] = new Polygon(new Vertex[]{vertex2, vertex1, vertex4, vertex3}, x, ad, y, ae, uTexScale, vTexScale, mirror, Direction.NORTH);
+        if (set.contains(class_2350.field_11043)) {
+            this.polygons[idx++] = new Polygon(new Vertex[]{vertex2, vertex1, vertex4, vertex3}, x, ad, y, ae, uTexScale, vTexScale, mirror, class_2350.field_11043);
         }
 
-        if (set.contains(Direction.EAST)) {
-            this.polygons[idx++] = new Polygon(new Vertex[]{vertex6, vertex2, vertex3, vertex7}, y, ad, aa, ae, uTexScale, vTexScale, mirror, Direction.EAST);
+        if (set.contains(class_2350.field_11034)) {
+            this.polygons[idx++] = new Polygon(new Vertex[]{vertex6, vertex2, vertex3, vertex7}, y, ad, aa, ae, uTexScale, vTexScale, mirror, class_2350.field_11034);
         }
 
-        if (set.contains(Direction.SOUTH)) {
-            this.polygons[idx] = new Polygon(new Vertex[]{vertex5, vertex6, vertex7, vertex8}, aa, ad, ab, ae, uTexScale, vTexScale, mirror, Direction.SOUTH);
+        if (set.contains(class_2350.field_11035)) {
+            this.polygons[idx] = new Polygon(new Vertex[]{vertex5, vertex6, vertex7, vertex8}, aa, ad, ab, ae, uTexScale, vTexScale, mirror, class_2350.field_11035);
         }
     }
 
@@ -112,8 +112,8 @@ public class CubeModel {
 
     public record Polygon(Vertex[] vertices, Vector3fc normal) {
 
-        public Polygon(Vertex[] vertices, float u0, float v0, float u1, float v1, float uSize, float vSize, boolean mirror, Direction direction) {
-            this(vertices, (mirror ? mirrorFacing(direction) : direction).getUnitVec3f());
+        public Polygon(Vertex[] vertices, float u0, float v0, float u1, float v1, float uSize, float vSize, boolean mirror, class_2350 direction) {
+            this(vertices, (mirror ? mirrorFacing(direction) : direction).method_68072());
 
             // This will force NaN if uSize or vSize are 0
             float l = 0.0F / uSize;
@@ -135,8 +135,8 @@ public class CubeModel {
             }
         }
 
-        private static Direction mirrorFacing(Direction direction) {
-            return direction.getAxis() == Direction.Axis.X ? direction.getOpposite() : direction;
+        private static class_2350 mirrorFacing(class_2350 direction) {
+            return direction.method_10166() == class_2350.class_2351.field_11048 ? direction.method_10153() : direction;
         }
     }
 

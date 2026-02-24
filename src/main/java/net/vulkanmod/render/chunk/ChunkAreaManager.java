@@ -1,6 +1,6 @@
 package net.vulkanmod.render.chunk;
 
-import net.minecraft.util.Mth;
+import net.minecraft.class_3532;
 import net.vulkanmod.render.chunk.buffer.DrawBuffers;
 import net.vulkanmod.render.chunk.frustum.FrustumOctree;
 import net.vulkanmod.render.chunk.frustum.VFrustum;
@@ -75,8 +75,8 @@ public class ChunkAreaManager {
         int xS = secX >> AREA_SH_XZ;
         int zS = secZ >> AREA_SH_XZ;
 
-        int deltaX = Mth.clamp(xS - this.prevX, -this.xzSize, this.xzSize);
-        int deltaZ = Mth.clamp(zS - this.prevZ, -this.xzSize, this.xzSize);
+        int deltaX = class_3532.method_15340(xS - this.prevX, -this.xzSize, this.xzSize);
+        int deltaZ = class_3532.method_15340(zS - this.prevZ, -this.xzSize, this.xzSize);
 
         int xAbsChunkIndex = xS - this.xzSize / 2;
         int xStart = Math.floorMod(xAbsChunkIndex, this.xzSize); // needs positive modulo
