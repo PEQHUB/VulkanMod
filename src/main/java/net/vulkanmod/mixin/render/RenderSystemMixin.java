@@ -9,7 +9,6 @@ import net.vulkanmod.render.engine.VkGpuDevice;
 import net.vulkanmod.vulkan.Renderer;
 import net.vulkanmod.vulkan.VRenderSystem;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,7 +17,6 @@ import static com.mojang.blaze3d.systems.RenderSystem.*;
 
 @Mixin(RenderSystem.class)
 public abstract class RenderSystemMixin {
-    @Shadow private static Matrix4f textureMatrix;
     @Shadow private static @Nullable Thread renderThread;
 
     @Shadow private static @Nullable GpuDevice DEVICE;
@@ -42,19 +40,4 @@ public abstract class RenderSystemMixin {
 
         dynamicUniforms = new DynamicUniforms();
     }
-
-    @Overwrite(remap = false)
-    public static void setTextureMatrix(Matrix4f matrix4f) {
-        assertOnRenderThread();
-        textureMatrix.set(matrix4f);
-        VRenderSystem.setTextureMatrix(matrix4f);
-    }
-
-    @Overwrite(remap = false)
-    public static void resetTextureMatrix() {
-        assertOnRenderThread();
-        textureMatrix.identity();
-        VRenderSystem.setTextureMatrix(textureMatrix);
-    }
-
 }

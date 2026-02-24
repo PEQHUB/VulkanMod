@@ -1,32 +1,37 @@
 package net.vulkanmod.mixin.texture.mip;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.util.Util;
 import net.minecraft.client.renderer.texture.MipmapGenerator;
+import net.minecraft.client.renderer.texture.MipmapStrategy;
+import net.minecraft.resources.Identifier;
 import net.vulkanmod.mixin.texture.image.NativeImageAccessor;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(MipmapGenerator.class)
 public abstract class MipmapGeneratorM {
+    @Unique
     private static final int ALPHA_CUTOFF = 50;
 
-    @Shadow
-    private static float getPow22(int i) {
-        return 0;
+    @Unique
+    private static final float[] POW22 = new float[256];
+
+    static {
+        for (int i = 0; i < 256; ++i) {
+            POW22[i] = (float) Math.pow((double) i / 255.0, 2.2);
+        }
     }
 
     /**
-     * @author
+     * @author VulkanMod
      * @reason Add an average background color to texture that have transparent backgrounds
      * to fix mipmaps artifacts
      */
     @SuppressWarnings("UnreachableCode")
     @Overwrite
-    public static NativeImage[] generateMipLevels(NativeImage[] nativeImages, int i) {
+    public static NativeImage[] generateMipLevels(Identifier identifier, NativeImage[] nativeImages, int i, MipmapStrategy mipmapStrategy, float f) {
         if (i + 1 <= nativeImages.length) {
             return nativeImages;
         } else {
@@ -92,6 +97,7 @@ public abstract class MipmapGeneratorM {
         }
     }
 
+    @Unique
     private static boolean hasTransparentPixel(long ptr, int width, int height) {
         for(int i = 0; i < width; ++i) {
             for(int j = 0; j < height; ++j) {
@@ -104,32 +110,31 @@ public abstract class MipmapGeneratorM {
         return false;
     }
 
+    @Unique
     private static int blend(int p0, int p1, int p2, int p3) {
         int a = gammaBlend(p0, p1, p2, p3, 24);
-//        int a = ((p0 >> 24 & 0xFF) + (p1 >> 24 & 0xFF) + (p2 >> 24 & 0xFF) + (p3 >> 24 & 0xFF)) >> 2;
         int b = gammaBlend(p0, p1, p2, p3, 16);
         int g = gammaBlend(p0, p1, p2, p3, 8);
         int r = gammaBlend(p0, p1, p2, p3, 0);
         return a << 24 | b << 16 | g << 8 | r;
     }
 
-    private static int getMax(int i0, int i1, int i2, int i3) {
-        return Math.max(Math.max(Math.max(i0, i1), i2), i3);
-    }
-
+    @Unique
     private static int gammaBlend(int i, int j, int k, int l, int m) {
-        float f = getPow22(i >> m);
-        float g = getPow22(j >> m);
-        float h = getPow22(k >> m);
-        float n = getPow22(l >> m);
+        float f = POW22[(i >> m) & 0xFF];
+        float g = POW22[(j >> m) & 0xFF];
+        float h = POW22[(k >> m) & 0xFF];
+        float n = POW22[(l >> m) & 0xFF];
         float o = (float)((double)((float)Math.pow((double)(f + g + h + n) * 0.25, 0.45454545454545453)));
         return (int)((double)o * 255.0);
     }
 
+    @Unique
     private static int getPixelA(int rgba) {
         return rgba >> 24;
     }
 
+    @Unique
     @SuppressWarnings("UnreachableCode")
     private static int calculateAverage(NativeImage nativeImage) {
         final int width = nativeImage.getWidth();
@@ -141,7 +146,6 @@ public abstract class MipmapGeneratorM {
 
         for(int i = 0; i < width; ++i) {
             for(int j = 0; j < height; ++j) {
-//                int value = nativeImage.getPixelRGBA(i, j);
                 int value = MemoryUtil.memGetInt(srcPtr + (i + (long) j * width) * 4L);
                 if (((value >> 24) & 0xFF) > 0) {
                     values[count] = value;

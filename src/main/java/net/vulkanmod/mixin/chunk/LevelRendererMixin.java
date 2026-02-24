@@ -92,7 +92,7 @@ public abstract class LevelRendererMixin {
      * @reason
      */
     @Overwrite
-    public boolean isSectionCompiled(BlockPos blockPos) {
+    public boolean isSectionCompiledAndVisible(BlockPos blockPos) {
         return this.worldRenderer.isSectionCompiled(blockPos);
     }
 
