@@ -17,6 +17,7 @@
 package net.vulkanmod.render.chunk.build.frapi.mesh;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadAtlas;
 import net.fabricmc.fabric.api.renderer.v1.mesh.ShadeMode;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.client.model.geom.builders.UVPair;
@@ -29,7 +30,6 @@ import org.joml.Vector3fc;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadTransform;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadView;
-import net.vulkanmod.render.chunk.build.frapi.helper.ColorHelper;
 import net.vulkanmod.render.chunk.build.frapi.helper.NormalHelper;
 import net.vulkanmod.render.chunk.build.frapi.helper.TextureHelper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -94,6 +94,7 @@ public abstract class MutableQuadViewImpl extends QuadViewImpl implements QuadEm
 		System.arraycopy(DEFAULT_QUAD_DATA, 0, data, baseIndex, EncodingFormat.TOTAL_STRIDE);
 		isGeometryInvalid = true;
 		nominalFace = null;
+		quadAtlas = QuadAtlas.BLOCK;
 	}
 
 	@Override
@@ -220,6 +221,13 @@ public abstract class MutableQuadViewImpl extends QuadViewImpl implements QuadEm
 	}
 
 	@Override
+	public MutableQuadViewImpl atlas(QuadAtlas quadAtlas) {
+		Objects.requireNonNull(quadAtlas, "QuadAtlas may not be null");
+		this.quadAtlas = quadAtlas;
+		return this;
+	}
+
+	@Override
 	public final MutableQuadViewImpl tag(int tag) {
 		data[baseIndex + HEADER_TAG] = tag;
 		return this;
@@ -230,37 +238,13 @@ public abstract class MutableQuadViewImpl extends QuadViewImpl implements QuadEm
 		final QuadViewImpl q = (QuadViewImpl) quad;
 		System.arraycopy(q.data, q.baseIndex, data, baseIndex, EncodingFormat.TOTAL_STRIDE);
 		nominalFace = q.nominalFace;
+		quadAtlas = q.quadAtlas;
 		isGeometryInvalid = q.isGeometryInvalid;
 
 		if (!isGeometryInvalid) {
 			faceNormal.set(q.faceNormal);
 		}
 
-		return this;
-	}
-
-	@Override
-	public final MutableQuadViewImpl fromVanilla(int[] quadData, int startIndex) {
-		System.arraycopy(quadData, startIndex, data, baseIndex + HEADER_STRIDE, VANILLA_QUAD_STRIDE);
-		isGeometryInvalid = true;
-
-		int normalFlags = 0;
-		int colorIndex = baseIndex + VERTEX_COLOR;
-		int normalIndex = baseIndex + VERTEX_NORMAL;
-
-		for (int i = 0; i < 4; i++) {
-			data[colorIndex] = ColorHelper.fromVanillaColor(data[colorIndex]);
-
-			// Set normal flag if normal is not zero, ignoring W component
-			if ((data[normalIndex] & 0xFFFFFF) != 0) {
-				normalFlags |= 1 << i;
-			}
-
-			colorIndex += VERTEX_STRIDE;
-			normalIndex += VERTEX_STRIDE;
-		}
-
-		normalFlags(normalFlags);
 		return this;
 	}
 

@@ -21,7 +21,6 @@ import static net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat.HEADER_
 import static net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat.HEADER_FACE_NORMAL;
 import static net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat.HEADER_STRIDE;
 import static net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat.HEADER_TAG;
-import static net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat.QUAD_STRIDE;
 import static net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat.VERTEX_COLOR;
 import static net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat.VERTEX_LIGHTMAP;
 import static net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat.VERTEX_NORMAL;
@@ -32,6 +31,7 @@ import static net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat.VERTEX_
 import static net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat.VERTEX_Y;
 import static net.vulkanmod.render.chunk.build.frapi.mesh.EncodingFormat.VERTEX_Z;
 
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadAtlas;
 import net.fabricmc.fabric.api.renderer.v1.mesh.ShadeMode;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -44,7 +44,6 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadView;
-import net.vulkanmod.render.chunk.build.frapi.helper.ColorHelper;
 import net.vulkanmod.render.chunk.build.frapi.helper.GeometryHelper;
 import net.vulkanmod.render.chunk.build.frapi.helper.NormalHelper;
 import net.minecraft.core.Direction;
@@ -67,6 +66,8 @@ public class QuadViewImpl implements QuadView, ModelQuadView {
 	protected int baseIndex = 0;
 
 	protected QuadFacing facing;
+
+	protected QuadAtlas quadAtlas = QuadAtlas.BLOCK;
 
 	/**
 	 * Decodes necessary state from the backing data array.
@@ -292,15 +293,8 @@ public class QuadViewImpl implements QuadView, ModelQuadView {
 	}
 
 	@Override
-	public final void toVanilla(int[] target, int targetIndex) {
-		System.arraycopy(data, baseIndex + HEADER_STRIDE, target, targetIndex, QUAD_STRIDE);
-
-		int colorIndex = targetIndex + VERTEX_COLOR - HEADER_STRIDE;
-
-		for (int i = 0; i < 4; i++) {
-			target[colorIndex] = ColorHelper.toVanillaColor(target[colorIndex]);
-			colorIndex += VANILLA_VERTEX_STRIDE;
-		}
+	public QuadAtlas atlas() {
+		return quadAtlas;
 	}
 
 	@Override
